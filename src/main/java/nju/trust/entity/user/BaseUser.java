@@ -2,18 +2,22 @@ package nju.trust.entity.user;
 
 import nju.trust.entity.CreditRating;
 import nju.trust.entity.UserLevel;
+import org.apache.tomcat.util.buf.StringUtils;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import javax.management.relation.Role;
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @MappedSuperclass
 public class BaseUser {
 
     @Id
+    @NotBlank
     private String username;
 
+    @NotBlank
     private String password;
 
     private String avatar;
@@ -25,6 +29,8 @@ public class BaseUser {
 
     @Enumerated(EnumType.STRING)
     private CreditRating creditRating;
+
+    private String roles;
 
     public String getUsername() {
         return username;
@@ -72,5 +78,26 @@ public class BaseUser {
 
     public void setCreditRating(CreditRating creditRating) {
         this.creditRating = creditRating;
+    }
+
+    public Set<RoleName> getRoles() {
+        if(roles == null) {
+            return Collections.emptySet();
+        }else{
+            return Collections.unmodifiableSet(
+                    new HashSet<RoleName>(Arrays.asList(roles.split(",")).stream().map(str -> RoleName.valueOf(str)).collect(Collectors.toSet()))
+            );
+        }
+    }
+
+    public void setRoles(ArrayList<RoleName> role) {
+        if(role == null) {
+            roles = null;
+        }else {
+            roles = "";
+            for (int i = 0; i < role.size(); i++) {
+                roles += role.get(i).name();
+            }
+        }
     }
 }
