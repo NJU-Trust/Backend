@@ -1,6 +1,6 @@
 package nju.trust.web.user;
 
-import nju.trust.dao.UserBaseDao;
+import nju.trust.dao.PrimaryUserDao;
 import nju.trust.entity.UserLevel;
 import nju.trust.entity.user.BaseUser;
 import nju.trust.entity.user.PrimaryUser;
@@ -23,7 +23,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * All rights Reserved, Designed by Popping Lim
@@ -39,7 +38,7 @@ public class UserController {
     AuthenticationManager authenticationManager;
 
     @Autowired
-    UserBaseDao userRepository;
+    PrimaryUserDao userRepository;
 
     @Autowired
     PasswordEncoder passwordEncoder;
@@ -49,7 +48,7 @@ public class UserController {
 
 
     @GetMapping(value = "/test")
-    @PreAuthorize("hasRole('COMPLETE')")
+    @PreAuthorize("hasRole('SF')")
     public String test() {
         return "test";
     }
@@ -88,23 +87,12 @@ public class UserController {
         user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
         ArrayList<RoleName> roles = new ArrayList<>();
         roles.add(RoleName.ROLE_PRIMARY);
+        roles.add(RoleName.ROLE_INTERMEDIATE);
+        roles.add(RoleName.ROLE_SF);
         user.setRoles(roles);
         user.setUserLevel(UserLevel.PRIMARY);
-        BaseUser result = userRepository.save(user);
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentContextPath().path("/users/{username}")
-                .buildAndExpand(result.getUsername()).toUri();
-
-        return ResponseEntity.created(location).body(new ApiResponse(true, "User registered successfully"));
-    }
-
-
-
-    @GetMapping("/users/{username}")
-    public UserProfile getUserProfile(@PathVariable(value = "username") String username) {
-        BaseUser user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
-        UserProfile userProfile = new UserProfile(user.getUsername());
-        return userProfile;
+        userRepository.save(user);
+        return new ResponseEntity(new ApiResponse(true, "User registered successfully"),
+                HttpStatus.ACCEPTED);
     }
 }
