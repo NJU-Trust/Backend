@@ -7,11 +7,9 @@ import org.hibernate.annotations.FetchMode;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.Inheritance;
 import java.util.List;
 
 @Entity
-@Inheritance
 @DiscriminatorValue("SMALL")
 public class SmallTarget extends BaseTarget {
 

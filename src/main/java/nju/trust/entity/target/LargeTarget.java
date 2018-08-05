@@ -4,7 +4,6 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Inheritance
 @DiscriminatorValue("LARGE")
 public class LargeTarget extends BaseTarget {
 
