@@ -2,7 +2,6 @@ package nju.trust.dao;
 
 import nju.trust.entity.UserLevel;
 import nju.trust.entity.user.CompleteUser;
-import nju.trust.entity.user.IntermediateUser;
 import nju.trust.entity.user.SFUser;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,12 +14,12 @@ import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class UserBaseDaoTest {
+public class PrimaryUserDaoTest {
 
-    private UserBaseDao userDao;
+    private PrimaryUserDao userDao;
 
     @Autowired
-    public void setUserDao(UserBaseDao userDao) {
+    public void setUserDao(PrimaryUserDao userDao) {
         this.userDao = userDao;
     }
 

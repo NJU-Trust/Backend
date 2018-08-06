@@ -97,6 +97,9 @@ public class BaseUser {
             roles = "";
             for (int i = 0; i < role.size(); i++) {
                 roles += role.get(i).name();
+                if (i != role.size() - 1){
+                    roles += ",";
+                }
             }
         }
     }
