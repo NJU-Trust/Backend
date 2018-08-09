@@ -1,7 +1,7 @@
 package nju.trust.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import nju.trust.entity.user.BaseUser;
+import nju.trust.entity.user.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -32,7 +32,7 @@ public class UserPrincipal implements UserDetails {
         this.authorities = authorities;
     }
 
-    public static UserPrincipal create(BaseUser user) {
+    public static UserPrincipal create(User user) {
         List<GrantedAuthority> authorities = user.getRoles().stream().map(role ->
                 new SimpleGrantedAuthority(role.name())
         ).collect(Collectors.toList());

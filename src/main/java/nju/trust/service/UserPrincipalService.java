@@ -1,7 +1,7 @@
 package nju.trust.service;
 
-import nju.trust.dao.PrimaryUserDao;
-import nju.trust.entity.user.BaseUser;
+import nju.trust.dao.UserDao;
+import nju.trust.entity.user.User;
 import nju.trust.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,12 +21,12 @@ import javax.transaction.Transactional;
 @Service
 public class UserPrincipalService implements UserDetailsService {
     @Autowired
-    PrimaryUserDao userRepository;
+    UserDao userRepository;
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username)
             throws UsernameNotFoundException {
-        BaseUser user = userRepository.findByUsername(username)
+        User user = userRepository.findByUsername(username)
                 .orElseThrow(() ->
                         new UsernameNotFoundException("User not found with username : " + username)
                 );

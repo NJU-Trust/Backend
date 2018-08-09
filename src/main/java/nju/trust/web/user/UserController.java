@@ -1,27 +1,26 @@
 package nju.trust.web.user;
 
-import nju.trust.dao.PrimaryUserDao;
+import nju.trust.dao.UserDao;
 import nju.trust.entity.UserLevel;
-import nju.trust.entity.user.BaseUser;
-import nju.trust.entity.user.PrimaryUser;
 import nju.trust.entity.user.RoleName;
-import nju.trust.exception.ResourceNotFoundException;
-import nju.trust.payloads.*;
+import nju.trust.entity.user.User;
+import nju.trust.payloads.ApiResponse;
+import nju.trust.payloads.JwtAuthenticationResponse;
+import nju.trust.payloads.LoginRequest;
+import nju.trust.payloads.SignUpRequest;
 import nju.trust.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.net.URI;
 import java.util.ArrayList;
 
 /**
@@ -34,18 +33,33 @@ import java.util.ArrayList;
 @RestController
 @RequestMapping("/user")
 public class UserController {
-    @Autowired
-    AuthenticationManager authenticationManager;
+    private AuthenticationManager authenticationManager;
+
+    private UserDao userRepository;
+
+    private PasswordEncoder passwordEncoder;
+
+    private JwtTokenProvider tokenProvider;
 
     @Autowired
-    PrimaryUserDao userRepository;
+    public void setAuthenticationManager(AuthenticationManager authenticationManager) {
+        this.authenticationManager = authenticationManager;
+    }
 
     @Autowired
-    PasswordEncoder passwordEncoder;
+    public void setUserRepository(UserDao userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Autowired
-    JwtTokenProvider tokenProvider;
+    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
 
+    @Autowired
+    public void setTokenProvider(JwtTokenProvider tokenProvider) {
+        this.tokenProvider = tokenProvider;
+    }
 
     @GetMapping(value = "/test")
     @PreAuthorize("hasRole('SF')")
@@ -70,19 +84,18 @@ public class UserController {
 
 
     /**
-     *
      * @param signUpRequest
-     * @attention mock method
      * @return
+     * @attention mock method
      */
     @PostMapping(value = "/signup", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
-        if(userRepository.existsByUsername(signUpRequest.getUsername())) {
-            return new ResponseEntity(new ApiResponse(false, "Username is already taken!"),
+        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+            return new ResponseEntity<>(new ApiResponse(false, "Username is already taken!"),
                     HttpStatus.BAD_REQUEST);
         }
 
-        PrimaryUser user = new PrimaryUser();
+        User user = new User();
         user.setUsername(signUpRequest.getUsername());
         user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
         ArrayList<RoleName> roles = new ArrayList<>();
@@ -92,7 +105,7 @@ public class UserController {
         user.setRoles(roles);
         user.setUserLevel(UserLevel.PRIMARY);
         userRepository.save(user);
-        return new ResponseEntity(new ApiResponse(true, "User registered successfully"),
-                HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(new ApiResponse(true, "User registered successfully"),
+                HttpStatus.OK);
     }
 }
