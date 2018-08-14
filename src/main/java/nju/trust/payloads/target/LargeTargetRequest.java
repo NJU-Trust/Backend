@@ -1,23 +1,26 @@
-package nju.trust.entity.target;
+package nju.trust.payloads.target;
 
-import javax.persistence.*;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import nju.trust.entity.target.FeeExplanation;
+import org.springframework.web.multipart.MultipartFile;
 
-@Entity
-@DiscriminatorValue("LARGE")
-public class LargeTarget extends BaseTarget {
+import java.util.Arrays;
 
-    /**
-     * Official document and other description files
-     */
-    @ElementCollection(targetClass = String.class)
-    private List<String> files;
+/**
+ * Author: J.D. Liao
+ * Date: 2018/8/14
+ */
+public class LargeTargetRequest {
+
+    @JsonUnwrapped
+    private TargetInfo basicInfo;
+
+    private MultipartFile[] files;
 
     /**
      * Explanation for each fee
      */
-    @ElementCollection(targetClass = FeeExplanation.class)
-    private List<FeeExplanation> feeExplanations;
+    private FeeExplanation[] feeExplanations;
 
     private String repayPlan;
 
@@ -27,28 +30,37 @@ public class LargeTarget extends BaseTarget {
 
     @Override
     public String toString() {
-        return "LargeTarget{" +
-                "files=" + files +
-                ", feeExplanations=" + feeExplanations +
+        return "LargeTargetRequest{" +
+                "basicInfo=" + basicInfo +
+                ", files=" + Arrays.toString(files) +
+                ", feeExplanations=" + Arrays.toString(feeExplanations) +
                 ", repayPlan='" + repayPlan + '\'' +
                 ", repayApproach='" + repayApproach + '\'' +
                 ", projectDescription='" + projectDescription + '\'' +
                 '}';
     }
 
-    public List<String> getFiles() {
+    public TargetInfo getBasicInfo() {
+        return basicInfo;
+    }
+
+    public void setBasicInfo(TargetInfo basicInfo) {
+        this.basicInfo = basicInfo;
+    }
+
+    public MultipartFile[] getFiles() {
         return files;
     }
 
-    public void setFiles(List<String> files) {
+    public void setFiles(MultipartFile[] files) {
         this.files = files;
     }
 
-    public List<FeeExplanation> getFeeExplanations() {
+    public FeeExplanation[] getFeeExplanations() {
         return feeExplanations;
     }
 
-    public void setFeeExplanations(List<FeeExplanation> feeExplanations) {
+    public void setFeeExplanations(FeeExplanation[] feeExplanations) {
         this.feeExplanations = feeExplanations;
     }
 
@@ -75,5 +87,4 @@ public class LargeTarget extends BaseTarget {
     public void setProjectDescription(String projectDescription) {
         this.projectDescription = projectDescription;
     }
-
 }

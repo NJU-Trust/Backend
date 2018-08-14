@@ -1,22 +1,21 @@
-package nju.trust.entity.target;
+package nju.trust.payloads.target;
 
-import javax.persistence.*;
+import nju.trust.entity.target.FeeExplanation;
+import nju.trust.entity.target.LargeTarget;
+
 import java.util.List;
 
-@Entity
-@DiscriminatorValue("LARGE")
-public class LargeTarget extends BaseTarget {
+/**
+ * Author: J.D. Liao
+ * Date: 2018/8/14
+ */
+public class LargeTargetInfo extends TargetInfo {
 
-    /**
-     * Official document and other description files
-     */
-    @ElementCollection(targetClass = String.class)
     private List<String> files;
 
     /**
      * Explanation for each fee
      */
-    @ElementCollection(targetClass = FeeExplanation.class)
     private List<FeeExplanation> feeExplanations;
 
     private String repayPlan;
@@ -25,10 +24,19 @@ public class LargeTarget extends BaseTarget {
 
     private String projectDescription;
 
+    public LargeTargetInfo(LargeTarget target) {
+        super(target);
+        files = target.getFiles();
+        feeExplanations = target.getFeeExplanations();
+        repayPlan = target.getRepayPlan();
+        repayApproach = target.getRepayApproach();
+        projectDescription = target.getProjectDescription();
+    }
+
     @Override
     public String toString() {
-        return "LargeTarget{" +
-                "files=" + files +
+        return "LargeTargetInfo{" +
+                ", files=" + files +
                 ", feeExplanations=" + feeExplanations +
                 ", repayPlan='" + repayPlan + '\'' +
                 ", repayApproach='" + repayApproach + '\'' +
@@ -75,5 +83,4 @@ public class LargeTarget extends BaseTarget {
     public void setProjectDescription(String projectDescription) {
         this.projectDescription = projectDescription;
     }
-
 }

@@ -20,19 +20,22 @@ import javax.transaction.Transactional;
  */
 @Service
 public class UserPrincipalService implements UserDetailsService {
+
+    private UserDao userRepository;
+
     @Autowired
-    UserDao userRepository;
+    public void setUserRepository(UserDao userRepository) {
+        this.userRepository = userRepository;
+    }
+
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(String username)
-            throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() ->
                         new UsernameNotFoundException("User not found with username : " + username)
                 );
 
-
         return UserPrincipal.create(user);
     }
-
 }

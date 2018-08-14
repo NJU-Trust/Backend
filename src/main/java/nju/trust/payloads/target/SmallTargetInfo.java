@@ -1,35 +1,36 @@
-package nju.trust.entity.target;
+package nju.trust.payloads.target;
 
 import nju.trust.entity.UseClassification;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
+import nju.trust.entity.target.SmallTarget;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
 import java.util.List;
 
-@Entity
-@DiscriminatorValue("SMALL")
-public class SmallTarget extends BaseTarget {
+/**
+ * Author: J.D. Liao
+ * Date: 2018/8/14
+ */
+public class SmallTargetInfo extends TargetInfo {
 
-    @ElementCollection(targetClass = UseClassification.class)
-    @Fetch(value = FetchMode.SUBSELECT)
     private List<UseClassification> purpose;
 
-    @ElementCollection(targetClass = String.class)
-    @Fetch(FetchMode.SUBSELECT)
     private List<String> purposeFiles;
 
     private String purposeExplanation;
 
+    public SmallTargetInfo(SmallTarget target) {
+        super(target);
+        purpose = target.getPurpose();
+        purposeFiles = target.getPurposeFiles();
+        purposeExplanation = target.getPurposeExplanation();
+    }
+
     @Override
     public String toString() {
-        return "SmallTarget{" +
-                "purpose=" + purpose +
+        return "SmallTargetInfo{" +
+                ", purpose=" + purpose +
                 ", purposeFiles=" + purposeFiles +
                 ", purposeExplanation='" + purposeExplanation + '\'' +
-                '}' + super.toString();
+                '}';
     }
 
     public List<UseClassification> getPurpose() {

@@ -36,27 +36,41 @@ public class User {
 
     private String roles;
 
+    private String briefIntro;
+
     private String phoneNumber;
 
     private String email;
 
+    /**
+     * Complete user's attributes
+     */
     private String realName;
 
     private String idCardNumber;
 
+    /**
+     * Intermediate user's attributes
+     */
     private String studentId;
 
     private String major;
 
     private Integer grade;
 
-    private String briefIntro;
+    private String stuCardImage;
 
+    /**
+     * School fellows attributes
+     */
     @ElementCollection(targetClass = String.class)
     @Fetch(FetchMode.SUBSELECT)
     private List<String> accomplishment;
 
     private String message;
+
+    @ElementCollection(targetClass = String.class)
+    private List<String> diplomas;
 
     @Override
     public String toString() {
@@ -68,6 +82,7 @@ public class User {
                 ", userLevel=" + userLevel +
                 ", creditRating=" + creditRating +
                 ", roles='" + roles + '\'' +
+                ", briefIntro='" + briefIntro + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", email='" + email + '\'' +
                 ", realName='" + realName + '\'' +
@@ -75,10 +90,27 @@ public class User {
                 ", studentId='" + studentId + '\'' +
                 ", major='" + major + '\'' +
                 ", grade=" + grade +
-                ", briefIntro='" + briefIntro + '\'' +
+                ", stuCardImage='" + stuCardImage + '\'' +
                 ", accomplishment=" + accomplishment +
                 ", message='" + message + '\'' +
+                ", diplomas=" + diplomas +
                 '}';
+    }
+
+    public String getStuCardImage() {
+        return stuCardImage;
+    }
+
+    public void setStuCardImage(String stuCardImage) {
+        this.stuCardImage = stuCardImage;
+    }
+
+    public List<String> getDiplomas() {
+        return diplomas;
+    }
+
+    public void setDiplomas(List<String> diplomas) {
+        this.diplomas = diplomas;
     }
 
     public String getUsername() {
@@ -217,9 +249,8 @@ public class User {
         if (roles == null) {
             return Collections.emptySet();
         } else {
-            return Collections.unmodifiableSet(
-                    new HashSet<>(Arrays.stream(roles.split(","))
-                            .map(RoleName::valueOf).collect(Collectors.toSet())));
+            return Collections.unmodifiableSet(Arrays.stream(roles.split(","))
+                    .map(RoleName::valueOf).collect(Collectors.toSet()));
         }
     }
 
@@ -227,13 +258,14 @@ public class User {
         if (role == null) {
             roles = null;
         } else {
-            roles = "";
+            StringBuilder roleStr = new StringBuilder();
             for (int i = 0; i < role.size(); i++) {
-                roles += role.get(i).name();
+                roleStr.append(role.get(i).name());
                 if (i != role.size() - 1) {
-                    roles += ",";
+                    roleStr.append(",");
                 }
             }
+            roles = roleStr.toString();
         }
     }
 }

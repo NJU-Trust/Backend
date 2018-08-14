@@ -1,20 +1,18 @@
-package nju.trust.entity.target;
+package nju.trust.payloads.target;
 
-import nju.trust.entity.IdentityOption;
 import nju.trust.entity.TargetState;
 import nju.trust.entity.TargetType;
+import nju.trust.entity.target.BaseTarget;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
-@MappedSuperclass
-@DiscriminatorColumn(name = "target_type")
-public class BaseTarget {
+/**
+ * Author: J.D. Liao
+ * Date: 2018/8/14
+ */
+public class TargetInfo {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long id;
+    private TargetType targetType;
 
     private String username;
 
@@ -24,6 +22,9 @@ public class BaseTarget {
 
     private LocalDateTime repaymentTime;
 
+    /**
+     * Target name
+     */
     private String name;
 
     private Double money;
@@ -32,8 +33,7 @@ public class BaseTarget {
 
     private Double grantedMoney;
 
-    @Enumerated(value = EnumType.STRING)
-    private TargetState targetState;
+    private TargetState state;
 
     /**
      * Limit of completion rate
@@ -49,16 +49,27 @@ public class BaseTarget {
 
     private String riskAnalysis;
 
-    @Enumerated(EnumType.STRING)
-    @NotNull
-    private TargetType targetType;
-
-    private IdentityOption identityOption;
+    public TargetInfo(BaseTarget baseTarget) {
+        targetType = baseTarget.getTargetType();
+        username = baseTarget.getUsername();
+        startTime = baseTarget.getStartTime();
+        endTime = baseTarget.getEndTime();
+        repaymentTime = baseTarget.getRepaymentTime();
+        name = baseTarget.getName();
+        money = baseTarget.getMoney();
+        collectedMoney = baseTarget.getCollectedMoney();
+        grantedMoney = baseTarget.getGrantedMoney();
+        state = baseTarget.getTargetState();
+        rate = baseTarget.getRate();
+        progress = baseTarget.getProgress();
+        incomeSituation = baseTarget.getIncomeSituation();
+        riskAnalysis = baseTarget.getRiskAnalysis();
+    }
 
     @Override
     public String toString() {
-        return "BaseTarget{" +
-                "id=" + id +
+        return "TargetInfo{" +
+                "targetType=" + targetType +
                 ", username='" + username + '\'' +
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
@@ -67,30 +78,20 @@ public class BaseTarget {
                 ", money=" + money +
                 ", collectedMoney=" + collectedMoney +
                 ", grantedMoney=" + grantedMoney +
-                ", targetState=" + targetState +
+                ", state=" + state +
                 ", rate=" + rate +
                 ", progress=" + progress +
                 ", incomeSituation='" + incomeSituation + '\'' +
                 ", riskAnalysis='" + riskAnalysis + '\'' +
-                ", targetType=" + targetType +
-                ", identityOption=" + identityOption +
                 '}';
     }
 
-    public IdentityOption getIdentityOption() {
-        return identityOption;
+    public TargetType getTargetType() {
+        return targetType;
     }
 
-    public void setIdentityOption(IdentityOption identityOption) {
-        this.identityOption = identityOption;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    public void setTargetType(TargetType targetType) {
+        this.targetType = targetType;
     }
 
     public String getUsername() {
@@ -157,12 +158,12 @@ public class BaseTarget {
         this.grantedMoney = grantedMoney;
     }
 
-    public TargetState getTargetState() {
-        return targetState;
+    public TargetState getState() {
+        return state;
     }
 
-    public void setTargetState(TargetState targetState) {
-        this.targetState = targetState;
+    public void setState(TargetState state) {
+        this.state = state;
     }
 
     public Double getRate() {
@@ -196,13 +197,4 @@ public class BaseTarget {
     public void setRiskAnalysis(String riskAnalysis) {
         this.riskAnalysis = riskAnalysis;
     }
-
-    public TargetType getTargetType() {
-        return targetType;
-    }
-
-    public void setTargetType(TargetType targetType) {
-        this.targetType = targetType;
-    }
-
 }
