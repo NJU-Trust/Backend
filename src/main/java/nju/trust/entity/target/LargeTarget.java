@@ -14,37 +14,11 @@ public class LargeTarget extends BaseTarget {
      */
     private LargeProjectClassification classification;
 
-    /**
-     * Official document and other description files
-     */
-    @ElementCollection(targetClass = String.class)
-    private List<String> files;
-
-    private String projectDescription;
-
     @Override
     public String toString() {
         return "LargeTarget{" +
                 "classification=" + classification +
-                ", files=" + files +
-                ", projectDescription='" + projectDescription + '\'' +
                 '}';
-    }
-
-    public List<String> getFiles() {
-        return files;
-    }
-
-    public void setFiles(List<String> files) {
-        this.files = files;
-    }
-
-    public String getProjectDescription() {
-        return projectDescription;
-    }
-
-    public void setProjectDescription(String projectDescription) {
-        this.projectDescription = projectDescription;
     }
 
     public LargeProjectClassification getClassification() {

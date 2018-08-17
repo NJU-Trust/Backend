@@ -8,6 +8,7 @@ import nju.trust.entity.TargetType;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @MappedSuperclass
 @DiscriminatorColumn(name = "target_type")
@@ -61,6 +62,11 @@ public class BaseTarget {
     @NotNull
     private TargetType targetType;
 
+    private String projectDescription;
+
+    @ElementCollection(targetClass = String.class)
+    private List<String> files;
+
     private IdentityOption identityOption;
 
     @Override
@@ -82,7 +88,25 @@ public class BaseTarget {
                 ", targetRating=" + targetRating +
                 ", targetType=" + targetType +
                 ", identityOption=" + identityOption +
+                ", projectDescription=" + projectDescription +
+                ", files=" + files +
                 '}';
+    }
+
+    public List<String> getFiles() {
+        return files;
+    }
+
+    public void setFiles(List<String> files) {
+        this.files = files;
+    }
+
+    public String getProjectDescription() {
+        return projectDescription;
+    }
+
+    public void setProjectDescription(String projectDescription) {
+        this.projectDescription = projectDescription;
     }
 
     public TargetRating getTargetRating() {

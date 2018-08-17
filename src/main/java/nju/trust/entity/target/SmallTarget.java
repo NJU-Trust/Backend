@@ -15,8 +15,6 @@ public class SmallTarget extends BaseTarget {
 
     private SmallProjectClassification classification;
 
-    private String projectDescription;
-
     /**
      * 可承受额外费用偏好（希望为这笔融资至多付多少费用）
      */
@@ -26,7 +24,6 @@ public class SmallTarget extends BaseTarget {
     public String toString() {
         return "SmallTarget{" +
                 "classification=" + classification +
-                ", projectDescription='" + projectDescription + '\'' +
                 ", maximumAmount=" + maximumAmount +
                 '}';
     }
@@ -37,14 +34,6 @@ public class SmallTarget extends BaseTarget {
 
     public void setClassification(SmallProjectClassification classification) {
         this.classification = classification;
-    }
-
-    public String getProjectDescription() {
-        return projectDescription;
-    }
-
-    public void setProjectDescription(String projectDescription) {
-        this.projectDescription = projectDescription;
     }
 
     public Double getMaximumAmount() {

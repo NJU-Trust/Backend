@@ -1,5 +1,6 @@
 package nju.trust.payloads.target;
 
+import nju.trust.entity.TargetRating;
 import nju.trust.entity.TargetState;
 import nju.trust.entity.TargetType;
 import nju.trust.entity.target.BaseTarget;
@@ -40,6 +41,14 @@ public class TargetInfo {
 
     private String riskAnalysis;
 
+    private String consumptionAdvise;
+
+    private Double interestRate;
+
+    private TargetRating targetRating;
+
+    private String projectDescription;
+
     public TargetInfo(BaseTarget baseTarget) {
         targetType = baseTarget.getTargetType();
         username = baseTarget.getUsername();
@@ -52,6 +61,10 @@ public class TargetInfo {
         rate = baseTarget.getCompletionRate();
         incomeSituation = baseTarget.getIncomeSituation();
         riskAnalysis = baseTarget.getRiskAnalysis();
+        consumptionAdvise = baseTarget.getConsumptionAdvise();
+        interestRate = baseTarget.getInterestRate();
+        targetRating = baseTarget.getTargetRating();
+        projectDescription = baseTarget.getProjectDescription();
     }
 
     @Override
@@ -68,7 +81,43 @@ public class TargetInfo {
                 ", rate=" + rate +
                 ", incomeSituation='" + incomeSituation + '\'' +
                 ", riskAnalysis='" + riskAnalysis + '\'' +
+                ", consumptionAdvise='" + consumptionAdvise + '\'' +
+                ", interestRate=" + interestRate +
+                ", targetRating=" + targetRating +
+                ", projectDescription='" + projectDescription + '\'' +
                 '}';
+    }
+
+    public String getProjectDescription() {
+        return projectDescription;
+    }
+
+    public void setProjectDescription(String projectDescription) {
+        this.projectDescription = projectDescription;
+    }
+
+    public TargetRating getTargetRating() {
+        return targetRating;
+    }
+
+    public void setTargetRating(TargetRating targetRating) {
+        this.targetRating = targetRating;
+    }
+
+    public String getConsumptionAdvise() {
+        return consumptionAdvise;
+    }
+
+    public void setConsumptionAdvise(String consumptionAdvise) {
+        this.consumptionAdvise = consumptionAdvise;
+    }
+
+    public Double getInterestRate() {
+        return interestRate;
+    }
+
+    public void setInterestRate(Double interestRate) {
+        this.interestRate = interestRate;
     }
 
     public TargetType getTargetType() {

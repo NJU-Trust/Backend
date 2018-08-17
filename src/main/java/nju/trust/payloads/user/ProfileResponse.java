@@ -3,7 +3,7 @@ package nju.trust.payloads.user;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import nju.trust.entity.CheckState;
 import nju.trust.entity.UserLevel;
-import nju.trust.payloads.target.SimpleTarget;
+import nju.trust.payloads.target.TargetBriefInfo;
 
 import java.util.List;
 
@@ -16,9 +16,9 @@ public class ProfileResponse {
     @JsonUnwrapped
     private UserInformation baseicInformation;
 
-    private List<SimpleTarget> favoriteTargets;
+    private List<TargetBriefInfo> favoriteTargets;
 
-    private List<SimpleTarget> participatingTargets;
+    private List<TargetBriefInfo> participatingTargets;
 
     private CreditCheck creditCheck;
 

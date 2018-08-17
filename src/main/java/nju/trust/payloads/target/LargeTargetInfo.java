@@ -1,5 +1,6 @@
 package nju.trust.payloads.target;
 
+import nju.trust.entity.LargeProjectClassification;
 import nju.trust.entity.target.FeeExplanation;
 import nju.trust.entity.target.LargeTarget;
 
@@ -13,19 +14,19 @@ public class LargeTargetInfo extends TargetInfo {
 
     private List<String> files;
 
-    private String projectDescription;
+    private LargeProjectClassification classification;
 
     public LargeTargetInfo(LargeTarget target) {
         super(target);
         files = target.getFiles();
-        projectDescription = target.getProjectDescription();
+        classification = target.getClassification();
     }
 
     @Override
     public String toString() {
         return "LargeTargetInfo{" +
-                ", files=" + files +
-                ", projectDescription='" + projectDescription + '\'' +
+                "files=" + files +
+                ", classification=" + classification +
                 '}';
     }
 
@@ -37,11 +38,11 @@ public class LargeTargetInfo extends TargetInfo {
         this.files = files;
     }
 
-    public String getProjectDescription() {
-        return projectDescription;
+    public LargeProjectClassification getClassification() {
+        return classification;
     }
 
-    public void setProjectDescription(String projectDescription) {
-        this.projectDescription = projectDescription;
+    public void setClassification(LargeProjectClassification classification) {
+        this.classification = classification;
     }
 }

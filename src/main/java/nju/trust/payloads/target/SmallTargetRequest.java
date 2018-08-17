@@ -2,9 +2,6 @@ package nju.trust.payloads.target;
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import nju.trust.entity.SmallProjectClassification;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.Arrays;
 
 /**
  * Author: J.D. Liao
@@ -13,53 +10,43 @@ import java.util.Arrays;
 public class SmallTargetRequest {
 
     @JsonUnwrapped
-    private TargetInfo basicInfo;
+    private BasicTargetRequest basicInfo;
 
-    private SmallProjectClassification[] purpose;
+    private SmallProjectClassification classification;
 
-    private MultipartFile[] purposeFiles;
-
-    private String purposeExplanation;
+    private Double maximumAmount;
 
     @Override
     public String toString() {
         return "SmallTargetRequest{" +
                 "basicInfo=" + basicInfo +
-                ", purpose=" + Arrays.toString(purpose) +
-                ", purposeFiles=" + Arrays.toString(purposeFiles) +
-                ", purposeExplanation='" + purposeExplanation + '\'' +
+                ", classification=" + classification +
+                ", maximumAmount=" + maximumAmount +
                 '}';
     }
 
-    public TargetInfo getBasicInfo() {
+    public Double getMaximumAmount() {
+        return maximumAmount;
+    }
+
+    public void setMaximumAmount(Double maximumAmount) {
+        this.maximumAmount = maximumAmount;
+    }
+
+    public SmallProjectClassification getClassification() {
+        return classification;
+    }
+
+    public void setClassification(SmallProjectClassification classification) {
+        this.classification = classification;
+    }
+
+    public BasicTargetRequest getBasicInfo() {
+
         return basicInfo;
     }
 
-    public void setBasicInfo(TargetInfo basicInfo) {
+    public void setBasicInfo(BasicTargetRequest basicInfo) {
         this.basicInfo = basicInfo;
-    }
-
-    public SmallProjectClassification[] getPurpose() {
-        return purpose;
-    }
-
-    public void setPurpose(SmallProjectClassification[] purpose) {
-        this.purpose = purpose;
-    }
-
-    public MultipartFile[] getPurposeFiles() {
-        return purposeFiles;
-    }
-
-    public void setPurposeFiles(MultipartFile[] purposeFiles) {
-        this.purposeFiles = purposeFiles;
-    }
-
-    public String getPurposeExplanation() {
-        return purposeExplanation;
-    }
-
-    public void setPurposeExplanation(String purposeExplanation) {
-        this.purposeExplanation = purposeExplanation;
     }
 }
