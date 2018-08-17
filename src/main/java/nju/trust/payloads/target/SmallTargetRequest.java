@@ -1,7 +1,7 @@
 package nju.trust.payloads.target;
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
-import nju.trust.entity.UseClassification;
+import nju.trust.entity.SmallProjectClassification;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
@@ -15,7 +15,7 @@ public class SmallTargetRequest {
     @JsonUnwrapped
     private TargetInfo basicInfo;
 
-    private UseClassification[] purpose;
+    private SmallProjectClassification[] purpose;
 
     private MultipartFile[] purposeFiles;
 
@@ -39,11 +39,11 @@ public class SmallTargetRequest {
         this.basicInfo = basicInfo;
     }
 
-    public UseClassification[] getPurpose() {
+    public SmallProjectClassification[] getPurpose() {
         return purpose;
     }
 
-    public void setPurpose(UseClassification[] purpose) {
+    public void setPurpose(SmallProjectClassification[] purpose) {
         this.purpose = purpose;
     }
 

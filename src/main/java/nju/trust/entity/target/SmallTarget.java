@@ -1,6 +1,6 @@
 package nju.trust.entity.target;
 
-import nju.trust.entity.UseClassification;
+import nju.trust.entity.SmallProjectClassification;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -13,46 +13,45 @@ import java.util.List;
 @DiscriminatorValue("SMALL")
 public class SmallTarget extends BaseTarget {
 
-    @ElementCollection(targetClass = UseClassification.class)
-    @Fetch(value = FetchMode.SUBSELECT)
-    private List<UseClassification> purpose;
+    private SmallProjectClassification classification;
 
-    @ElementCollection(targetClass = String.class)
-    @Fetch(FetchMode.SUBSELECT)
-    private List<String> purposeFiles;
+    private String projectDescription;
 
-    private String purposeExplanation;
+    /**
+     * 可承受额外费用偏好（希望为这笔融资至多付多少费用）
+     */
+    private Double maximumAmount;
 
     @Override
     public String toString() {
         return "SmallTarget{" +
-                "purpose=" + purpose +
-                ", purposeFiles=" + purposeFiles +
-                ", purposeExplanation='" + purposeExplanation + '\'' +
-                '}' + super.toString();
+                "classification=" + classification +
+                ", projectDescription='" + projectDescription + '\'' +
+                ", maximumAmount=" + maximumAmount +
+                '}';
     }
 
-    public List<UseClassification> getPurpose() {
-        return purpose;
+    public SmallProjectClassification getClassification() {
+        return classification;
     }
 
-    public void setPurpose(List<UseClassification> purpose) {
-        this.purpose = purpose;
+    public void setClassification(SmallProjectClassification classification) {
+        this.classification = classification;
     }
 
-    public List<String> getPurposeFiles() {
-        return purposeFiles;
+    public String getProjectDescription() {
+        return projectDescription;
     }
 
-    public void setPurposeFiles(List<String> purposeFiles) {
-        this.purposeFiles = purposeFiles;
+    public void setProjectDescription(String projectDescription) {
+        this.projectDescription = projectDescription;
     }
 
-    public String getPurposeExplanation() {
-        return purposeExplanation;
+    public Double getMaximumAmount() {
+        return maximumAmount;
     }
 
-    public void setPurposeExplanation(String purposeExplanation) {
-        this.purposeExplanation = purposeExplanation;
+    public void setMaximumAmount(Double maximumAmount) {
+        this.maximumAmount = maximumAmount;
     }
 }

@@ -1,5 +1,7 @@
 package nju.trust.entity.target;
 
+import nju.trust.entity.LargeProjectClassification;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -8,30 +10,23 @@ import java.util.List;
 public class LargeTarget extends BaseTarget {
 
     /**
+     * 学习项目类别分类
+     */
+    private LargeProjectClassification classification;
+
+    /**
      * Official document and other description files
      */
     @ElementCollection(targetClass = String.class)
     private List<String> files;
-
-    /**
-     * Explanation for each fee
-     */
-    @ElementCollection(targetClass = FeeExplanation.class)
-    private List<FeeExplanation> feeExplanations;
-
-    private String repayPlan;
-
-    private String repayApproach;
 
     private String projectDescription;
 
     @Override
     public String toString() {
         return "LargeTarget{" +
-                "files=" + files +
-                ", feeExplanations=" + feeExplanations +
-                ", repayPlan='" + repayPlan + '\'' +
-                ", repayApproach='" + repayApproach + '\'' +
+                "classification=" + classification +
+                ", files=" + files +
                 ", projectDescription='" + projectDescription + '\'' +
                 '}';
     }
@@ -44,30 +39,6 @@ public class LargeTarget extends BaseTarget {
         this.files = files;
     }
 
-    public List<FeeExplanation> getFeeExplanations() {
-        return feeExplanations;
-    }
-
-    public void setFeeExplanations(List<FeeExplanation> feeExplanations) {
-        this.feeExplanations = feeExplanations;
-    }
-
-    public String getRepayPlan() {
-        return repayPlan;
-    }
-
-    public void setRepayPlan(String repayPlan) {
-        this.repayPlan = repayPlan;
-    }
-
-    public String getRepayApproach() {
-        return repayApproach;
-    }
-
-    public void setRepayApproach(String repayApproach) {
-        this.repayApproach = repayApproach;
-    }
-
     public String getProjectDescription() {
         return projectDescription;
     }
@@ -76,4 +47,11 @@ public class LargeTarget extends BaseTarget {
         this.projectDescription = projectDescription;
     }
 
+    public LargeProjectClassification getClassification() {
+        return classification;
+    }
+
+    public void setClassification(LargeProjectClassification classification) {
+        this.classification = classification;
+    }
 }

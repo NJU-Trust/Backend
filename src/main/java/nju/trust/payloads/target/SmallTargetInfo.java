@@ -1,9 +1,7 @@
 package nju.trust.payloads.target;
 
-import nju.trust.entity.UseClassification;
+import nju.trust.entity.SmallProjectClassification;
 import nju.trust.entity.target.SmallTarget;
-
-import java.util.List;
 
 /**
  * Author: J.D. Liao
@@ -11,49 +9,52 @@ import java.util.List;
  */
 public class SmallTargetInfo extends TargetInfo {
 
-    private List<UseClassification> purpose;
+    private SmallProjectClassification classification;
 
-    private List<String> purposeFiles;
+    private String projectDescription;
 
-    private String purposeExplanation;
+    /**
+     * 可承受额外费用偏好（希望为这笔融资至多付多少费用）
+     */
+    private Double maximumAmount;
 
     public SmallTargetInfo(SmallTarget target) {
         super(target);
-        purpose = target.getPurpose();
-        purposeFiles = target.getPurposeFiles();
-        purposeExplanation = target.getPurposeExplanation();
+        classification = target.getClassification();
+        projectDescription = target.getProjectDescription();
+        maximumAmount = target.getMaximumAmount();
     }
 
     @Override
     public String toString() {
         return "SmallTargetInfo{" +
-                ", purpose=" + purpose +
-                ", purposeFiles=" + purposeFiles +
-                ", purposeExplanation='" + purposeExplanation + '\'' +
+                "classification=" + classification +
+                ", projectDescription='" + projectDescription + '\'' +
+                ", maximumAmount=" + maximumAmount +
                 '}';
     }
 
-    public List<UseClassification> getPurpose() {
-        return purpose;
+    public SmallProjectClassification getClassification() {
+        return classification;
     }
 
-    public void setPurpose(List<UseClassification> purpose) {
-        this.purpose = purpose;
+    public void setClassification(SmallProjectClassification classification) {
+        this.classification = classification;
     }
 
-    public List<String> getPurposeFiles() {
-        return purposeFiles;
+    public String getProjectDescription() {
+        return projectDescription;
     }
 
-    public void setPurposeFiles(List<String> purposeFiles) {
-        this.purposeFiles = purposeFiles;
+    public void setProjectDescription(String projectDescription) {
+        this.projectDescription = projectDescription;
     }
 
-    public String getPurposeExplanation() {
-        return purposeExplanation;
+    public Double getMaximumAmount() {
+        return maximumAmount;
     }
 
-    public void setPurposeExplanation(String purposeExplanation) {
-        this.purposeExplanation = purposeExplanation;
+    public void setMaximumAmount(Double maximumAmount) {
+        this.maximumAmount = maximumAmount;
     }
 }

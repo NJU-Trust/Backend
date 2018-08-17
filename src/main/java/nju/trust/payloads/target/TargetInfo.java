@@ -18,10 +18,6 @@ public class TargetInfo {
 
     private LocalDateTime startTime;
 
-    private LocalDateTime endTime;
-
-    private LocalDateTime repaymentTime;
-
     /**
      * Target name
      */
@@ -40,11 +36,6 @@ public class TargetInfo {
      */
     private Double rate;
 
-    /**
-     * Current completion rate
-     */
-    private Double progress;
-
     private String incomeSituation;
 
     private String riskAnalysis;
@@ -53,15 +44,12 @@ public class TargetInfo {
         targetType = baseTarget.getTargetType();
         username = baseTarget.getUsername();
         startTime = baseTarget.getStartTime();
-        endTime = baseTarget.getEndTime();
-        repaymentTime = baseTarget.getRepaymentTime();
         name = baseTarget.getName();
         money = baseTarget.getMoney();
         collectedMoney = baseTarget.getCollectedMoney();
         grantedMoney = baseTarget.getGrantedMoney();
         state = baseTarget.getTargetState();
-        rate = baseTarget.getRate();
-        progress = baseTarget.getProgress();
+        rate = baseTarget.getCompletionRate();
         incomeSituation = baseTarget.getIncomeSituation();
         riskAnalysis = baseTarget.getRiskAnalysis();
     }
@@ -72,15 +60,12 @@ public class TargetInfo {
                 "targetType=" + targetType +
                 ", username='" + username + '\'' +
                 ", startTime=" + startTime +
-                ", endTime=" + endTime +
-                ", repaymentTime=" + repaymentTime +
                 ", name='" + name + '\'' +
                 ", money=" + money +
                 ", collectedMoney=" + collectedMoney +
                 ", grantedMoney=" + grantedMoney +
                 ", state=" + state +
                 ", rate=" + rate +
-                ", progress=" + progress +
                 ", incomeSituation='" + incomeSituation + '\'' +
                 ", riskAnalysis='" + riskAnalysis + '\'' +
                 '}';
@@ -108,22 +93,6 @@ public class TargetInfo {
 
     public void setStartTime(LocalDateTime startTime) {
         this.startTime = startTime;
-    }
-
-    public LocalDateTime getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(LocalDateTime endTime) {
-        this.endTime = endTime;
-    }
-
-    public LocalDateTime getRepaymentTime() {
-        return repaymentTime;
-    }
-
-    public void setRepaymentTime(LocalDateTime repaymentTime) {
-        this.repaymentTime = repaymentTime;
     }
 
     public String getName() {
@@ -172,14 +141,6 @@ public class TargetInfo {
 
     public void setRate(Double rate) {
         this.rate = rate;
-    }
-
-    public Double getProgress() {
-        return progress;
-    }
-
-    public void setProgress(Double progress) {
-        this.progress = progress;
     }
 
     public String getIncomeSituation() {

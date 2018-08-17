@@ -16,4 +16,8 @@ public interface TargetService {
     ApiResponse applySmallTarget(SmallTargetRequest request, String username);
 
     ApiResponse applyLargeTarget(LargeTargetRequest request, String username);
+
+    ApiResponse investTarget(Long targetId, String username);
+
+    ApiResponse schoolFellowInvestTarget(Long targetId, String username, String interestPlan);
 }

@@ -1,6 +1,7 @@
 package nju.trust.entity.target;
 
 import nju.trust.entity.IdentityOption;
+import nju.trust.entity.TargetRating;
 import nju.trust.entity.TargetState;
 import nju.trust.entity.TargetType;
 
@@ -20,10 +21,6 @@ public class BaseTarget {
 
     private LocalDateTime startTime;
 
-    private LocalDateTime endTime;
-
-    private LocalDateTime repaymentTime;
-
     private String name;
 
     private Double money;
@@ -36,18 +33,29 @@ public class BaseTarget {
     private TargetState targetState;
 
     /**
-     * Limit of completion rate
+     * 完成度限制
      */
-    private Double rate;
+    private Double completionRate;
 
     /**
-     * Current completion rate
+     * 收益情况
      */
-    private Double progress;
-
     private String incomeSituation;
 
     private String riskAnalysis;
+
+    /**
+     * 消费修正建议
+     */
+    private String consumptionAdvise;
+
+    /**
+     * 项目利率
+     */
+    private Double interestRate;
+
+    @Enumerated(value = EnumType.STRING)
+    private TargetRating targetRating;
 
     @Enumerated(EnumType.STRING)
     @NotNull
@@ -61,20 +69,44 @@ public class BaseTarget {
                 "id=" + id +
                 ", username='" + username + '\'' +
                 ", startTime=" + startTime +
-                ", endTime=" + endTime +
-                ", repaymentTime=" + repaymentTime +
                 ", name='" + name + '\'' +
                 ", money=" + money +
                 ", collectedMoney=" + collectedMoney +
                 ", grantedMoney=" + grantedMoney +
                 ", targetState=" + targetState +
-                ", rate=" + rate +
-                ", progress=" + progress +
+                ", completionRate=" + completionRate +
                 ", incomeSituation='" + incomeSituation + '\'' +
                 ", riskAnalysis='" + riskAnalysis + '\'' +
+                ", consumptionAdvise='" + consumptionAdvise + '\'' +
+                ", interestRate=" + interestRate +
+                ", targetRating=" + targetRating +
                 ", targetType=" + targetType +
                 ", identityOption=" + identityOption +
                 '}';
+    }
+
+    public TargetRating getTargetRating() {
+        return targetRating;
+    }
+
+    public void setTargetRating(TargetRating targetRating) {
+        this.targetRating = targetRating;
+    }
+
+    public Double getInterestRate() {
+        return interestRate;
+    }
+
+    public void setInterestRate(Double interestRate) {
+        this.interestRate = interestRate;
+    }
+
+    public String getConsumptionAdvise() {
+        return consumptionAdvise;
+    }
+
+    public void setConsumptionAdvise(String consumptionAdvise) {
+        this.consumptionAdvise = consumptionAdvise;
     }
 
     public IdentityOption getIdentityOption() {
@@ -107,22 +139,6 @@ public class BaseTarget {
 
     public void setStartTime(LocalDateTime startTime) {
         this.startTime = startTime;
-    }
-
-    public LocalDateTime getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(LocalDateTime endTime) {
-        this.endTime = endTime;
-    }
-
-    public LocalDateTime getRepaymentTime() {
-        return repaymentTime;
-    }
-
-    public void setRepaymentTime(LocalDateTime repaymentTime) {
-        this.repaymentTime = repaymentTime;
     }
 
     public String getName() {
@@ -165,20 +181,12 @@ public class BaseTarget {
         this.targetState = targetState;
     }
 
-    public Double getRate() {
-        return rate;
+    public Double getCompletionRate() {
+        return completionRate;
     }
 
-    public void setRate(Double rate) {
-        this.rate = rate;
-    }
-
-    public Double getProgress() {
-        return progress;
-    }
-
-    public void setProgress(Double progress) {
-        this.progress = progress;
+    public void setCompletionRate(Double completionRate) {
+        this.completionRate = completionRate;
     }
 
     public String getIncomeSituation() {
