@@ -15,7 +15,7 @@ import java.util.List;
 public class BaseTarget {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue
     private Long id;
 
     private String username;
@@ -38,11 +38,6 @@ public class BaseTarget {
      */
     private Double completionRate;
 
-    /**
-     * 收益情况
-     */
-    private String incomeSituation;
-
     private String riskAnalysis;
 
     /**
@@ -51,10 +46,13 @@ public class BaseTarget {
     private String consumptionAdvise;
 
     /**
-     * 项目利率
+     * 项目利率，同时也是收益情况
      */
     private Double interestRate;
 
+    /**
+     * 平台项目评级
+     */
     @Enumerated(value = EnumType.STRING)
     private TargetRating targetRating;
 
@@ -81,7 +79,6 @@ public class BaseTarget {
                 ", grantedMoney=" + grantedMoney +
                 ", targetState=" + targetState +
                 ", completionRate=" + completionRate +
-                ", incomeSituation='" + incomeSituation + '\'' +
                 ", riskAnalysis='" + riskAnalysis + '\'' +
                 ", consumptionAdvise='" + consumptionAdvise + '\'' +
                 ", interestRate=" + interestRate +
@@ -211,14 +208,6 @@ public class BaseTarget {
 
     public void setCompletionRate(Double completionRate) {
         this.completionRate = completionRate;
-    }
-
-    public String getIncomeSituation() {
-        return incomeSituation;
-    }
-
-    public void setIncomeSituation(String incomeSituation) {
-        this.incomeSituation = incomeSituation;
     }
 
     public String getRiskAnalysis() {

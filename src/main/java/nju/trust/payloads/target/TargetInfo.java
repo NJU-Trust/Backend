@@ -37,8 +37,6 @@ public class TargetInfo {
      */
     private Double rate;
 
-    private String incomeSituation;
-
     private String riskAnalysis;
 
     private String consumptionAdvise;
@@ -59,7 +57,6 @@ public class TargetInfo {
         grantedMoney = baseTarget.getGrantedMoney();
         state = baseTarget.getTargetState();
         rate = baseTarget.getCompletionRate();
-        incomeSituation = baseTarget.getIncomeSituation();
         riskAnalysis = baseTarget.getRiskAnalysis();
         consumptionAdvise = baseTarget.getConsumptionAdvise();
         interestRate = baseTarget.getInterestRate();
@@ -79,7 +76,6 @@ public class TargetInfo {
                 ", grantedMoney=" + grantedMoney +
                 ", state=" + state +
                 ", rate=" + rate +
-                ", incomeSituation='" + incomeSituation + '\'' +
                 ", riskAnalysis='" + riskAnalysis + '\'' +
                 ", consumptionAdvise='" + consumptionAdvise + '\'' +
                 ", interestRate=" + interestRate +
@@ -190,14 +186,6 @@ public class TargetInfo {
 
     public void setRate(Double rate) {
         this.rate = rate;
-    }
-
-    public String getIncomeSituation() {
-        return incomeSituation;
-    }
-
-    public void setIncomeSituation(String incomeSituation) {
-        this.incomeSituation = incomeSituation;
     }
 
     public String getRiskAnalysis() {
