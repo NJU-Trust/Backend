@@ -7,23 +7,17 @@ package nju.trust.entity;
  */
 public enum LargeProjectClassification {
     /**
-     * 出国所需考试
-     */
-    EXAMS_FOR_GOING_ABROAD,
-    /**
-     * 各类考证
+     * 大额考证
      */
     CERTIFICATE_TEST,
     /**
-     * 外出学习培训
-     */
-    TRAIN,
-    /**
-     * 职业资格证
-     */
-    PROFESSIONAL_QUALIFICATION,
-    /**
      * 交换生
      */
-    EXCHANGE_PROJECT
+    EXCHANGE_PROJECT,
+
+    GMAT,
+
+    TOEFL,
+
+    IELTS,
 }

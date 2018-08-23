@@ -27,7 +27,23 @@ public enum SmallProjectClassification {
      */
     OTHER,
     /**
-     * 小额学习费用
+     * 出国所需考试的相关成绩单
      */
-    LEARNING_FEE
+    TEST_TRANSCRIPT,
+    /**
+     * 各类考证
+     */
+    CERTIFICATE_TEST,
+    /**
+     * 外出学习培训的培训证明或信息
+     */
+    TRAIN,
+    /**
+     * 职业资格证
+     */
+    PROFESSIONAL_QUALIFICATION,
+    /**
+     * 交换生
+     */
+    EXCHANGE_PROJECT,
 }

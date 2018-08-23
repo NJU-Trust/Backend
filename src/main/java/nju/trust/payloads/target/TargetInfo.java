@@ -5,6 +5,7 @@ import nju.trust.entity.TargetState;
 import nju.trust.entity.TargetType;
 import nju.trust.entity.target.BaseTarget;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 /**
@@ -12,6 +13,9 @@ import java.time.LocalDateTime;
  * Date: 2018/8/14
  */
 public class TargetInfo {
+
+    @NotNull
+    private Long id;
 
     private TargetType targetType;
 
@@ -27,8 +31,6 @@ public class TargetInfo {
     private Double money;
 
     private Double collectedMoney;
-
-    private Double grantedMoney;
 
     private TargetState state;
 
@@ -48,13 +50,13 @@ public class TargetInfo {
     private String projectDescription;
 
     public TargetInfo(BaseTarget baseTarget) {
+        id = baseTarget.getId();
         targetType = baseTarget.getTargetType();
         username = baseTarget.getUsername();
         startTime = baseTarget.getStartTime();
         name = baseTarget.getName();
         money = baseTarget.getMoney();
         collectedMoney = baseTarget.getCollectedMoney();
-        grantedMoney = baseTarget.getGrantedMoney();
         state = baseTarget.getTargetState();
         rate = baseTarget.getCompletionRate();
         riskAnalysis = baseTarget.getRiskAnalysis();
@@ -67,13 +69,13 @@ public class TargetInfo {
     @Override
     public String toString() {
         return "TargetInfo{" +
-                "targetType=" + targetType +
+                "id=" + id +
+                ", targetType=" + targetType +
                 ", username='" + username + '\'' +
                 ", startTime=" + startTime +
                 ", name='" + name + '\'' +
                 ", money=" + money +
                 ", collectedMoney=" + collectedMoney +
-                ", grantedMoney=" + grantedMoney +
                 ", state=" + state +
                 ", rate=" + rate +
                 ", riskAnalysis='" + riskAnalysis + '\'' +
@@ -82,6 +84,14 @@ public class TargetInfo {
                 ", targetRating=" + targetRating +
                 ", projectDescription='" + projectDescription + '\'' +
                 '}';
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getProjectDescription() {
@@ -162,14 +172,6 @@ public class TargetInfo {
 
     public void setCollectedMoney(Double collectedMoney) {
         this.collectedMoney = collectedMoney;
-    }
-
-    public Double getGrantedMoney() {
-        return grantedMoney;
-    }
-
-    public void setGrantedMoney(Double grantedMoney) {
-        this.grantedMoney = grantedMoney;
     }
 
     public TargetState getState() {

@@ -1,6 +1,6 @@
 package nju.trust.service;
 
-import nju.trust.dao.UserDao;
+import nju.trust.dao.UserRepository;
 import nju.trust.entity.user.User;
 import nju.trust.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +21,10 @@ import javax.transaction.Transactional;
 @Service
 public class UserPrincipalService implements UserDetailsService {
 
-    private UserDao userRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    public void setUserRepository(UserDao userRepository) {
+    public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

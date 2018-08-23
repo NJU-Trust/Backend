@@ -1,7 +1,6 @@
 package nju.trust.payloads.target;
 
 import nju.trust.entity.LargeProjectClassification;
-import nju.trust.entity.target.FeeExplanation;
 import nju.trust.entity.target.LargeTarget;
 
 import java.util.List;

@@ -24,11 +24,6 @@ public class BasicTargetRequest {
 
     private Double completionRate;
 
-    /**
-     * 保证金（待定）
-     */
-    private Double grantedMoney;
-
     @Override
     public String toString() {
         return "BasicTargetRequest{" +
@@ -38,7 +33,6 @@ public class BasicTargetRequest {
                 ", projectDescription='" + projectDescription + '\'' +
                 ", files=" + Arrays.toString(files) +
                 ", completionRate=" + completionRate +
-                ", grantedMoney=" + grantedMoney +
                 '}';
     }
 
@@ -90,11 +84,4 @@ public class BasicTargetRequest {
         this.completionRate = completionRate;
     }
 
-    public Double getGrantedMoney() {
-        return grantedMoney;
-    }
-
-    public void setGrantedMoney(Double grantedMoney) {
-        this.grantedMoney = grantedMoney;
-    }
 }

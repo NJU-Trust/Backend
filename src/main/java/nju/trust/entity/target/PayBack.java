@@ -1,29 +1,38 @@
 package nju.trust.entity.target;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
+import java.time.LocalDateTime;
 
+/**
+ * Author: J.D. Liao
+ * Date: 2018/8/17
+ * Description:
+ */
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
-public class Investment {
+public class PayBack {
 
     @Id
+    @GeneratedValue
     private Long id;
 
     private String username;
 
+    private String investor;
+
     private Double money;
 
-    private Long targetId;
+    private LocalDateTime time;
 
     @Override
     public String toString() {
-        return "Investment{" +
+        return "PayBack{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
+                ", investor='" + investor + '\'' +
                 ", money=" + money +
+                ", time=" + time +
                 '}';
     }
 
@@ -43,11 +52,27 @@ public class Investment {
         this.username = username;
     }
 
+    public String getInvestor() {
+        return investor;
+    }
+
+    public void setInvestor(String investor) {
+        this.investor = investor;
+    }
+
     public Double getMoney() {
         return money;
     }
 
     public void setMoney(Double money) {
         this.money = money;
+    }
+
+    public LocalDateTime getTime() {
+        return time;
+    }
+
+    public void setTime(LocalDateTime time) {
+        this.time = time;
     }
 }

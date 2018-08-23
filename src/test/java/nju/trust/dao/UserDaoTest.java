@@ -10,10 +10,10 @@ package nju.trust.dao;
 // @DataJpaTest
 // public class UserDaoTest {
 
-//     private UserDao userDao;
+//     private UserRepository userDao;
 
 //     @Autowired
-//     public void setUserDao(UserDao userDao) {
+//     public void setUserDao(UserRepository userDao) {
 //         this.userDao = userDao;
 //     }
 

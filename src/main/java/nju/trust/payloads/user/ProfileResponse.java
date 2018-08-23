@@ -14,7 +14,7 @@ import java.util.List;
 public class ProfileResponse {
 
     @JsonUnwrapped
-    private UserInformation baseicInformation;
+    private UserInformation basicInformation;
 
     private List<TargetBriefInfo> favoriteTargets;
 
@@ -27,7 +27,7 @@ public class ProfileResponse {
     @Override
     public String toString() {
         return "ProfileResponse{" +
-                "baseicInformation=" + baseicInformation +
+                "basicInformation=" + basicInformation +
                 ", favoriteTargets=" + favoriteTargets +
                 ", participatingTargets=" + participatingTargets +
                 ", creditCheck=" + creditCheck +

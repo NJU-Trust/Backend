@@ -2,6 +2,7 @@ package nju.trust.service;
 
 import nju.trust.entity.IdentityOption;
 import nju.trust.payloads.ApiResponse;
+import nju.trust.payloads.SignUpRequest;
 import nju.trust.payloads.user.*;
 import org.springframework.stereotype.Service;
 
@@ -55,4 +56,6 @@ public interface UserService {
      * @return result of submitting the request to the server
      */
     ApiResponse applySchoolFellow(ApplySchoolFellowRequest request, String username);
+
+    ApiResponse addUser(SignUpRequest request);
 }

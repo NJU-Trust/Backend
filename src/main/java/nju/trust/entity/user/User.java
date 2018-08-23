@@ -6,6 +6,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -26,6 +27,11 @@ public class User {
 
     private String avatar;
 
+    private Integer age;
+
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
+
     private String platformAdvice;
 
     @Enumerated(EnumType.STRING)
@@ -40,6 +46,7 @@ public class User {
 
     private String phoneNumber;
 
+    @Email
     private String email;
 
     /**
@@ -69,8 +76,7 @@ public class User {
 
     private String message;
 
-    @ElementCollection(targetClass = String.class)
-    private List<String> diplomas;
+    private String diplomaId;
 
     @Override
     public String toString() {
@@ -78,6 +84,8 @@ public class User {
                 "username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", avatar='" + avatar + '\'' +
+                ", age=" + age +
+                ", gender=" + gender +
                 ", platformAdvice='" + platformAdvice + '\'' +
                 ", userLevel=" + userLevel +
                 ", creditRating=" + creditRating +
@@ -93,8 +101,33 @@ public class User {
                 ", stuCardImage='" + stuCardImage + '\'' +
                 ", accomplishment=" + accomplishment +
                 ", message='" + message + '\'' +
-                ", diplomas=" + diplomas +
+                ", diplomaId='" + diplomaId + '\'' +
                 '}';
+    }
+
+    public String getDiplomaId() {
+        return diplomaId;
+    }
+
+    public void setDiplomaId(String diplomaId) {
+        this.diplomaId = diplomaId;
+    }
+
+    public Gender getGender() {
+        return gender;
+    }
+
+    public void setGender(Gender gender) {
+        this.gender = gender;
+    }
+
+    public Integer getAge() {
+
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
     }
 
     public String getStuCardImage() {
@@ -103,14 +136,6 @@ public class User {
 
     public void setStuCardImage(String stuCardImage) {
         this.stuCardImage = stuCardImage;
-    }
-
-    public List<String> getDiplomas() {
-        return diplomas;
-    }
-
-    public void setDiplomas(List<String> diplomas) {
-        this.diplomas = diplomas;
     }
 
     public String getUsername() {

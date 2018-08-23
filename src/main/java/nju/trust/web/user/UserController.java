@@ -1,6 +1,6 @@
 package nju.trust.web.user;
 
-import nju.trust.dao.UserDao;
+import nju.trust.dao.UserRepository;
 import nju.trust.entity.UserLevel;
 import nju.trust.entity.user.RoleName;
 import nju.trust.entity.user.User;
@@ -9,6 +9,7 @@ import nju.trust.payloads.JwtAuthenticationResponse;
 import nju.trust.payloads.LoginRequest;
 import nju.trust.payloads.SignUpRequest;
 import nju.trust.security.JwtTokenProvider;
+import nju.trust.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,25 +36,18 @@ import java.util.ArrayList;
 public class UserController {
     private AuthenticationManager authenticationManager;
 
-    private UserDao userRepository;
-
-    private PasswordEncoder passwordEncoder;
-
     private JwtTokenProvider tokenProvider;
+
+    private UserService userService;
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
 
     @Autowired
     public void setAuthenticationManager(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
-    }
-
-    @Autowired
-    public void setUserRepository(UserDao userRepository) {
-        this.userRepository = userRepository;
-    }
-
-    @Autowired
-    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
     }
 
     @Autowired
@@ -82,30 +76,8 @@ public class UserController {
         return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
     }
 
-
-    /**
-     * @param signUpRequest
-     * @return
-     * @attention mock method
-     */
     @PostMapping(value = "/signup", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
-        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-            return new ResponseEntity<>(new ApiResponse(false, "Username is already taken!"),
-                    HttpStatus.BAD_REQUEST);
-        }
-
-        User user = new User();
-        user.setUsername(signUpRequest.getUsername());
-        user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
-        ArrayList<RoleName> roles = new ArrayList<>();
-        roles.add(RoleName.ROLE_PRIMARY);
-        roles.add(RoleName.ROLE_INTERMEDIATE);
-        roles.add(RoleName.ROLE_SF);
-        user.setRoles(roles);
-        user.setUserLevel(UserLevel.PRIMARY);
-        userRepository.save(user);
-        return new ResponseEntity<>(new ApiResponse(true, "User registered successfully"),
-                HttpStatus.OK);
+    public ApiResponse registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
+        return userService.addUser(signUpRequest);
     }
 }
