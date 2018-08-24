@@ -1,28 +1,37 @@
 package nju.trust.payloads.target;
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import nju.trust.entity.IdentityOption;
 import nju.trust.entity.SmallProjectClassification;
 
 /**
  * Author: J.D. Liao
  * Date: 2018/8/14
  */
-public class SmallTargetRequest {
+public class SmallTargetRequest extends BasicTargetRequest {
 
-    @JsonUnwrapped
-    private BasicTargetRequest basicInfo;
 
     private SmallProjectClassification classification;
 
     private Double maximumAmount;
 
+    private IdentityOption identityOption;
+
     @Override
     public String toString() {
         return "SmallTargetRequest{" +
-                "basicInfo=" + basicInfo +
-                ", classification=" + classification +
+                "classification=" + classification +
                 ", maximumAmount=" + maximumAmount +
+                ", identityOption=" + identityOption +
                 '}';
+    }
+
+    public IdentityOption getIdentityOption() {
+        return identityOption;
+    }
+
+    public void setIdentityOption(IdentityOption identityOption) {
+        this.identityOption = identityOption;
     }
 
     public Double getMaximumAmount() {
@@ -39,14 +48,5 @@ public class SmallTargetRequest {
 
     public void setClassification(SmallProjectClassification classification) {
         this.classification = classification;
-    }
-
-    public BasicTargetRequest getBasicInfo() {
-
-        return basicInfo;
-    }
-
-    public void setBasicInfo(BasicTargetRequest basicInfo) {
-        this.basicInfo = basicInfo;
     }
 }

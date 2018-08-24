@@ -8,7 +8,17 @@ package nju.trust.payloads;
  * @Todo:
  */
 public class ApiResponse {
+
+    public static ApiResponse successResponse() {
+        return new ApiResponse(true, "");
+    }
+
+    public static ApiResponse serverGoseWrong() {
+        return new ApiResponse(false, "Something is wrong with the server");
+    }
+
     private Boolean success;
+
     private String message;
 
     public ApiResponse(Boolean success, String message) {

@@ -4,10 +4,14 @@ import nju.trust.entity.IdentityOption;
 import nju.trust.entity.TargetRating;
 import nju.trust.entity.TargetState;
 import nju.trust.entity.TargetType;
+import nju.trust.payloads.target.BasicTargetRequest;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @MappedSuperclass
@@ -27,8 +31,6 @@ public class BaseTarget {
     private Double money;
 
     private Double collectedMoney;
-
-    private Double grantedMoney;
 
     @Enumerated(value = EnumType.STRING)
     private TargetState targetState;
@@ -57,15 +59,28 @@ public class BaseTarget {
     private TargetRating targetRating;
 
     @Enumerated(EnumType.STRING)
-    @NotNull
-    private TargetType targetType;
+    @NotNull TargetType targetType;
 
     private String projectDescription;
 
-    @ElementCollection(targetClass = String.class)
-    private List<String> files;
+    @Lob
+    @ElementCollection
+    @Basic(fetch = FetchType.LAZY)
+    private List<byte[]> files;
 
-    private IdentityOption identityOption;
+    IdentityOption identityOption;
+
+    BaseTarget(BasicTargetRequest request, String username) {
+        this.username = username;
+        startTime = request.getStartTime();
+        name = request.getName();
+        money = request.getMoney();
+        completionRate = request.getCompletionRate();
+        projectDescription = request.getProjectDescription();
+
+        collectedMoney = 0.;
+        targetState = TargetState.PENDING;
+    }
 
     @Override
     public String toString() {
@@ -76,7 +91,6 @@ public class BaseTarget {
                 ", name='" + name + '\'' +
                 ", money=" + money +
                 ", collectedMoney=" + collectedMoney +
-                ", grantedMoney=" + grantedMoney +
                 ", targetState=" + targetState +
                 ", completionRate=" + completionRate +
                 ", riskAnalysis='" + riskAnalysis + '\'' +
@@ -86,15 +100,14 @@ public class BaseTarget {
                 ", targetType=" + targetType +
                 ", identityOption=" + identityOption +
                 ", projectDescription=" + projectDescription +
-                ", files=" + files +
                 '}';
     }
 
-    public List<String> getFiles() {
+    public List<byte[]> getFiles() {
         return files;
     }
 
-    public void setFiles(List<String> files) {
+    public void setFiles(List<byte[]> files) {
         this.files = files;
     }
 
@@ -184,14 +197,6 @@ public class BaseTarget {
 
     public void setCollectedMoney(Double collectedMoney) {
         this.collectedMoney = collectedMoney;
-    }
-
-    public Double getGrantedMoney() {
-        return grantedMoney;
-    }
-
-    public void setGrantedMoney(Double grantedMoney) {
-        this.grantedMoney = grantedMoney;
     }
 
     public TargetState getTargetState() {

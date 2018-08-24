@@ -1,9 +1,13 @@
 package nju.trust.payloads.target;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Author: J.D. Liao
@@ -82,6 +86,14 @@ public class BasicTargetRequest {
 
     public void setCompletionRate(Double completionRate) {
         this.completionRate = completionRate;
+    }
+
+    public List<byte[]> convertFileToByte() throws IOException {
+        List<byte[]> result = new ArrayList<>();
+        for (MultipartFile file : files) {
+            result.add(file.getBytes());
+        }
+        return result;
     }
 
 }

@@ -7,17 +7,14 @@ import nju.trust.entity.LargeProjectClassification;
  * Author: J.D. Liao
  * Date: 2018/8/14
  */
-public class LargeTargetRequest {
-
-    @JsonUnwrapped
-    private BasicTargetRequest basicInfo;
+public class LargeTargetRequest extends BasicTargetRequest{
 
     private LargeProjectClassification classification;
 
     @Override
     public String toString() {
         return "LargeTargetRequest{" +
-                "basicInfo=" + basicInfo +
+                "basicInfo=" + super.toString() +
                 ", classification=" + classification +
                 '}';
     }
@@ -28,13 +25,5 @@ public class LargeTargetRequest {
 
     public void setClassification(LargeProjectClassification classification) {
         this.classification = classification;
-    }
-
-    public BasicTargetRequest getBasicInfo() {
-        return basicInfo;
-    }
-
-    public void setBasicInfo(BasicTargetRequest basicInfo) {
-        this.basicInfo = basicInfo;
     }
 }

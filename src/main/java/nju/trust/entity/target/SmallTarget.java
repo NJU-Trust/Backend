@@ -1,6 +1,8 @@
 package nju.trust.entity.target;
 
 import nju.trust.entity.SmallProjectClassification;
+import nju.trust.entity.TargetType;
+import nju.trust.payloads.target.SmallTargetRequest;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -19,6 +21,15 @@ public class SmallTarget extends BaseTarget {
      * 可承受额外费用偏好（希望为这笔融资至多付多少费用）
      */
     private Double maximumAmount;
+
+    public SmallTarget(SmallTargetRequest request, String username) {
+        super(request, username);
+        maximumAmount = request.getMaximumAmount();
+        classification = request.getClassification();
+        identityOption = request.getIdentityOption();
+
+        targetType = TargetType.SMALL;
+    }
 
     @Override
     public String toString() {

@@ -2,11 +2,33 @@ package nju.trust;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.format.Formatter;
+
+import java.text.ParseException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 @SpringBootApplication
 public class MainApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(MainApplication.class, args);
+    }
+
+    @Bean
+    public Formatter<LocalDateTime> localDateTimeFormatter() {
+        return new Formatter<LocalDateTime>() {
+            @Override
+            public LocalDateTime parse(String s, Locale locale) throws ParseException {
+                return LocalDateTime.parse(s, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+            }
+
+            @Override
+            public String print(LocalDateTime localDateTime, Locale locale) {
+                return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(localDateTime);
+            }
+        };
     }
 }
