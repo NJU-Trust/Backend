@@ -1,5 +1,6 @@
 package nju.trust.payloads.user;
 
+import nju.trust.entity.user.Gender;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -12,18 +13,35 @@ public class ApplyIntermediateUserRequest {
 
     private MultipartFile stuCardImage;
 
-    private String major;
+    private MultipartFile idCardImage;
 
-    private Integer grade;
+    private String idNumber;
+
+    private Gender gender;
+
+    private String realName;
+
+    private Integer age;
 
     @Override
     public String toString() {
         return "ApplyIntermediateUserRequest{" +
                 "stuId='" + stuId + '\'' +
                 ", stuCardImage=" + stuCardImage +
-                ", major='" + major + '\'' +
-                ", grade=" + grade +
+                ", idCardImage=" + idCardImage +
+                ", idNumber='" + idNumber + '\'' +
+                ", gender=" + gender +
+                ", realName='" + realName + '\'' +
+                ", age=" + age +
                 '}';
+    }
+
+    public String getStuId() {
+        return stuId;
+    }
+
+    public void setStuId(String stuId) {
+        this.stuId = stuId;
     }
 
     public MultipartFile getStuCardImage() {
@@ -34,27 +52,43 @@ public class ApplyIntermediateUserRequest {
         this.stuCardImage = stuCardImage;
     }
 
-    public String getMajor() {
-        return major;
+    public MultipartFile getIdCardImage() {
+        return idCardImage;
     }
 
-    public void setMajor(String major) {
-        this.major = major;
+    public void setIdCardImage(MultipartFile idCardImage) {
+        this.idCardImage = idCardImage;
     }
 
-    public Integer getGrade() {
-        return grade;
+    public String getIdNumber() {
+        return idNumber;
     }
 
-    public void setGrade(Integer grade) {
-        this.grade = grade;
+    public void setIdNumber(String idNumber) {
+        this.idNumber = idNumber;
     }
 
-    public String getStuId() {
-        return stuId;
+    public Gender getGender() {
+        return gender;
     }
 
-    public void setStuId(String stuId) {
-        this.stuId = stuId;
+    public void setGender(Gender gender) {
+        this.gender = gender;
+    }
+
+    public String getRealName() {
+        return realName;
+    }
+
+    public void setRealName(String realName) {
+        this.realName = realName;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
     }
 }

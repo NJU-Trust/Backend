@@ -45,6 +45,7 @@ public interface UserService {
      * @param username username
      * @return result of submitting the request to the server
      */
+    @Deprecated
     ApiResponse applyCompleteUser(ApplyCompleteUserRequest request, String username);
 
     /**

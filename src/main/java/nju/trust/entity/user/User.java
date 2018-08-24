@@ -1,13 +1,13 @@
 package nju.trust.entity.user;
 
 import nju.trust.entity.CreditRating;
+import nju.trust.entity.SchoolType;
 import nju.trust.entity.UserLevel;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -78,6 +78,47 @@ public class User {
 
     private String diplomaId;
 
+    private SchoolType schoolType;
+
+    /**
+     * 排名率
+     */
+    @DecimalMax("1.0")
+    @DecimalMin("0.0")
+    private Double rankingRate;
+
+    /**
+     * 挂科数
+     */
+    @Min(0)
+    private Integer failedSubjects;
+
+    /**
+     * 获奖情况
+     */
+    @ElementCollection
+    private Map<AwardLevel, Integer> awards;
+
+    /**
+     * 违约记录
+     */
+    @ElementCollection
+    private Map<DefaultType, Integer> defaultRecords;
+    /**
+     * 学生工作类型
+     */
+    private StudentWorkType studentWorkType;
+
+    /**
+     * 平均每年志愿时长
+     */
+    private Double averagedVolunteerTime;
+
+    /**
+     * 学历情况
+     */
+    private EducationLevel educationLevel;
+
     @Override
     public String toString() {
         return "User{" +
@@ -102,7 +143,79 @@ public class User {
                 ", accomplishment=" + accomplishment +
                 ", message='" + message + '\'' +
                 ", diplomaId='" + diplomaId + '\'' +
+                ", schoolType=" + schoolType +
+                ", rankingRate=" + rankingRate +
+                ", failedSubjects=" + failedSubjects +
+                ", awards=" + awards +
+                ", defaultRecords=" + defaultRecords +
+                ", studentWorkType=" + studentWorkType +
+                ", averagedVolunteerTime=" + averagedVolunteerTime +
+                ", educationLevel=" + educationLevel +
                 '}';
+    }
+
+    public SchoolType getSchoolType() {
+        return schoolType;
+    }
+
+    public void setSchoolType(SchoolType schoolType) {
+        this.schoolType = schoolType;
+    }
+
+    public Double getRankingRate() {
+        return rankingRate;
+    }
+
+    public void setRankingRate(Double rankingRate) {
+        this.rankingRate = rankingRate;
+    }
+
+    public Integer getFailedSubjects() {
+        return failedSubjects;
+    }
+
+    public void setFailedSubjects(Integer failedSubjects) {
+        this.failedSubjects = failedSubjects;
+    }
+
+    public Map<AwardLevel, Integer> getAwards() {
+        return awards;
+    }
+
+    public void setAwards(Map<AwardLevel, Integer> awards) {
+        this.awards = awards;
+    }
+
+    public Map<DefaultType, Integer> getDefaultRecords() {
+        return defaultRecords;
+    }
+
+    public void setDefaultRecords(Map<DefaultType, Integer> defaultRecords) {
+        this.defaultRecords = defaultRecords;
+    }
+
+    public StudentWorkType getStudentWorkType() {
+        return studentWorkType;
+    }
+
+    public void setStudentWorkType(StudentWorkType studentWorkType) {
+        this.studentWorkType = studentWorkType;
+    }
+
+    public Double getAveragedVolunteerTime() {
+        return averagedVolunteerTime;
+    }
+
+    public void setAveragedVolunteerTime(Double averagedVolunteerTime) {
+        this.averagedVolunteerTime = averagedVolunteerTime;
+    }
+
+    public EducationLevel getEducationLevel() {
+        return educationLevel;
+    }
+
+    public void setEducationLevel(EducationLevel educationLevel) {
+        this.educationLevel = educationLevel;
     }
 
     public String getDiplomaId() {

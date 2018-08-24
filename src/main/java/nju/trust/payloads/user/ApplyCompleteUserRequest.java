@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
  * Author: J.D. Liao
  * Date: 2018/8/13
  */
+@Deprecated
 public class ApplyCompleteUserRequest {
 
     private String idNumber;
