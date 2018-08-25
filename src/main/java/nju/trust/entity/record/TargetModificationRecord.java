@@ -17,6 +17,13 @@ public class TargetModificationRecord extends BaseRecord {
 
     private Long targetId;
 
+    public TargetModificationRecord(String username, Double moneyBefore, Double moneyAfter, Long targetId) {
+        super(username);
+        this.moneyBefore = moneyBefore;
+        this.moneyAfter = moneyAfter;
+        this.targetId = targetId;
+    }
+
     @Override
     public String toString() {
         return "TargetModificationRecord{" +

@@ -1,6 +1,7 @@
 package nju.trust.dao;
 
 import nju.trust.entity.target.BaseTarget;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 /**
@@ -8,6 +9,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
  * Date: 2018/8/24
  * Description:
  */
-public interface TargetRepository extends PagingAndSortingRepository<BaseTarget, Long> {
+public interface TargetRepository
+        extends PagingAndSortingRepository<BaseTarget, Long>, JpaSpecificationExecutor<BaseTarget> {
 
 }

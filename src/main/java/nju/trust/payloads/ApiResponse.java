@@ -13,7 +13,7 @@ public class ApiResponse {
         return new ApiResponse(true, "");
     }
 
-    public static ApiResponse serverGoseWrong() {
+    public static ApiResponse serverGoesWrong() {
         return new ApiResponse(false, "Something is wrong with the server");
     }
 

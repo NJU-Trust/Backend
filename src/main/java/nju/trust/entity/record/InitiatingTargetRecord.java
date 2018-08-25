@@ -13,6 +13,11 @@ public class InitiatingTargetRecord extends BaseRecord {
 
     private Long targetId;
 
+    public InitiatingTargetRecord(String username, Long targetId) {
+        super(username);
+        this.targetId = targetId;
+    }
+
     @Override
     public String toString() {
         return "InitiatingTargetRecord{" +

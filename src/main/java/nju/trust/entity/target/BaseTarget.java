@@ -4,6 +4,7 @@ import nju.trust.entity.IdentityOption;
 import nju.trust.entity.TargetRating;
 import nju.trust.entity.TargetState;
 import nju.trust.entity.TargetType;
+import nju.trust.entity.user.User;
 import nju.trust.payloads.target.BasicTargetRequest;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,15 +15,20 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@MappedSuperclass
-@DiscriminatorColumn(name = "target_type")
-public class BaseTarget {
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "targetType")
+public abstract class BaseTarget {
 
     @Id
     @GeneratedValue
     private Long id;
 
     private String username;
+
+    @ManyToOne(targetEntity = User.class)
+    @JoinColumn(name = "user.username", nullable = false)
+    private User user;
 
     private LocalDateTime startTime;
 
@@ -68,6 +74,12 @@ public class BaseTarget {
     @Basic(fetch = FetchType.LAZY)
     private List<byte[]> files;
 
+    /**
+     * 还款期限
+     * todo 考虑从哪里赋值
+     */
+    private Integer repaymentDuration;
+
     IdentityOption identityOption;
 
     BaseTarget(BasicTargetRequest request, String username) {
@@ -101,6 +113,22 @@ public class BaseTarget {
                 ", identityOption=" + identityOption +
                 ", projectDescription=" + projectDescription +
                 '}';
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Integer getRepaymentDuration() {
+        return repaymentDuration;
+    }
+
+    public void setRepaymentDuration(Integer repaymentDuration) {
+        this.repaymentDuration = repaymentDuration;
     }
 
     public List<byte[]> getFiles() {

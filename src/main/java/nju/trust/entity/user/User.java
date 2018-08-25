@@ -3,6 +3,8 @@ package nju.trust.entity.user;
 import nju.trust.entity.CreditRating;
 import nju.trust.entity.SchoolType;
 import nju.trust.entity.UserLevel;
+import nju.trust.entity.record.InvestmentRecord;
+import nju.trust.entity.target.BaseTarget;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -81,7 +83,7 @@ public class User {
     private SchoolType schoolType;
 
     /**
-     * 排名率
+     * 学习成绩排名率
      */
     @DecimalMax("1.0")
     @DecimalMin("0.0")
@@ -97,12 +99,14 @@ public class User {
      * 获奖情况
      */
     @ElementCollection
+    @Basic(fetch = FetchType.LAZY)
     private Map<AwardLevel, Integer> awards;
 
     /**
      * 违约记录
      */
     @ElementCollection
+    @Basic(fetch = FetchType.LAZY)
     private Map<DefaultType, Integer> defaultRecords;
     /**
      * 学生工作类型
@@ -118,6 +122,9 @@ public class User {
      * 学历情况
      */
     private EducationLevel educationLevel;
+
+    @OneToMany(mappedBy = "user")
+    private List<BaseTarget> publishedTargets;
 
     @Override
     public String toString() {
@@ -152,6 +159,14 @@ public class User {
                 ", averagedVolunteerTime=" + averagedVolunteerTime +
                 ", educationLevel=" + educationLevel +
                 '}';
+    }
+
+    public List<BaseTarget> getPublishedTargets() {
+        return publishedTargets;
+    }
+
+    public void setPublishedTargets(List<BaseTarget> publishedTargets) {
+        this.publishedTargets = publishedTargets;
     }
 
     public SchoolType getSchoolType() {

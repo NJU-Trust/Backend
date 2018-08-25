@@ -15,6 +15,12 @@ public class RepaymentRecord extends BaseRecord {
 
     private Long targetId;
 
+    public RepaymentRecord(String username, Double money, Long targetId) {
+        super(username);
+        this.money = money;
+        this.targetId = targetId;
+    }
+
     @Override
     public String toString() {
         return "RepaymentRecord{" +

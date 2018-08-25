@@ -10,6 +10,11 @@ public class BaseRecord {
 
     LocalDateTime time;
 
+    public BaseRecord(String username) {
+        this.username = username;
+        time = LocalDateTime.now();
+    }
+
     public String getUsername() {
         return username;
     }

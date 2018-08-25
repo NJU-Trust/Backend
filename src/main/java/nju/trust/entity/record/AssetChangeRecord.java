@@ -19,6 +19,13 @@ public class AssetChangeRecord extends BaseRecord {
 
     private Double balance;
 
+    public AssetChangeRecord(String username, String reason, Double changeMoney, Double balance) {
+        super(username);
+        this.reason = reason;
+        this.changeMoney = changeMoney;
+        this.balance = balance;
+    }
+
     @Override
     public String toString() {
         return "AssetChangeRecord{" +
