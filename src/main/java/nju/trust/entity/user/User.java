@@ -90,6 +90,11 @@ public class User {
     private Double rankingRate;
 
     /**
+     * 信用分数
+     */
+    private Double creditScore;
+
+    /**
      * 挂科数
      */
     @Min(0)
@@ -126,6 +131,9 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<BaseTarget> publishedTargets;
 
+    @OneToOne(targetEntity = AssetStatistics.class, fetch = FetchType.LAZY, mappedBy = "user")
+    private AssetStatistics assetStatistics;
+
     @Override
     public String toString() {
         return "User{" +
@@ -159,6 +167,22 @@ public class User {
                 ", averagedVolunteerTime=" + averagedVolunteerTime +
                 ", educationLevel=" + educationLevel +
                 '}';
+    }
+
+    public AssetStatistics getAssetStatistics() {
+        return assetStatistics;
+    }
+
+    public void setAssetStatistics(AssetStatistics assetStatistics) {
+        this.assetStatistics = assetStatistics;
+    }
+
+    public Double getCreditScore() {
+        return creditScore;
+    }
+
+    public void setCreditScore(Double creditScore) {
+        this.creditScore = creditScore;
     }
 
     public List<BaseTarget> getPublishedTargets() {

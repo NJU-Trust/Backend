@@ -5,12 +5,16 @@ import nju.trust.dao.TargetRepository;
 import nju.trust.dao.TargetSpecification;
 import nju.trust.dao.UserRepository;
 import nju.trust.dao.record.InvestmentRecordRepository;
+import nju.trust.entity.CreditRating;
+import nju.trust.entity.TargetRating;
 import nju.trust.entity.TargetState;
 import nju.trust.entity.TargetType;
 import nju.trust.entity.record.InvestmentRecord;
 import nju.trust.entity.target.BaseTarget;
 import nju.trust.entity.target.LargeTarget;
 import nju.trust.entity.target.SmallTarget;
+import nju.trust.entity.user.AssetStatistics;
+import nju.trust.entity.user.User;
 import nju.trust.payloads.ApiResponse;
 import nju.trust.payloads.target.*;
 import org.slf4j.Logger;
@@ -61,13 +65,15 @@ public class TargetServiceImpl implements TargetService {
 
     @Override
     public ApiResponse applySmallTarget(SmallTargetRequest request, String username) {
-        SmallTarget smallTarget = new SmallTarget(request, username);
+        User user = userRepository.findByUsername(username).orElseThrow(InternalError::new);
+        SmallTarget smallTarget = new SmallTarget(request, user);
         return setFileAndSaveTarget(smallTarget, request);
     }
 
     @Override
     public ApiResponse applyLargeTarget(LargeTargetRequest request, String username) {
-        LargeTarget largeTarget = new LargeTarget(request, username);
+        User user = userRepository.findByUsername(username).orElseThrow(InternalError::new);
+        LargeTarget largeTarget = new LargeTarget(request, user);
         return setFileAndSaveTarget(largeTarget, request);
     }
 
@@ -148,6 +154,7 @@ public class TargetServiceImpl implements TargetService {
             return ApiResponse.serverGoesWrong();
         }
 
+        setTargetRating(target);
         targetRepository.save(target);
 
         return ApiResponse.successResponse();
@@ -156,5 +163,33 @@ public class TargetServiceImpl implements TargetService {
     private TargetInfo convertToTargetInfo(BaseTarget target) {
         return target.getTargetType() == TargetType.SMALL ?
                 new SmallTargetInfo((SmallTarget) target) : new LargeTargetInfo((LargeTarget) target);
+    }
+
+    /**
+     * 标的风险评定
+     * @param target 目标标的
+     */
+    private void setTargetRating(BaseTarget target) {
+        User user = target.getUser();
+
+        double money = target.getMoney();
+        double interestRate = target.getInterestRate();
+        int duration = target.getRepaymentDuration();
+
+
+        CreditRating creditRating = CreditRating.of(user.getCreditScore());
+        AssetStatistics assetStatistics = user.getAssetStatistics();
+        int monthIncome = assetStatistics.getMonthIncomeLevel();
+
+        // Count number of success
+        SearchCriteria criteria = new SearchCriteria("targetState", ":", "COMPLETED");
+        long numberOfSuccess = targetRepository.count(new TargetSpecification(criteria));
+
+        // Calculate z-value
+        double z = 1.18 - 0.35 * money * 0.001 - 0.82 * interestRate + 1.84 * creditRating.getLevel()
+                + 0.04 * duration + 0.48 * monthIncome + 1.96 * numberOfSuccess;
+
+        double p = 1. / (1 + Math.exp(-z));
+        target.setTargetRating(TargetRating.of(p));
     }
 }

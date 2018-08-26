@@ -33,4 +33,6 @@ public class ProfileResponseTest {
 
         System.out.println(mapper.readValue(userInfo, ProfileResponse.class));
     }
+
+
 }

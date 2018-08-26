@@ -27,4 +27,6 @@ public interface TargetService {
     List<TargetInfo> sortTargets(SortingProperty property);
 
     List<TargetInfo> filterTargets(List<SearchCriteria> criteriaList, SortingProperty sortingProperty);
+
+
 }
