@@ -63,6 +63,11 @@ public abstract class BaseTarget {
     @Enumerated(value = EnumType.STRING)
     private TargetRating targetRating;
 
+    /**
+     * 项目风险评级分数（同时也是计算所得的标的成功率）
+     */
+    private Double targetRatingScore;
+
     @Enumerated(EnumType.STRING)
     @NotNull TargetType targetType;
 
@@ -111,6 +116,14 @@ public abstract class BaseTarget {
                 ", identityOption=" + identityOption +
                 ", projectDescription=" + projectDescription +
                 '}';
+    }
+
+    public Double getTargetRatingScore() {
+        return targetRatingScore;
+    }
+
+    public void setTargetRatingScore(Double targetRatingScore) {
+        this.targetRatingScore = targetRatingScore;
     }
 
     public User getUser() {

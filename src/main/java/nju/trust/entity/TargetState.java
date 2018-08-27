@@ -10,9 +10,9 @@ public enum TargetState {
      */
     PENDING,
     /**
-     * 已完成
+     * 还款中
      */
-    COMPLETED,
+    IN_THE_PAYMENT,
     /**
      * 已还款
      */

@@ -1,8 +1,6 @@
-package nju.trust.service;
+package nju.trust.service.target;
 
-import nju.trust.dao.SearchCriteria;
-import nju.trust.dao.TargetRepository;
-import nju.trust.dao.TargetSpecification;
+import nju.trust.dao.target.*;
 import nju.trust.dao.UserRepository;
 import nju.trust.dao.record.InvestmentRecordRepository;
 import nju.trust.entity.CreditRating;
@@ -17,21 +15,20 @@ import nju.trust.entity.user.AssetStatistics;
 import nju.trust.entity.user.User;
 import nju.trust.payloads.ApiResponse;
 import nju.trust.payloads.target.*;
+import nju.trust.service.TargetService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.Predicate;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * Author: J.D. Liao
@@ -43,17 +40,26 @@ public class TargetServiceImpl implements TargetService {
 
     private static final Logger log = LoggerFactory.getLogger("TargetService");
 
+    private static final int RECOMMENDATION_NUMBER = 8''
+
     private TargetRepository targetRepository;
+
+    private SmallTargetRepository smallTargetRepository;
+
+    private LargeTargetRepository largeTargetRepository;
 
     private UserRepository userRepository;
 
     private InvestmentRecordRepository recordRepository;
 
-    @Autowired
     public TargetServiceImpl(TargetRepository targetRepository,
+                             SmallTargetRepository smallTargetRepository,
+                             LargeTargetRepository largeTargetRepository,
                              UserRepository userRepository,
                              InvestmentRecordRepository recordRepository) {
         this.targetRepository = targetRepository;
+        this.smallTargetRepository = smallTargetRepository;
+        this.largeTargetRepository = largeTargetRepository;
         this.userRepository = userRepository;
         this.recordRepository = recordRepository;
     }
@@ -92,7 +98,7 @@ public class TargetServiceImpl implements TargetService {
         } else if (amountAfter > baseTarget.getMoney()) {
             return new ApiResponse(false, "This project has already completed");
         } else if (amountAfter == baseTarget.getMoney()) {
-            baseTarget.setTargetState(TargetState.COMPLETED);
+            baseTarget.setTargetState(TargetState.IN_THE_PAYMENT);
         }
 
 
@@ -105,39 +111,29 @@ public class TargetServiceImpl implements TargetService {
     }
 
     @Override
-    public List<TargetInfo> sortTargets(SortingProperty property) {
-        Page<BaseTarget> targets = targetRepository
-                .findAll(PageRequest.of(1, 20, new Sort(Sort.Direction.DESC, property.getProperty())));
+    public List<TargetInfo> filterLargeTargets(Pageable pageable, LargeTargetFilterRequest filterRequest) {
+        // Execute searching and map the results to TargetInfo
+        Specification<LargeTarget> specification = new LargeTargetSpecification(filterRequest);
+        Page<LargeTarget> targets = largeTargetRepository.findAll(specification, pageable);
 
-
-        // Sort by user's field
-        return targets.map(this::convertToTargetInfo).getContent();
+        return targets.stream().map(LargeTargetInfo::new).collect(Collectors.toList());
     }
 
     @Override
-    public List<TargetInfo> filterTargets(List<SearchCriteria> criteriaList, SortingProperty sortingProperty) {
-        List<TargetSpecification> specifications = criteriaList.stream()
-                .map(TargetSpecification::new).collect(Collectors.toList());
+    public List<TargetInfo> filterSmallTargets(Pageable pageable, SmallTargetFilterRequest filterRequest) {
+        Specification<SmallTarget> specification = new SmallTargetSpecification(filterRequest);
+        Page<SmallTarget> targets = smallTargetRepository.findAll(specification, pageable);
 
-        // Create specifications for searching
-        Specification<BaseTarget> specification = null;
-        for (Specification<BaseTarget> s : specifications) {
-            if (specification == null)
-                specification = Specification.where(s);
-            else
-                specification = specification.and(s);
-        }
+        return targets.stream().map(SmallTargetInfo::new).collect(Collectors.toList());
+    }
 
-        // Execute searching and map the results to TargetInfo
-        List<BaseTarget> targets;
-        if (specification == null) {
-            targets = StreamSupport.stream(targetRepository.findAll(Sort.by(sortingProperty.getProperty())).spliterator(),
-                    false).collect(Collectors.toList());
-        } else
-            targets = targetRepository.findAll(specification,
-                    Sort.by(Sort.Direction.DESC, sortingProperty.getProperty()));
+    public List<TargetInfo> recommendSmallTargets(SmallTargetFilterRequest filterRequest) {
+        // Get top 8 targets with highest success rate
+        Specification<SmallTarget> specification = new SmallTargetSpecification(filterRequest);
+        Page<SmallTarget> targets = smallTargetRepository
+                .findAll(specification, PageRequest.of(0, RECOMMENDATION_NUMBER));
 
-        return targets.stream().map(this::convertToTargetInfo).collect(Collectors.toList());
+        return null;
     }
 
     @Override
@@ -167,6 +163,7 @@ public class TargetServiceImpl implements TargetService {
 
     /**
      * 标的风险评定
+     *
      * @param target 目标标的
      */
     private void setTargetRating(BaseTarget target) {
@@ -182,8 +179,11 @@ public class TargetServiceImpl implements TargetService {
         int monthIncome = assetStatistics.getMonthIncomeLevel();
 
         // Count number of success
-        SearchCriteria criteria = new SearchCriteria("targetState", ":", "COMPLETED");
-        long numberOfSuccess = targetRepository.count(new TargetSpecification(criteria));
+        long numberOfSuccess = targetRepository.count((Specification<BaseTarget>)
+                (root, criteriaQuery, criteriaBuilder) -> {
+                    Predicate p = criteriaBuilder.equal(root.get("targetState"), TargetState.IN_THE_PAYMENT);
+                    return criteriaBuilder.or(p, criteriaBuilder.equal(root.get("targetState"), TargetState.PAY_OFF));
+                });
 
         // Calculate z-value
         double z = 1.18 - 0.35 * money * 0.001 - 0.82 * interestRate + 1.84 * creditRating.getLevel()
@@ -191,5 +191,10 @@ public class TargetServiceImpl implements TargetService {
 
         double p = 1. / (1 + Math.exp(-z));
         target.setTargetRating(TargetRating.of(p));
+        target.setTargetRatingScore(z);
+    }
+
+    private double gaussianKernel(double t) {
+        return (1 / Math.sqrt(2 * Math.PI)) * Math.exp(-1 / 2 * Math.pow(t, 2.));
     }
 }
