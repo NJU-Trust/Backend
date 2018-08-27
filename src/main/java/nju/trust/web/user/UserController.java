@@ -57,13 +57,14 @@ public class UserController {
 
     @GetMapping(value = "/test")
     @PreAuthorize("hasRole('SF')")
-    public String test() {
-        return "test";
+    public ResponseEntity<ApiResponse> test() {
+        return new ResponseEntity<ApiResponse>(new ApiResponse(true, "You are "
+                + UserLevel.getUserLevelTrans(UserLevel.SF)), HttpStatus.ACCEPTED);
     }
 
 
     @PostMapping(value = "/signin")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<JwtAuthenticationResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getUsername(),

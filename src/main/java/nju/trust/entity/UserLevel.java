@@ -1,5 +1,7 @@
 package nju.trust.entity;
 
+import java.util.HashMap;
+
 public enum UserLevel {
     /**
      * First level : need email and phone number
@@ -21,5 +23,23 @@ public enum UserLevel {
     /**
      * School fellow account : need diploma photo
      */
-    SF
+    SF;
+
+
+    /**
+     *  Emun to string
+     */
+    private static HashMap<UserLevel, String> userLevelTrans = new HashMap<>();
+
+    static{
+        userLevelTrans.put(PRIMARY, "初级账号");
+        userLevelTrans.put(INTERMEDIATE, "中级账号");
+        userLevelTrans.put(COMPLETE, "完整账号");
+        userLevelTrans.put(SF, "校友账号");
+    }
+
+    public static String getUserLevelTrans(UserLevel userLevel) {
+        return userLevelTrans.get(userLevel);
+    }
+
 }
