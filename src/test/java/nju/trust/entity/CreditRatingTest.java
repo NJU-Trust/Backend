@@ -1,5 +1,6 @@
 package nju.trust.entity;
 
+import org.apache.commons.math3.linear.MatrixUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -24,5 +25,10 @@ public class CreditRatingTest {
     @Test
     public void testD() {
         assertEquals("D", CreditRating.of(39.9).toString());
+    }
+
+    @Test
+    public void test() {
+        System.out.println(MatrixUtils.createRealMatrix(8, 8));
     }
 }

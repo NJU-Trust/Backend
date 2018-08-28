@@ -13,9 +13,16 @@ import nju.trust.entity.target.LargeTarget;
 import nju.trust.entity.target.SmallTarget;
 import nju.trust.entity.user.AssetStatistics;
 import nju.trust.entity.user.User;
+import nju.trust.exception.ResourceNotFoundException;
 import nju.trust.payloads.ApiResponse;
+import nju.trust.payloads.investment.InvestmentStrategy;
 import nju.trust.payloads.target.*;
 import nju.trust.service.TargetService;
+import org.apache.commons.math3.linear.*;
+import org.apache.commons.math3.optim.OptimizationData;
+import org.apache.commons.math3.optim.PointValuePair;
+import org.apache.commons.math3.optim.linear.*;
+import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -26,6 +33,8 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.Predicate;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -40,7 +49,9 @@ public class TargetServiceImpl implements TargetService {
 
     private static final Logger log = LoggerFactory.getLogger("TargetService");
 
-    private static final int RECOMMENDATION_NUMBER = 8''
+    private static final int RECOMMENDATION_NUMBER = 8;
+
+    private static final double BANDWIDTH = 0.0274;
 
     private TargetRepository targetRepository;
 
@@ -130,10 +141,95 @@ public class TargetServiceImpl implements TargetService {
     public List<TargetInfo> recommendSmallTargets(SmallTargetFilterRequest filterRequest) {
         // Get top 8 targets with highest success rate
         Specification<SmallTarget> specification = new SmallTargetSpecification(filterRequest);
-        Page<SmallTarget> targets = smallTargetRepository
-                .findAll(specification, PageRequest.of(0, RECOMMENDATION_NUMBER));
+        List<SmallTarget> targets = smallTargetRepository
+                .findAll(specification, PageRequest.of(0, RECOMMENDATION_NUMBER)).getContent();
 
         return null;
+    }
+
+    public List<InvestmentStrategy> recommendStrategy(List<Long> targetIds, double money, double interstRate) {
+        List<SmallTarget> targets = targetIds.stream()
+                .map(id -> smallTargetRepository.findById(id)
+                        .orElseThrow(() -> new ResourceNotFoundException("target", "targetId", id)))
+                .collect(Collectors.toList());
+
+        int matrixSize = targetIds.size();
+
+        // Calculate distance matrix
+        RealMatrix distanceMatrix = MatrixUtils.createRealMatrix(matrixSize, matrixSize);
+        for (int i = 0; i < matrixSize; i++) {
+            for (int j = i + 1; j < matrixSize; j++) {
+                double iScore = targets.get(i).getTargetRatingScore();
+                double jScore = targets.get(j).getTargetRatingScore();
+                double distance = Math.abs(iScore - jScore);
+                distanceMatrix.setEntry(i, j, distance);
+                distanceMatrix.setEntry(j, i, distance);
+            }
+        }
+
+        RealMatrix kernelValueMatrix = distanceMatrix.copy();
+        for (int i = 0; i < matrixSize; i++) {
+            for (int j = i; j < matrixSize; j++) {
+                double ijDistance = kernelValueMatrix.getEntry(i, j);
+                double kernelValue = gaussianKernel(ijDistance / BANDWIDTH);
+                kernelValueMatrix.setEntry(i, j, kernelValue);
+                kernelValueMatrix.setEntry(j, i, kernelValue);
+            }
+        }
+
+        // Calculate weight for each distance
+        RealMatrix weightMatrix = MatrixUtils.createRealMatrix(matrixSize, matrixSize);
+        for (int i = 0; i < matrixSize; i++) {
+            double rowSum = sum(kernelValueMatrix.getRow(i));
+            for (int j = 0; j < matrixSize; j++) {
+                double weight = kernelValueMatrix.getEntry(i, j) / rowSum;
+                weightMatrix.setEntry(i, j, weight);
+            }
+        }
+
+        // Calculate yield
+        RealVector yieldVector = new ArrayRealVector(matrixSize);
+        for (int i = 0; i < matrixSize; i++) {
+            double yield = 0.;
+            for (int j = 0; j < matrixSize; j++) {
+                yield += weightMatrix.getEntry(i, j) * targets.get(j).getInterestRate();
+            }
+            yieldVector.setEntry(i, yield);
+        }
+
+        RealVector stdDeviation = new ArrayRealVector(matrixSize);
+        for (int i = 0; i < matrixSize; i++) {
+            double sigma = 0.;
+            double yield = yieldVector.getEntry(i);
+            for (int j = 0; j < matrixSize; j++) {
+                sigma += weightMatrix.getEntry(i, j) *
+                        Math.pow(targets.get(j).getInterestRate() - yield, 2);
+            }
+            stdDeviation.setEntry(i, Math.sqrt(sigma));
+        }
+
+        // Linear programming part
+        LinearObjectiveFunction objectiveFunction = new LinearObjectiveFunction(stdDeviation, 0);
+        List<LinearConstraint> constraints = new ArrayList<>();
+        LinearConstraint constraint1 = new LinearConstraint(yieldVector, Relationship.EQ, interstRate);
+        LinearConstraint constraint2 = new LinearConstraint(new ArrayRealVector(matrixSize, 1.),
+                Relationship.EQ, 1);
+        constraints.add(constraint1);
+        constraints.add(constraint2);
+        for (int i = 0; i < matrixSize; i++) {
+            double e = targets.get(i).getMoney() - targets.get(i).getCollectedMoney();
+            constraints.add(new LinearConstraint(new double[]{money}, Relationship.LEQ, e));
+        }
+        SimplexSolver optimizer = new SimplexSolver();
+        double[] result = optimizer.optimize(objectiveFunction,
+                new LinearConstraintSet(constraints), GoalType.MINIMIZE).getPoint();
+
+        List<InvestmentStrategy> strategies = new ArrayList<>();
+        for (int i = 0; i < matrixSize; i++) {
+            strategies.add(new InvestmentStrategy(targetIds.get(i), result[i], result[i] * money));
+        }
+
+        return strategies;
     }
 
     @Override
@@ -154,11 +250,6 @@ public class TargetServiceImpl implements TargetService {
         targetRepository.save(target);
 
         return ApiResponse.successResponse();
-    }
-
-    private TargetInfo convertToTargetInfo(BaseTarget target) {
-        return target.getTargetType() == TargetType.SMALL ?
-                new SmallTargetInfo((SmallTarget) target) : new LargeTargetInfo((LargeTarget) target);
     }
 
     /**
@@ -196,5 +287,9 @@ public class TargetServiceImpl implements TargetService {
 
     private double gaussianKernel(double t) {
         return (1 / Math.sqrt(2 * Math.PI)) * Math.exp(-1 / 2 * Math.pow(t, 2.));
+    }
+
+    private double sum(double[] array) {
+        return Arrays.stream(array).sum();
     }
 }
