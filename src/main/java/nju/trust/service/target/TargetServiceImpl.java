@@ -1,8 +1,8 @@
 package nju.trust.service.target;
 
-import nju.trust.dao.target.*;
-import nju.trust.dao.UserRepository;
 import nju.trust.dao.record.InvestmentRecordRepository;
+import nju.trust.dao.target.*;
+import nju.trust.dao.user.UserRepository;
 import nju.trust.entity.CreditRating;
 import nju.trust.entity.TargetRating;
 import nju.trust.entity.TargetState;
@@ -11,16 +11,18 @@ import nju.trust.entity.record.InvestmentRecord;
 import nju.trust.entity.target.BaseTarget;
 import nju.trust.entity.target.LargeTarget;
 import nju.trust.entity.target.SmallTarget;
-import nju.trust.entity.user.AssetStatistics;
 import nju.trust.entity.user.User;
+import nju.trust.entity.user.UserMonthStatistics;
+import nju.trust.exception.InternalException;
 import nju.trust.exception.ResourceNotFoundException;
 import nju.trust.payloads.ApiResponse;
 import nju.trust.payloads.investment.InvestmentStrategy;
 import nju.trust.payloads.target.*;
 import nju.trust.service.TargetService;
-import org.apache.commons.math3.linear.*;
-import org.apache.commons.math3.optim.OptimizationData;
-import org.apache.commons.math3.optim.PointValuePair;
+import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.MatrixUtils;
+import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.optim.linear.*;
 import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
 import org.slf4j.Logger;
@@ -264,10 +266,11 @@ public class TargetServiceImpl implements TargetService {
         double interestRate = target.getInterestRate();
         int duration = target.getRepaymentDuration();
 
-
         CreditRating creditRating = CreditRating.of(user.getCreditScore());
-        AssetStatistics assetStatistics = user.getAssetStatistics();
-        int monthIncome = assetStatistics.getMonthIncomeLevel();
+        double avgMonthlyIncome = user.getMonthStatistics().stream()
+                .mapToDouble(UserMonthStatistics::getIncome).average()
+                .orElseThrow(() -> new InternalException("Something is wrong"));
+        int monthIncome = getMonthIncomeLevel(avgMonthlyIncome);
 
         // Count number of success
         long numberOfSuccess = targetRepository.count((Specification<BaseTarget>)
@@ -291,5 +294,17 @@ public class TargetServiceImpl implements TargetService {
 
     private double sum(double[] array) {
         return Arrays.stream(array).sum();
+    }
+
+    private int getMonthIncomeLevel(double averagedMonthIncome) {
+        double[] slices = {1000., 2000., 3000., 4000., 5000., 10000.};
+        int i = 1;
+        for (double slice : slices) {
+            if (averagedMonthIncome < slice)
+                return i;
+            i++;
+        }
+
+        return i;
     }
 }

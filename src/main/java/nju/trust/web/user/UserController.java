@@ -1,9 +1,5 @@
 package nju.trust.web.user;
 
-import nju.trust.dao.UserRepository;
-import nju.trust.entity.UserLevel;
-import nju.trust.entity.user.RoleName;
-import nju.trust.entity.user.User;
 import nju.trust.payloads.ApiResponse;
 import nju.trust.payloads.JwtAuthenticationResponse;
 import nju.trust.payloads.LoginRequest;
@@ -11,18 +7,15 @@ import nju.trust.payloads.SignUpRequest;
 import nju.trust.security.JwtTokenProvider;
 import nju.trust.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 
 /**
  * All rights Reserved, Designed by Popping Lim

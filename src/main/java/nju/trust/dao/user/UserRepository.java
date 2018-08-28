@@ -1,4 +1,4 @@
-package nju.trust.dao;
+package nju.trust.dao.user;
 
 import nju.trust.entity.user.User;
 import org.springframework.data.repository.CrudRepository;

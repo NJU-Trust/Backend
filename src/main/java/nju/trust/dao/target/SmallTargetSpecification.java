@@ -1,7 +1,5 @@
 package nju.trust.dao.target;
 
-import nju.trust.dao.SearchCriteria;
-import nju.trust.dao.target.SpecificationHelper;
 import nju.trust.entity.CreditRating;
 import nju.trust.entity.SmallProjectClassification;
 import nju.trust.entity.target.BaseTarget;
@@ -22,13 +20,7 @@ import java.util.List;
  */
 public class SmallTargetSpecification implements Specification<SmallTarget> {
 
-    private SearchCriteria criteria;
-
     private SmallTargetFilterRequest filter;
-
-    public SmallTargetSpecification(SearchCriteria criteria) {
-        this.criteria = criteria;
-    }
 
     public SmallTargetSpecification(SmallTargetFilterRequest filter) {
         this.filter = filter;
