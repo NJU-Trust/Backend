@@ -1,13 +1,13 @@
 package nju.trust.service;
 
 import nju.trust.entity.CheckState;
+import nju.trust.entity.user.UserMonthStatistics;
 import nju.trust.payloads.admin.BaseStatistics;
 import nju.trust.payloads.admin.BreakContractStatistics;
 import nju.trust.payloads.target.LargeTargetInfo;
 import nju.trust.payloads.target.SmallTargetInfo;
 import nju.trust.payloads.target.TargetAdminBriefInfo;
 import nju.trust.payloads.target.TargetInfo;
-import nju.trust.payloads.user.AssetStatistics;
 import nju.trust.payloads.user.UserSimpleInfo;
 import nju.trust.entity.TargetState;
 import nju.trust.entity.TargetType;
@@ -71,7 +71,7 @@ public interface AdminService {
      * @param username 用户昵称
      * @return 财务信息
      */
-    AssetStatistics searchFinancialInfo(String username);
+    List<UserMonthStatistics> searchFinancialInfo(String username);
 
     /**
      * 标的查看

@@ -34,7 +34,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.Predicate;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -86,14 +85,14 @@ public class TargetServiceImpl implements TargetService {
     public ApiResponse applySmallTarget(SmallTargetRequest request, String username) {
         User user = userRepository.findByUsername(username).orElseThrow(InternalError::new);
         SmallTarget smallTarget = new SmallTarget(request, user);
-        return setFileAndSaveTarget(smallTarget, request);
+        return setFileAndSaveTarget(smallTarget);
     }
 
     @Override
     public ApiResponse applyLargeTarget(LargeTargetRequest request, String username) {
         User user = userRepository.findByUsername(username).orElseThrow(InternalError::new);
         LargeTarget largeTarget = new LargeTarget(request, user);
-        return setFileAndSaveTarget(largeTarget, request);
+        return setFileAndSaveTarget(largeTarget);
     }
 
     @Override
@@ -119,7 +118,7 @@ public class TargetServiceImpl implements TargetService {
         targetRepository.save(baseTarget);
 
         // Add record
-        recordRepository.save(new InvestmentRecord(targetId, money, username));
+        recordRepository.save(new InvestmentRecord(targetId, money));
         return ApiResponse.successResponse();
     }
 
@@ -149,7 +148,7 @@ public class TargetServiceImpl implements TargetService {
         return null;
     }
 
-    public List<InvestmentStrategy> recommendStrategy(List<Long> targetIds, double money, double interstRate) {
+    public List<InvestmentStrategy> recommendStrategy(List<Long> targetIds, double money, double interestRate) {
         List<SmallTarget> targets = targetIds.stream()
                 .map(id -> smallTargetRepository.findById(id)
                         .orElseThrow(() -> new ResourceNotFoundException("target", "targetId", id)))
@@ -213,7 +212,7 @@ public class TargetServiceImpl implements TargetService {
         // Linear programming part
         LinearObjectiveFunction objectiveFunction = new LinearObjectiveFunction(stdDeviation, 0);
         List<LinearConstraint> constraints = new ArrayList<>();
-        LinearConstraint constraint1 = new LinearConstraint(yieldVector, Relationship.EQ, interstRate);
+        LinearConstraint constraint1 = new LinearConstraint(yieldVector, Relationship.EQ, interestRate);
         LinearConstraint constraint2 = new LinearConstraint(new ArrayRealVector(matrixSize, 1.),
                 Relationship.EQ, 1);
         constraints.add(constraint1);
@@ -239,15 +238,7 @@ public class TargetServiceImpl implements TargetService {
         return null;
     }
 
-    private ApiResponse setFileAndSaveTarget(BaseTarget target, BasicTargetRequest request) {
-        try {
-            target.setFiles(request.convertFileToByte());
-        } catch (IOException e) {
-            e.printStackTrace();
-            log.error("Error occurs when getting bytes from MultiPartFile");
-            return ApiResponse.serverGoesWrong();
-        }
-
+    private ApiResponse setFileAndSaveTarget(BaseTarget target) {
         setTargetRating(target);
         targetRepository.save(target);
 

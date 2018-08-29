@@ -4,6 +4,7 @@ import nju.trust.entity.CheckState;
 import nju.trust.entity.TargetState;
 import nju.trust.entity.TargetType;
 import nju.trust.entity.UserType;
+import nju.trust.entity.user.UserMonthStatistics;
 import nju.trust.payloads.ApiResponse;
 import nju.trust.payloads.SignUpRequest;
 import nju.trust.payloads.admin.BaseStatistics;
@@ -12,7 +13,6 @@ import nju.trust.payloads.target.LargeTargetInfo;
 import nju.trust.payloads.target.SmallTargetInfo;
 import nju.trust.payloads.target.TargetAdminBriefInfo;
 import nju.trust.payloads.target.TargetInfo;
-import nju.trust.payloads.user.AssetStatistics;
 import nju.trust.payloads.user.UserInformation;
 import nju.trust.payloads.user.UserSimpleInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,7 +92,7 @@ public class AdminServiceImpl implements AdminService {
      * @return 财务信息
      */
     @Override
-    public AssetStatistics searchFinancialInfo(String username) {
+    public List<UserMonthStatistics> searchFinancialInfo(String username) {
         return null;
     }
 

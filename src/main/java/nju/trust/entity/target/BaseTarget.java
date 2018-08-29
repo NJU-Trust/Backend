@@ -71,6 +71,7 @@ public abstract class BaseTarget {
     @Enumerated(EnumType.STRING)
     @NotNull TargetType targetType;
 
+    @Lob
     private String projectDescription;
 
     @Lob

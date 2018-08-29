@@ -15,8 +15,8 @@ public class RepaymentRecord extends BaseRecord {
 
     private Long targetId;
 
-    public RepaymentRecord(String username, Double money, Long targetId) {
-        super(username);
+    public RepaymentRecord(Double money, Long targetId) {
+        super();
         this.money = money;
         this.targetId = targetId;
     }
@@ -27,7 +27,6 @@ public class RepaymentRecord extends BaseRecord {
                 "id=" + id +
                 ", money=" + money +
                 ", targetId=" + targetId +
-                ", username='" + username + '\'' +
                 ", time=" + time +
                 '}';
     }

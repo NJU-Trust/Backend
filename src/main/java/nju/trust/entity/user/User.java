@@ -3,9 +3,6 @@ package nju.trust.entity.user;
 import nju.trust.entity.CreditRating;
 import nju.trust.entity.SchoolType;
 import nju.trust.entity.UserLevel;
-import nju.trust.entity.target.BaseTarget;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -59,8 +56,6 @@ public class User {
 
     private String briefIntro;
 
-
-
     private String major;
 
     private Integer grade;
@@ -71,14 +66,11 @@ public class User {
      * School fellows attributes
      */
     @ElementCollection(targetClass = String.class)
-    @Fetch(FetchMode.SUBSELECT)
     private List<String> accomplishment;
 
     private String message;
 
     private String diplomaId;
-
-    private SchoolType schoolType;
 
     /**
      * 学习成绩排名率
@@ -102,73 +94,10 @@ public class User {
      * 获奖情况
      */
     @ElementCollection
-    @Basic(fetch = FetchType.LAZY)
     private Map<AwardLevel, Integer> awards;
-
-    /**
-     * 违约记录
-     */
-    @ElementCollection
-    @Basic(fetch = FetchType.LAZY)
-    private Map<DefaultType, Integer> defaultRecords;
-    /**
-     * 学生工作类型
-     */
-    private StudentWorkType studentWorkType;
-
-    /**
-     * 平均每年志愿时长
-     */
-    private Double averagedVolunteerTime;
-
-    /**
-     * 学历情况
-     */
-    private EducationLevel educationLevel;
-
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<BaseTarget> publishedTargets;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private List<UserMonthStatistics> monthStatistics;
-
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "user")
-    private UserTotalStatistics totalStatistics;
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", avatar='" + avatar + '\'' +
-                ", age=" + age +
-                ", gender=" + gender +
-                ", platformAdvice='" + platformAdvice + '\'' +
-                ", userLevel=" + userLevel +
-                ", creditRating=" + creditRating +
-                ", roles='" + roles + '\'' +
-                ", briefIntro='" + briefIntro + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", email='" + email + '\'' +
-                ", realName='" + realName + '\'' +
-                ", idCardNumber='" + idCardNumber + '\'' +
-                ", studentId='" + studentId + '\'' +
-                ", major='" + major + '\'' +
-                ", grade=" + grade +
-                ", stuCardImage='" + stuCardImage + '\'' +
-                ", accomplishment=" + accomplishment +
-                ", message='" + message + '\'' +
-                ", diplomaId='" + diplomaId + '\'' +
-                ", schoolType=" + schoolType +
-                ", rankingRate=" + rankingRate +
-                ", failedSubjects=" + failedSubjects +
-                ", awards=" + awards +
-                ", defaultRecords=" + defaultRecords +
-                ", studentWorkType=" + studentWorkType +
-                ", averagedVolunteerTime=" + averagedVolunteerTime +
-                ", educationLevel=" + educationLevel +
-                '}';
-    }
 
     public List<UserMonthStatistics> getMonthStatistics() {
         return monthStatistics;
@@ -178,36 +107,12 @@ public class User {
         this.monthStatistics = monthStatistics;
     }
 
-    public UserTotalStatistics getTotalStatistics() {
-        return totalStatistics;
-    }
-
-    public void setTotalStatistics(UserTotalStatistics totalStatistics) {
-        this.totalStatistics = totalStatistics;
-    }
-
     public Double getCreditScore() {
         return creditScore;
     }
 
     public void setCreditScore(Double creditScore) {
         this.creditScore = creditScore;
-    }
-
-    public List<BaseTarget> getPublishedTargets() {
-        return publishedTargets;
-    }
-
-    public void setPublishedTargets(List<BaseTarget> publishedTargets) {
-        this.publishedTargets = publishedTargets;
-    }
-
-    public SchoolType getSchoolType() {
-        return schoolType;
-    }
-
-    public void setSchoolType(SchoolType schoolType) {
-        this.schoolType = schoolType;
     }
 
     public Double getRankingRate() {
@@ -232,38 +137,6 @@ public class User {
 
     public void setAwards(Map<AwardLevel, Integer> awards) {
         this.awards = awards;
-    }
-
-    public Map<DefaultType, Integer> getDefaultRecords() {
-        return defaultRecords;
-    }
-
-    public void setDefaultRecords(Map<DefaultType, Integer> defaultRecords) {
-        this.defaultRecords = defaultRecords;
-    }
-
-    public StudentWorkType getStudentWorkType() {
-        return studentWorkType;
-    }
-
-    public void setStudentWorkType(StudentWorkType studentWorkType) {
-        this.studentWorkType = studentWorkType;
-    }
-
-    public Double getAveragedVolunteerTime() {
-        return averagedVolunteerTime;
-    }
-
-    public void setAveragedVolunteerTime(Double averagedVolunteerTime) {
-        this.averagedVolunteerTime = averagedVolunteerTime;
-    }
-
-    public EducationLevel getEducationLevel() {
-        return educationLevel;
-    }
-
-    public void setEducationLevel(EducationLevel educationLevel) {
-        this.educationLevel = educationLevel;
     }
 
     public String getDiplomaId() {

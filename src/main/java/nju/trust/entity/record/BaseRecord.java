@@ -1,26 +1,25 @@
 package nju.trust.entity.record;
 
+import nju.trust.entity.user.User;
+
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @MappedSuperclass
 public class BaseRecord {
 
-    String username;
-
     LocalDateTime time;
 
-    public BaseRecord(String username) {
-        this.username = username;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "username")
+    User user;
+
+    BaseRecord() {
         time = LocalDateTime.now();
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public LocalDateTime getTime() {

@@ -17,8 +17,8 @@ public class TargetModificationRecord extends BaseRecord {
 
     private Long targetId;
 
-    public TargetModificationRecord(String username, Double moneyBefore, Double moneyAfter, Long targetId) {
-        super(username);
+    public TargetModificationRecord(Double moneyBefore, Double moneyAfter, Long targetId) {
+        super();
         this.moneyBefore = moneyBefore;
         this.moneyAfter = moneyAfter;
         this.targetId = targetId;
@@ -31,7 +31,6 @@ public class TargetModificationRecord extends BaseRecord {
                 ", moneyBefore=" + moneyBefore +
                 ", moneyAfter=" + moneyAfter +
                 ", targetId=" + targetId +
-                ", username='" + username + '\'' +
                 ", time=" + time +
                 '}';
     }
