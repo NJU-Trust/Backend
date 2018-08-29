@@ -1,5 +1,6 @@
 package nju.trust.web.user;
 
+import nju.trust.entity.UserLevel;
 import nju.trust.payloads.ApiResponse;
 import nju.trust.payloads.JwtAuthenticationResponse;
 import nju.trust.payloads.LoginRequest;
@@ -7,6 +8,7 @@ import nju.trust.payloads.SignUpRequest;
 import nju.trust.security.JwtTokenProvider;
 import nju.trust.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
