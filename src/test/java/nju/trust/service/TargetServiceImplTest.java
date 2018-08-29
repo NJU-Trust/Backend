@@ -4,12 +4,15 @@ import nju.trust.dao.target.SmallTargetRepository;
 import nju.trust.dao.target.SmallTargetSpecification;
 import nju.trust.dao.target.TargetRepository;
 import nju.trust.payloads.target.SmallTargetFilterRequest;
+import org.hibernate.SessionFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import javax.persistence.EntityManager;
 
 /**
  * Author: J.D. Liao
@@ -22,6 +25,10 @@ public class TargetServiceImplTest {
 
     @Autowired
     private TargetRepository targetRepository;
+
+    @Autowired
+    private EntityManager entityManager;
+
 
     @Autowired
     private SmallTargetRepository smallTargetRepository;

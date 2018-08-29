@@ -193,7 +193,7 @@ public class TargetServiceImpl implements TargetService {
         for (int i = 0; i < matrixSize; i++) {
             double yield = 0.;
             for (int j = 0; j < matrixSize; j++) {
-                yield += weightMatrix.getEntry(i, j) * targets.get(j).getInterestRate();
+                yield += weightMatrix.getEntry(i, j) * targets.get(j).getRepayment().getYearInterestRate();
             }
             yieldVector.setEntry(i, yield);
         }
@@ -204,7 +204,7 @@ public class TargetServiceImpl implements TargetService {
             double yield = yieldVector.getEntry(i);
             for (int j = 0; j < matrixSize; j++) {
                 sigma += weightMatrix.getEntry(i, j) *
-                        Math.pow(targets.get(j).getInterestRate() - yield, 2);
+                        Math.pow(targets.get(j).getRepayment().getYearInterestRate() - yield, 2);
             }
             stdDeviation.setEntry(i, Math.sqrt(sigma));
         }
@@ -254,8 +254,8 @@ public class TargetServiceImpl implements TargetService {
         User user = target.getUser();
 
         double money = target.getMoney();
-        double interestRate = target.getInterestRate();
-        int duration = target.getRepaymentDuration();
+        double interestRate = target.getRepayment().getYearInterestRate();
+        int duration = target.getRepayment().getRepaymentDuration();
 
         CreditRating creditRating = CreditRating.of(user.getCreditScore());
         double avgMonthlyIncome = user.getMonthStatistics().stream()

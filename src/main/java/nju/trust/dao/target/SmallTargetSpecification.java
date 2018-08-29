@@ -4,6 +4,7 @@ import nju.trust.entity.CreditRating;
 import nju.trust.entity.SmallProjectClassification;
 import nju.trust.entity.target.BaseTarget;
 import nju.trust.entity.target.SmallTarget;
+import nju.trust.entity.user.Repayment;
 import nju.trust.entity.user.User;
 import nju.trust.payloads.target.SmallTargetFilterRequest;
 import org.springframework.data.jpa.domain.Specification;
@@ -31,6 +32,9 @@ public class SmallTargetSpecification implements Specification<SmallTarget> {
 
         List<Predicate> predicates = new ArrayList<>();
 
+        Root<Repayment> repaymentRoot = query.from(Repayment.class);
+        predicates.add(builder.equal(repaymentRoot.get("target").get("id"), root.get("id")));
+        predicates.add(builder.lessThanOrEqualTo(repaymentRoot.get("repaymentDuration"), filter.getRepaymentDuration()[0]));
         // Money range
         addDoubleRange(root, predicates, builder, "money", filter.getMoney()[0], filter.getMoney()[1]);
         addDoubleRange(root, predicates, builder, "interestRate",
@@ -42,9 +46,9 @@ public class SmallTargetSpecification implements Specification<SmallTarget> {
         Predicate[] p = new Predicate[predicates.size()];
         Predicate result = builder.and(predicates.toArray(p));
 
-        Join<BaseTarget, User> userJoin = root.join("user");
+
         for (CreditRating creditRating : filter.getUserCreditRating())
-            result = builder.or(result, builder.equal(userJoin.get("creditRating"), creditRating));
+            result = builder.or(result, builder.equal(root.get("user").get("creditRating"), creditRating));
         for (SmallProjectClassification classification : filter.getClassifications())
             result = builder.or(result, builder.equal(root.get("classification"), classification));
 

@@ -38,7 +38,7 @@ public class LargeTargetSpecification implements Specification<LargeTarget> {
                 filter.getRepaymentDuration()[0], filter.getRepaymentDuration()[1]);
         addTimeRange(root, predicates, builder, filter.getTime()[0], filter.getTime()[1]);
 
-        Join<LargeTarget, User> userJoin = root.join("user");
+        Join<LargeTarget, User> userJoin = root.join("username");
         addIntegerRange(userJoin, predicates, builder,
                 filter.getUserFailedSubject()[0], filter.getUserFailedSubject()[1]);
         addDoubleRange(userJoin, predicates, builder,

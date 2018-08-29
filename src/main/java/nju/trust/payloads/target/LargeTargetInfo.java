@@ -15,7 +15,6 @@ public class LargeTargetInfo extends TargetInfo {
 
     public LargeTargetInfo(LargeTarget target) {
         super(target);
-//        files = target.getFiles();
         classification = target.getClassification();
     }
 
