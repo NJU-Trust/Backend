@@ -8,11 +8,11 @@ import nju.trust.payloads.ApiResponse;
 import nju.trust.payloads.SignUpRequest;
 import nju.trust.payloads.admin.BaseStatistics;
 import nju.trust.payloads.admin.BreakContractStatistics;
+import nju.trust.payloads.admin.UserStateList;
 import nju.trust.payloads.target.LargeTargetInfo;
 import nju.trust.payloads.target.SmallTargetInfo;
 import nju.trust.payloads.target.TargetAdminBriefInfo;
 import nju.trust.payloads.target.TargetInfo;
-import nju.trust.payloads.user.AssetStatistics;
 import nju.trust.payloads.user.UserInformation;
 import nju.trust.payloads.user.UserSimpleInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +29,8 @@ import java.util.List;
 public class AdminServiceImpl implements AdminService {
     @Autowired
     private TargetService targetService;
+    @Autowired
+    private UserService userService;
 
     @Override
     public ArrayList<UserSimpleInfo> getUserList() {
@@ -37,14 +39,13 @@ public class AdminServiceImpl implements AdminService {
 
     /**
      * 管理员添加用户(默认用户为初级用户)
-     * TODO
      * @param userInfo 用户信息
      *                 用户名邮箱手机等非空
      * @return
      */
     @Override
     public ApiResponse addUser(SignUpRequest userInfo) {
-        return null;
+        return userService.addUser(userInfo);
     }
 
     /**
@@ -91,10 +92,10 @@ public class AdminServiceImpl implements AdminService {
      * @param username 用户昵称
      * @return 财务信息
      */
-    @Override
+/*    @Override
     public AssetStatistics searchFinancialInfo(String username) {
         return null;
-    }
+    }*/
 
     /**
      * 标的查看
@@ -151,7 +152,7 @@ public class AdminServiceImpl implements AdminService {
         }
         return infos;
     }
-    // TODO 不区分大额、小额
+    // 不区分大额、小额
     private ArrayList<TargetAdminBriefInfo> getTargetInfo(Pageable pageable, TargetState state) {
         ArrayList<TargetAdminBriefInfo> infos = new ArrayList<>();
         infos.addAll(getSmallTargetInfo(pageable, state));
@@ -191,6 +192,17 @@ public class AdminServiceImpl implements AdminService {
      */
     @Override
     public List<BreakContractStatistics> getBreakContractStatistics() {
+        return null;
+    }
+
+    /**
+     * 用户审核时得到待审核用户及其状态的列表
+     * 优先级：UPDATE > SUBMIT 时间早 > 时间晚
+     * TODO
+     * @return List<UserStateList>
+     */
+    @Override
+    public List<UserStateList> getUserStateList() {
         return null;
     }
 
