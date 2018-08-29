@@ -99,6 +99,9 @@ public class User {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private List<UserMonthStatistics> monthStatistics;
 
+    @OneToMany(mappedBy = "user")
+    private List<UnstructuredData> unstructuredData;
+
     public List<UserMonthStatistics> getMonthStatistics() {
         return monthStatistics;
     }

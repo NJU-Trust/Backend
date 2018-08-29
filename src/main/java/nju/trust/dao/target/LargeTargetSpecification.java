@@ -3,7 +3,6 @@ package nju.trust.dao.target;
 import nju.trust.entity.CreditRating;
 import nju.trust.entity.LargeProjectClassification;
 import nju.trust.entity.target.LargeTarget;
-import nju.trust.entity.user.User;
 import nju.trust.payloads.target.LargeTargetFilterRequest;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -11,6 +10,7 @@ import javax.persistence.criteria.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Author: J.D. Liao
@@ -31,71 +31,56 @@ public class LargeTargetSpecification implements Specification<LargeTarget> {
 
         List<Predicate> predicates = new ArrayList<>();
 
-        addDoubleRange(root, predicates, builder, "money", filter.getMoney()[0], filter.getMoney()[1]);
-        addDoubleRange(root, predicates, builder, "interestRate",
-                filter.getInterestRate()[0], filter.getInterestRate()[1]);
-        addIntegerRange(root, predicates, builder,
-                filter.getRepaymentDuration()[0], filter.getRepaymentDuration()[1]);
-        addTimeRange(root, predicates, builder, filter.getTime()[0], filter.getTime()[1]);
+        // Money
+        Expression<Double> moneyExpression = root.get("money");
+        Optional.ofNullable(filter.getMoney()[0])
+                .ifPresent(t -> builder.ge(moneyExpression, t));
+        Optional.ofNullable(filter.getMoney()[1])
+                .ifPresent(t -> builder.le(moneyExpression, t));
 
-        Join<LargeTarget, User> userJoin = root.join("username");
-        addIntegerRange(userJoin, predicates, builder,
-                filter.getUserFailedSubject()[0], filter.getUserFailedSubject()[1]);
-        addDoubleRange(userJoin, predicates, builder,
-                filter.getUserRankingRate()[0], filter.getUserRankingRate()[1]);
+        // Interest rate
+        Expression<Double> interestRateExpression = root.get("repayment").get("yearInterestRate");
+        Optional.ofNullable(filter.getInterestRate()[0])
+                .ifPresent(t -> predicates.add(builder.ge(interestRateExpression, t)));
+        Optional.ofNullable(filter.getInterestRate()[1])
+                .ifPresent(t -> predicates.add(builder.le(interestRateExpression, t)));
+
+        // Repayment duration
+        Expression<Integer> durationExpression = root.get("repayment").get("repaymentDuration");
+        Optional.ofNullable(filter.getRepaymentDuration()[0])
+                .ifPresent(t -> predicates.add(builder.ge(durationExpression, t)));
+        Optional.ofNullable(filter.getRepaymentDuration()[1])
+                .ifPresent(t -> predicates.add(builder.le(durationExpression, t)));
+
+        // Start time
+        Expression<LocalDateTime> timeExpression = root.get("startTime");
+        Optional.ofNullable(filter.getTime()[0])
+                .ifPresent(t -> predicates.add(builder.greaterThanOrEqualTo(timeExpression, t)));
+        Optional.ofNullable(filter.getTime()[1])
+                .ifPresent(t -> predicates.add(builder.lessThanOrEqualTo(timeExpression, t)));
+
+        // User failed subjects
+        Expression<Integer> failedSubjectsExpression = root.get("user").get("failedSubjects");
+        Optional.ofNullable(filter.getUserFailedSubject()[0])
+                .ifPresent(t -> predicates.add(builder.ge(failedSubjectsExpression, t)));
+        Optional.ofNullable(filter.getUserFailedSubject()[1])
+                .ifPresent(t -> predicates.add(builder.le(failedSubjectsExpression, t)));
+
+        // User ranking rate
+        Expression<Double> rankingExpression = root.get("user").get("rankingRate");
+        Optional.ofNullable(filter.getUserRankingRate()[0])
+                .ifPresent(t -> predicates.add(builder.ge(rankingExpression, t)));
+        Optional.ofNullable(filter.getUserRankingRate()[1])
+                .ifPresent(t -> predicates.add(builder.le(rankingExpression, t)));
 
         Predicate[] p = new Predicate[predicates.size()];
         Predicate result = builder.and(predicates.toArray(p));
+
         for (CreditRating creditRating : filter.getUserCreditRating())
-            result = builder.or(result, builder.equal(userJoin.get("creditRating"), creditRating));
+            result = builder.or(result, builder.equal(root.get("user").get("creditRating"), creditRating));
         for (LargeProjectClassification classification : filter.getClassifications())
             result = builder.or(result, builder.equal(root.get("classification"), classification));
 
         return result;
-    }
-
-    private void addDoubleRange(Root<LargeTarget> root, List<Predicate> predicates, CriteriaBuilder builder,
-                               String name, Double lowerBound, Double higherBound) {
-        Expression<Double> expression = root.get(name).as(Double.class);
-        if (lowerBound != null)
-            predicates.add(builder.greaterThanOrEqualTo(expression, lowerBound));
-        if (higherBound != null)
-            predicates.add(builder.lessThanOrEqualTo(expression, higherBound));
-    }
-
-    private void addIntegerRange(Root<LargeTarget> root, List<Predicate> predicates, CriteriaBuilder builder,
-                                 Integer lowerBound, Integer higherBound) {
-        Expression<Integer> expression = root.get("repaymentDuration").as(Integer.class);
-        if (lowerBound != null)
-            predicates.add(builder.greaterThanOrEqualTo(expression, lowerBound));
-        if (higherBound != null)
-            predicates.add(builder.lessThanOrEqualTo(expression, higherBound));
-    }
-
-    private void addTimeRange(Root<LargeTarget> root, List<Predicate> predicates, CriteriaBuilder builder,
-                             LocalDateTime lowerBound, LocalDateTime higherBound) {
-        Expression<LocalDateTime> expression = root.get("startTime").as(LocalDateTime.class);
-        if (lowerBound != null)
-            predicates.add(builder.greaterThanOrEqualTo(expression, lowerBound));
-        if (higherBound != null)
-            predicates.add(builder.lessThanOrEqualTo(expression, higherBound));
-    }
-
-    private void addIntegerRange(Join<LargeTarget, User> root, List<Predicate> predicates, CriteriaBuilder builder,
-                                 Integer lowerBound, Integer higherBound) {
-        Expression<Integer> expression = root.get("failedSubjects").as(Integer.class);
-        if (lowerBound != null)
-            predicates.add(builder.greaterThanOrEqualTo(expression, lowerBound));
-        if (higherBound != null)
-            predicates.add(builder.lessThanOrEqualTo(expression, higherBound));
-    }
-
-    private void addDoubleRange(Join<LargeTarget, User> root, List<Predicate> predicates, CriteriaBuilder builder,
-                                Double lowerBound, Double higherBound) {
-        Expression<Double> expression = root.get("rankingRate").as(Double.class);
-        if (lowerBound != null)
-            predicates.add(builder.greaterThanOrEqualTo(expression, lowerBound));
-        if (higherBound != null)
-            predicates.add(builder.lessThanOrEqualTo(expression, higherBound));
     }
 }

@@ -9,8 +9,6 @@ import nju.trust.entity.user.User;
 import nju.trust.payloads.target.BasicTargetRequest;
 
 import javax.persistence.*;
-import javax.validation.constraints.DecimalMax;
-import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
@@ -64,6 +62,7 @@ public abstract class BaseTarget {
      * 还款方案
      */
     @OneToOne(fetch = FetchType.LAZY)
+    @NotNull
     private Repayment repayment;
 
     IdentityOption identityOption;

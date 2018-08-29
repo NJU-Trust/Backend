@@ -14,6 +14,21 @@ import java.time.LocalDateTime;
  */
 public class LargeTargetFilterRequest {
 
+    public static LargeTargetFilterRequest testData() {
+        LargeTargetFilterRequest filter = new LargeTargetFilterRequest();
+        filter.setInterestRate(new Double[]{0., 0.});
+        filter.setMoney(new Double[]{0., 0.});
+        filter.setRepaymentDuration(new Integer[]{0, 0});
+        filter.setTime(new LocalDateTime[]{LocalDateTime.now(), LocalDateTime.now()});
+        filter.setClassifications(new LargeProjectClassification[]{
+                LargeProjectClassification.CERTIFICATE_TEST, LargeProjectClassification.GMAT});
+        filter.setUserCreditRating(new CreditRating[]{});
+        filter.setUserFailedSubject(new Integer[]{0, null});
+        filter.setUserRankingRate(new Double[]{null, 50.});
+
+        return filter;
+    }
+
     @Size(min = 2, max = 2)
     private Double[] money;
 
