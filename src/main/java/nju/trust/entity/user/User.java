@@ -1,7 +1,6 @@
 package nju.trust.entity.user;
 
 import nju.trust.entity.CreditRating;
-import nju.trust.entity.SchoolType;
 import nju.trust.entity.UserLevel;
 
 import javax.persistence.*;
@@ -90,12 +89,6 @@ public class User {
     @Min(0)
     private Integer failedSubjects;
 
-    /**
-     * 获奖情况
-     */
-    @ElementCollection
-    private Map<AwardLevel, Integer> awards;
-
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private List<UserMonthStatistics> monthStatistics;
 
@@ -132,14 +125,6 @@ public class User {
 
     public void setFailedSubjects(Integer failedSubjects) {
         this.failedSubjects = failedSubjects;
-    }
-
-    public Map<AwardLevel, Integer> getAwards() {
-        return awards;
-    }
-
-    public void setAwards(Map<AwardLevel, Integer> awards) {
-        this.awards = awards;
     }
 
     public String getDiplomaId() {

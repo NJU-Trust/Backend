@@ -18,8 +18,6 @@ public enum UnstructuredDataType {
 
     FAILED_SUBJECTS,
 
-    ATTENDANCE,
-
     SCHOLARSHIP,
 
     AWARD,
@@ -29,8 +27,6 @@ public enum UnstructuredDataType {
     VIOLATION,
 
     TUITION,
-
-    UTILITY_FEE,
 
     BORROWING_BOOK,
 

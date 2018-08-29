@@ -1,6 +1,8 @@
 package nju.trust.service;
 
 import nju.trust.entity.*;
+import nju.trust.entity.target.TargetState;
+import nju.trust.entity.target.TargetType;
 import nju.trust.payloads.admin.BaseStatistics;
 import nju.trust.payloads.admin.BreakContractStatistics;
 import nju.trust.payloads.admin.UserStateList;

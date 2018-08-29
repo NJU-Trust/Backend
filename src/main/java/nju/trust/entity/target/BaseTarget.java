@@ -1,15 +1,13 @@
 package nju.trust.entity.target;
 
-import nju.trust.entity.IdentityOption;
-import nju.trust.entity.TargetRating;
-import nju.trust.entity.TargetState;
-import nju.trust.entity.TargetType;
+import nju.trust.entity.user.IdentityOption;
 import nju.trust.entity.user.Repayment;
 import nju.trust.entity.user.User;
 import nju.trust.payloads.target.BasicTargetRequest;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -26,6 +24,12 @@ public abstract class BaseTarget {
     private User user;
 
     private LocalDateTime startTime;
+
+    /**
+     * 借款募集截止时间：如果在这个时间之前就满标，则将改时间改为
+     * 满标时的时间，并从此时开始计算利息
+     */
+    private LocalDateTime completeDate;
 
     private String name;
 
@@ -79,23 +83,13 @@ public abstract class BaseTarget {
         targetState = TargetState.PENDING;
     }
 
-    @Override
-    public String toString() {
-        return "BaseTarget{" +
-                "id=" + id +
-                ", startTime=" + startTime +
-                ", name='" + name + '\'' +
-                ", money=" + money +
-                ", collectedMoney=" + collectedMoney +
-                ", targetState=" + targetState +
-                ", completionRate=" + completionRate +
-                ", targetRating=" + targetRating +
-                ", targetType=" + targetType +
-                ", identityOption=" + identityOption +
-                ", projectDescription=" + projectDescription +
-                '}';
+    public LocalDateTime getCompleteDate() {
+        return completeDate;
     }
 
+    public void setCompleteDate(LocalDateTime completeDate) {
+        this.completeDate = completeDate;
+    }
 
     public Repayment getRepayment() {
         return repayment;

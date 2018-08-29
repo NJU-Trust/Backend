@@ -1,7 +1,7 @@
 package nju.trust.service;
 
 import nju.trust.dao.user.UserRepository;
-import nju.trust.entity.IdentityOption;
+import nju.trust.entity.user.IdentityOption;
 import nju.trust.entity.UserLevel;
 import nju.trust.entity.user.RoleName;
 import nju.trust.entity.user.User;

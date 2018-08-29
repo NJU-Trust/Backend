@@ -4,9 +4,9 @@ import nju.trust.dao.record.InvestmentRecordRepository;
 import nju.trust.dao.target.*;
 import nju.trust.dao.user.UserRepository;
 import nju.trust.entity.CreditRating;
-import nju.trust.entity.TargetRating;
-import nju.trust.entity.TargetState;
-import nju.trust.entity.TargetType;
+import nju.trust.entity.target.TargetRating;
+import nju.trust.entity.target.TargetState;
+import nju.trust.entity.target.TargetType;
 import nju.trust.entity.record.InvestmentRecord;
 import nju.trust.entity.target.BaseTarget;
 import nju.trust.entity.target.LargeTarget;
@@ -139,6 +139,7 @@ public class TargetServiceImpl implements TargetService {
         return targets.stream().map(SmallTargetInfo::new).collect(Collectors.toList());
     }
 
+    @Override
     public List<TargetInfo> recommendSmallTargets(SmallTargetFilterRequest filterRequest) {
         // Get top 8 targets with highest success rate
         Specification<SmallTarget> specification = new SmallTargetSpecification(filterRequest);
@@ -148,6 +149,7 @@ public class TargetServiceImpl implements TargetService {
         return null;
     }
 
+    @Override
     public List<InvestmentStrategy> recommendStrategy(List<Long> targetIds, double money, double interestRate) {
         List<SmallTarget> targets = targetIds.stream()
                 .map(id -> smallTargetRepository.findById(id)

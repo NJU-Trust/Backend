@@ -16,7 +16,7 @@ public class BaseRecord {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "username")
-    User user;
+    private User user;
 
     BaseRecord() {
         time = LocalDateTime.now();
@@ -28,5 +28,13 @@ public class BaseRecord {
 
     public void setTime(LocalDateTime time) {
         this.time = time;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

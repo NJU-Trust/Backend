@@ -1,7 +1,7 @@
 package nju.trust.dao.target;
 
 import nju.trust.entity.CreditRating;
-import nju.trust.entity.SmallProjectClassification;
+import nju.trust.entity.target.SmallProjectClassification;
 import nju.trust.entity.target.SmallTarget;
 import nju.trust.payloads.target.SmallTargetFilterRequest;
 import org.springframework.data.jpa.domain.Specification;

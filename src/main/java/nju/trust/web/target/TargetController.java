@@ -1,15 +1,16 @@
 package nju.trust.web.target;
 
+import nju.trust.payloads.ApiResponse;
 import nju.trust.payloads.investment.InterestRateInterval;
 import nju.trust.payloads.investment.InvestmentStrategy;
-import nju.trust.payloads.ApiResponse;
 import nju.trust.payloads.target.*;
 import nju.trust.service.TargetService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.awt.print.Pageable;
+import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
 
@@ -46,22 +47,23 @@ public class TargetController {
     }
 
     @RequestMapping("/largeTargetList")
-    public List<TargetInfo> getLargeTargets(Pageable pageable, LargeTargetFilterRequest filter) {
-        return null;
+    public List<TargetInfo> getLargeTargets(Pageable pageable, @Valid LargeTargetFilterRequest filter) {
+        return targetService.filterLargeTargets(pageable, filter);
     }
 
     @RequestMapping("/smallTargetList")
-    public List<TargetInfo> getSmallTargets(Pageable pageable, SmallTargetFilterRequest filter) {
-        return null;
+    public List<TargetInfo> getSmallTargets(Pageable pageable, @Valid SmallTargetFilterRequest filter) {
+        return targetService.filterSmallTargets(pageable, filter);
     }
 
     @RequestMapping("/recommendSmall")
-    public List<TargetInfo> smallTargetRecommendation() {
-        return null;
+    public List<TargetInfo> smallTargetRecommendation(@Valid SmallTargetFilterRequest filterRequest) {
+        return targetService.recommendSmallTargets(filterRequest);
     }
 
     @RequestMapping("/recommendStrategy")
-    public List<InvestmentStrategy> getRecommendationStrategy() {
-        return null;
+    public List<InvestmentStrategy> getRecommendationStrategy(List<Long> targets,
+                                                              Double expectedInterestRate, Double money) {
+        return targetService.recommendStrategy(targets, money, expectedInterestRate);
     }
 }

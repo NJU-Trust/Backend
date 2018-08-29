@@ -1,14 +1,10 @@
 package nju.trust.entity.target;
 
-import nju.trust.entity.IdentityOption;
-import nju.trust.entity.LargeProjectClassification;
-import nju.trust.entity.TargetType;
+import nju.trust.entity.user.IdentityOption;
 import nju.trust.entity.user.User;
-import nju.trust.payloads.target.BasicTargetRequest;
 import nju.trust.payloads.target.LargeTargetRequest;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @DiscriminatorValue("LARGE")

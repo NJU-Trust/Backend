@@ -1,8 +1,8 @@
 package nju.trust.service;
 
 import nju.trust.entity.CheckState;
-import nju.trust.entity.TargetState;
-import nju.trust.entity.TargetType;
+import nju.trust.entity.target.TargetState;
+import nju.trust.entity.target.TargetType;
 import nju.trust.entity.UserType;
 import nju.trust.payloads.ApiResponse;
 import nju.trust.payloads.SignUpRequest;

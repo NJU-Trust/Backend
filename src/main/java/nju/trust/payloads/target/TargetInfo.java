@@ -1,11 +1,10 @@
 package nju.trust.payloads.target;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import nju.trust.entity.TargetRating;
-import nju.trust.entity.TargetState;
-import nju.trust.entity.TargetType;
+import nju.trust.entity.target.TargetRating;
+import nju.trust.entity.target.TargetState;
+import nju.trust.entity.target.TargetType;
 import nju.trust.entity.target.BaseTarget;
 import nju.trust.entity.user.User;
 
@@ -70,7 +69,6 @@ public class TargetInfo {
         interestRate = baseTarget.getRepayment().getYearInterestRate();
         targetRating = baseTarget.getTargetRating();
         projectDescription = baseTarget.getProjectDescription();
-
         User user = baseTarget.getUser();
         username = user.getUsername();
     }

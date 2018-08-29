@@ -1,8 +1,7 @@
 package nju.trust.payloads.target;
 
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
-import nju.trust.entity.IdentityOption;
-import nju.trust.entity.SmallProjectClassification;
+import nju.trust.entity.user.IdentityOption;
+import nju.trust.entity.target.SmallProjectClassification;
 
 /**
  * Author: J.D. Liao

@@ -1,7 +1,7 @@
 package nju.trust.payloads.target;
 
 import nju.trust.entity.CreditRating;
-import nju.trust.entity.SmallProjectClassification;
+import nju.trust.entity.target.SmallProjectClassification;
 
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;

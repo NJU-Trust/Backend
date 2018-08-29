@@ -1,7 +1,7 @@
 package nju.trust.payloads.target;
 
 import nju.trust.entity.CreditRating;
-import nju.trust.entity.TargetType;
+import nju.trust.entity.target.TargetType;
 
 /**
  * Author: J.D. Liao

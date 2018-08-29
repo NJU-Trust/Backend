@@ -1,6 +1,6 @@
 package nju.trust.payloads.target;
 
-import nju.trust.entity.LargeProjectClassification;
+import nju.trust.entity.target.LargeProjectClassification;
 import nju.trust.entity.target.LargeTarget;
 
 /**

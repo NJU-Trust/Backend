@@ -1,6 +1,6 @@
 package nju.trust.service;
 
-import nju.trust.entity.IdentityOption;
+import nju.trust.entity.user.IdentityOption;
 import nju.trust.payloads.ApiResponse;
 import nju.trust.payloads.SignUpRequest;
 import nju.trust.payloads.user.*;
