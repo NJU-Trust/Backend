@@ -3,7 +3,6 @@ package nju.trust.entity.user;
 import nju.trust.entity.CreditRating;
 import nju.trust.entity.SchoolType;
 import nju.trust.entity.UserLevel;
-import nju.trust.entity.record.InvestmentRecord;
 import nju.trust.entity.target.BaseTarget;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -27,12 +26,26 @@ public class User {
     @NotBlank
     private String password;
 
+    private String phoneNumber;
+
+    @Email
+    private String email;
+
     private String avatar;
 
-    private Integer age;
+    private String realName;
+
+    private String idCardNumber;
+
+    /**
+     * 校园卡号
+     */
+    private String studentId;
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
+
+    private Integer age;
 
     private String platformAdvice;
 
@@ -46,22 +59,7 @@ public class User {
 
     private String briefIntro;
 
-    private String phoneNumber;
 
-    @Email
-    private String email;
-
-    /**
-     * Complete user's attributes
-     */
-    private String realName;
-
-    private String idCardNumber;
-
-    /**
-     * Intermediate user's attributes
-     */
-    private String studentId;
 
     private String major;
 
@@ -88,6 +86,11 @@ public class User {
     @DecimalMax("1.0")
     @DecimalMin("0.0")
     private Double rankingRate;
+
+    /**
+     * 信用分数
+     */
+    private Double creditScore;
 
     /**
      * 挂科数
@@ -123,8 +126,14 @@ public class User {
      */
     private EducationLevel educationLevel;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<BaseTarget> publishedTargets;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private List<UserMonthStatistics> monthStatistics;
+
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "user")
+    private UserTotalStatistics totalStatistics;
 
     @Override
     public String toString() {
@@ -159,6 +168,30 @@ public class User {
                 ", averagedVolunteerTime=" + averagedVolunteerTime +
                 ", educationLevel=" + educationLevel +
                 '}';
+    }
+
+    public List<UserMonthStatistics> getMonthStatistics() {
+        return monthStatistics;
+    }
+
+    public void setMonthStatistics(List<UserMonthStatistics> monthStatistics) {
+        this.monthStatistics = monthStatistics;
+    }
+
+    public UserTotalStatistics getTotalStatistics() {
+        return totalStatistics;
+    }
+
+    public void setTotalStatistics(UserTotalStatistics totalStatistics) {
+        this.totalStatistics = totalStatistics;
+    }
+
+    public Double getCreditScore() {
+        return creditScore;
+    }
+
+    public void setCreditScore(Double creditScore) {
+        this.creditScore = creditScore;
     }
 
     public List<BaseTarget> getPublishedTargets() {

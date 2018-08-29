@@ -1,9 +1,13 @@
 package nju.trust.payloads.target;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import nju.trust.entity.TargetRating;
 import nju.trust.entity.TargetState;
 import nju.trust.entity.TargetType;
 import nju.trust.entity.target.BaseTarget;
+import nju.trust.entity.user.User;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -17,6 +21,7 @@ public class TargetInfo {
     @NotNull
     private Long id;
 
+    @JsonIgnore
     private TargetType targetType;
 
     private String username;
@@ -35,16 +40,26 @@ public class TargetInfo {
     private TargetState state;
 
     /**
-     * Limit of completion rate
+     * 完成度限制
      */
+    @JsonProperty("completionRate")
     private Double rate;
 
+    @JsonIgnore
     private String riskAnalysis;
 
+    @JsonIgnore
     private String consumptionAdvise;
 
+    /**
+     * 利率（同时也是项目收益情况）
+     */
     private Double interestRate;
 
+    /**
+     * 项目风险评级
+     */
+    @JsonProperty("riskRating")
     private TargetRating targetRating;
 
     private String projectDescription;
@@ -52,7 +67,6 @@ public class TargetInfo {
     public TargetInfo(BaseTarget baseTarget) {
         id = baseTarget.getId();
         targetType = baseTarget.getTargetType();
-        username = baseTarget.getUsername();
         startTime = baseTarget.getStartTime();
         name = baseTarget.getName();
         money = baseTarget.getMoney();
@@ -64,6 +78,9 @@ public class TargetInfo {
         interestRate = baseTarget.getInterestRate();
         targetRating = baseTarget.getTargetRating();
         projectDescription = baseTarget.getProjectDescription();
+
+        User user = baseTarget.getUser();
+        username = user.getUsername();
     }
 
     @Override

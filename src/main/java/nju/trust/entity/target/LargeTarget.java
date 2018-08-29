@@ -3,6 +3,7 @@ package nju.trust.entity.target;
 import nju.trust.entity.IdentityOption;
 import nju.trust.entity.LargeProjectClassification;
 import nju.trust.entity.TargetType;
+import nju.trust.entity.user.User;
 import nju.trust.payloads.target.BasicTargetRequest;
 import nju.trust.payloads.target.LargeTargetRequest;
 
@@ -18,8 +19,8 @@ public class LargeTarget extends BaseTarget {
      */
     private LargeProjectClassification classification;
 
-    public LargeTarget(LargeTargetRequest request, String username) {
-        super(request, username);
+    public LargeTarget(LargeTargetRequest request, User user) {
+        super(request, user);
         classification = request.getClassification();
 
         identityOption = IdentityOption.ONE;

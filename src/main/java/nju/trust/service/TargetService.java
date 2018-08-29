@@ -1,10 +1,8 @@
 package nju.trust.service;
 
-import nju.trust.dao.SearchCriteria;
 import nju.trust.payloads.ApiResponse;
-import nju.trust.payloads.target.LargeTargetRequest;
-import nju.trust.payloads.target.SmallTargetRequest;
-import nju.trust.payloads.target.TargetInfo;
+import nju.trust.payloads.target.*;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -22,9 +20,11 @@ public interface TargetService {
 
     ApiResponse investTarget(Long targetId, String username, Double money);
 
+    List<TargetInfo> filterLargeTargets(Pageable pageable, LargeTargetFilterRequest filterRequest);
+
+    List<TargetInfo> filterSmallTargets(Pageable pageable, SmallTargetFilterRequest filterRequest);
+
     ApiResponse schoolFellowInvestTarget(Long targetId, String username, String interestPlan);
 
-    List<TargetInfo> sortTargets(SortingProperty property);
 
-    List<TargetInfo> filterTargets(List<SearchCriteria> criteriaList, SortingProperty sortingProperty);
 }

@@ -2,6 +2,7 @@ package nju.trust.entity.target;
 
 import nju.trust.entity.SmallProjectClassification;
 import nju.trust.entity.TargetType;
+import nju.trust.entity.user.User;
 import nju.trust.payloads.target.SmallTargetRequest;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -22,8 +23,8 @@ public class SmallTarget extends BaseTarget {
      */
     private Double maximumAmount;
 
-    public SmallTarget(SmallTargetRequest request, String username) {
-        super(request, username);
+    public SmallTarget(SmallTargetRequest request, User user) {
+        super(request, user);
         maximumAmount = request.getMaximumAmount();
         classification = request.getClassification();
         identityOption = request.getIdentityOption();

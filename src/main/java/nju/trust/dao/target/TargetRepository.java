@@ -1,4 +1,4 @@
-package nju.trust.dao;
+package nju.trust.dao.target;
 
 import nju.trust.entity.target.BaseTarget;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;

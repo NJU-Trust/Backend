@@ -6,13 +6,12 @@ import nju.trust.entity.TargetState;
 import nju.trust.entity.TargetType;
 import nju.trust.entity.user.User;
 import nju.trust.payloads.target.BasicTargetRequest;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
+import javax.validation.constraints.DecimalMax;
+import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
-import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -24,10 +23,8 @@ public abstract class BaseTarget {
     @GeneratedValue
     private Long id;
 
-    private String username;
-
     @ManyToOne(targetEntity = User.class)
-    @JoinColumn(name = "user.username", nullable = false)
+    @JoinColumn(name = "username", nullable = false)
     private User user;
 
     private LocalDateTime startTime;
@@ -54,8 +51,10 @@ public abstract class BaseTarget {
     private String consumptionAdvise;
 
     /**
-     * 项目利率，同时也是收益情况
+     * 项目利率，同时也是收益情况，百分数
      */
+    @DecimalMin("0.0")
+    @DecimalMax("100.0")
     private Double interestRate;
 
     /**
@@ -63,6 +62,11 @@ public abstract class BaseTarget {
      */
     @Enumerated(value = EnumType.STRING)
     private TargetRating targetRating;
+
+    /**
+     * 项目风险评级分数（同时也是计算所得的标的成功率）
+     */
+    private Double targetRatingScore;
 
     @Enumerated(EnumType.STRING)
     @NotNull TargetType targetType;
@@ -82,8 +86,8 @@ public abstract class BaseTarget {
 
     IdentityOption identityOption;
 
-    BaseTarget(BasicTargetRequest request, String username) {
-        this.username = username;
+    BaseTarget(BasicTargetRequest request, User user) {
+        this.user = user;
         startTime = request.getStartTime();
         name = request.getName();
         money = request.getMoney();
@@ -98,7 +102,6 @@ public abstract class BaseTarget {
     public String toString() {
         return "BaseTarget{" +
                 "id=" + id +
-                ", username='" + username + '\'' +
                 ", startTime=" + startTime +
                 ", name='" + name + '\'' +
                 ", money=" + money +
@@ -113,6 +116,14 @@ public abstract class BaseTarget {
                 ", identityOption=" + identityOption +
                 ", projectDescription=" + projectDescription +
                 '}';
+    }
+
+    public Double getTargetRatingScore() {
+        return targetRatingScore;
+    }
+
+    public void setTargetRatingScore(Double targetRatingScore) {
+        this.targetRatingScore = targetRatingScore;
     }
 
     public User getUser() {
@@ -185,14 +196,6 @@ public abstract class BaseTarget {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public LocalDateTime getStartTime() {

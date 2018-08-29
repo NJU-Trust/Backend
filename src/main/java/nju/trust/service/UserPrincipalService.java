@@ -1,6 +1,6 @@
 package nju.trust.service;
 
-import nju.trust.dao.UserRepository;
+import nju.trust.dao.user.UserRepository;
 import nju.trust.entity.user.User;
 import nju.trust.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
