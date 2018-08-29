@@ -1,17 +1,14 @@
 package nju.trust.service;
 
-import nju.trust.entity.CheckState;
+import nju.trust.entity.*;
 import nju.trust.payloads.admin.BaseStatistics;
 import nju.trust.payloads.admin.BreakContractStatistics;
+import nju.trust.payloads.admin.UserStateList;
 import nju.trust.payloads.target.LargeTargetInfo;
 import nju.trust.payloads.target.SmallTargetInfo;
 import nju.trust.payloads.target.TargetAdminBriefInfo;
 import nju.trust.payloads.target.TargetInfo;
-import nju.trust.payloads.user.AssetStatistics;
 import nju.trust.payloads.user.UserSimpleInfo;
-import nju.trust.entity.TargetState;
-import nju.trust.entity.TargetType;
-import nju.trust.entity.UserType;
 import nju.trust.payloads.ApiResponse;
 import nju.trust.payloads.SignUpRequest;
 import nju.trust.payloads.user.UserInformation;
@@ -24,14 +21,13 @@ import java.util.List;
 /**
  * @Author: 161250127
  * @Description: 用于【管理员】用户管理
- *               用例6 7 8
  * @Date: 2018/8/26
  */
 @Service
 public interface AdminService {
     public ArrayList<UserSimpleInfo> getUserList();
 
-    // 用例6：用户管理
+    // 用户管理
     /**
      * 管理员添加用户(默认用户为初级用户)
      * @param userInfo 用户信息
@@ -71,7 +67,8 @@ public interface AdminService {
      * @param username 用户昵称
      * @return 财务信息
      */
-    AssetStatistics searchFinancialInfo(String username);
+    // TODO 修改返回值
+    //AssetStatistics searchFinancialInfo(String username);
 
     /**
      * 标的查看
@@ -124,6 +121,15 @@ public interface AdminService {
 
     // 管理审核
     // TODO 用户审核
+
+    /**
+     * 用户审核时得到待审核用户及其状态的列表
+     * 优先级：UPDATE > SUBMIT 时间早 > 时间晚
+     * @return List<UserStateList>
+     */
+    List<UserStateList> getUserStateList();
+
+
 
     // 标的发布审核
     /**
