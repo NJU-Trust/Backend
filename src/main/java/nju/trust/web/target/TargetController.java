@@ -1,10 +1,12 @@
 package nju.trust.web.target;
 
 import nju.trust.payloads.ApiResponse;
+import nju.trust.payloads.Range;
 import nju.trust.payloads.investment.InterestRateInterval;
 import nju.trust.payloads.investment.InvestmentStrategy;
 import nju.trust.payloads.target.*;
 import nju.trust.service.TargetService;
+import nju.trust.service.UserService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,8 +27,11 @@ public class TargetController {
 
     private TargetService targetService;
 
-    public TargetController(TargetService targetService) {
+    private UserService userService;
+
+    public TargetController(TargetService targetService, UserService userService) {
         this.targetService = targetService;
+        this.userService = userService;
     }
 
     @PostMapping("/new/small")
@@ -65,5 +70,10 @@ public class TargetController {
     public List<InvestmentStrategy> getRecommendationStrategy(List<Long> targets,
                                                               Double expectedInterestRate, Double money) {
         return targetService.recommendStrategy(targets, money, expectedInterestRate);
+    }
+
+    @RequestMapping("/rateRange")
+    public Range<Double> getInterestRateRange(Principal principal) {
+        return userService.getInterestRange(principal.getName());
     }
 }
