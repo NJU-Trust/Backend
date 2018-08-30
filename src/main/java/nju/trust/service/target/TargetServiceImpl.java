@@ -2,6 +2,7 @@ package nju.trust.service.target;
 
 import nju.trust.dao.record.InvestmentRecordRepository;
 import nju.trust.dao.target.*;
+import nju.trust.dao.user.UserMonthlyStatisticsRepository;
 import nju.trust.dao.user.UserRepository;
 import nju.trust.entity.CreditRating;
 import nju.trust.entity.target.TargetRating;
@@ -16,9 +17,11 @@ import nju.trust.entity.user.UserMonthStatistics;
 import nju.trust.exception.InternalException;
 import nju.trust.exception.ResourceNotFoundException;
 import nju.trust.payloads.ApiResponse;
+import nju.trust.payloads.Range;
 import nju.trust.payloads.investment.InvestmentStrategy;
 import nju.trust.payloads.target.*;
 import nju.trust.service.TargetService;
+import nju.trust.util.SimpleExponentialSmoothing;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -27,9 +30,11 @@ import org.apache.commons.math3.optim.linear.*;
 import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -62,17 +67,22 @@ public class TargetServiceImpl implements TargetService {
 
     private UserRepository userRepository;
 
+    private UserMonthlyStatisticsRepository monthlyStatisticsRepository;
+
     private InvestmentRecordRepository recordRepository;
 
+    @Autowired
     public TargetServiceImpl(TargetRepository targetRepository,
                              SmallTargetRepository smallTargetRepository,
                              LargeTargetRepository largeTargetRepository,
                              UserRepository userRepository,
+                             UserMonthlyStatisticsRepository monthlyStatisticsRepository,
                              InvestmentRecordRepository recordRepository) {
         this.targetRepository = targetRepository;
         this.smallTargetRepository = smallTargetRepository;
         this.largeTargetRepository = largeTargetRepository;
         this.userRepository = userRepository;
+        this.monthlyStatisticsRepository = monthlyStatisticsRepository;
         this.recordRepository = recordRepository;
     }
 
@@ -238,6 +248,27 @@ public class TargetServiceImpl implements TargetService {
     @Override
     public ApiResponse schoolFellowInvestTarget(Long targetId, String username, String interestPlan) {
         return null;
+    }
+
+    @Override
+    public Range<Double> getLoanTimeRange(String username, double money) {
+        List<UserMonthStatistics> statistics = monthlyStatisticsRepository
+                .findAllByUserUsername(username, Sort.by(Sort.Direction.ASC, "date"));
+
+        List<Double> surplusData = statistics.stream().map(UserMonthStatistics::getSurplus).collect(Collectors.toList());
+        List<Double> discData = statistics.stream().map(UserMonthStatistics::getDisc).collect(Collectors.toList());
+        double k0 = SimpleExponentialSmoothing.forecast(surplusData);
+        double a0 = SimpleExponentialSmoothing.forecast(discData);
+
+        if (money <= k0)
+            return new Range<>(0., 1.);
+
+        double lower = Math.ceil(money / k0);
+        if (lower > 12.)
+            lower = 12.;
+        double upper = Math.min(12., Math.ceil(money / (k0 + a0)));
+
+        return new Range<>(lower, upper);
     }
 
     private ApiResponse setFileAndSaveTarget(BaseTarget target) {
