@@ -1,9 +1,12 @@
-package nju.trust.service;
+package nju.trust.service.admin;
 
+import nju.trust.dao.admin.AdminUserRepository;
+import nju.trust.dao.admin.RepaymentReposity;
 import nju.trust.entity.CheckState;
 import nju.trust.entity.target.TargetState;
 import nju.trust.entity.target.TargetType;
 import nju.trust.entity.UserType;
+import nju.trust.entity.user.User;
 import nju.trust.payloads.ApiResponse;
 import nju.trust.payloads.SignUpRequest;
 import nju.trust.payloads.admin.BaseStatistics;
@@ -15,63 +18,113 @@ import nju.trust.payloads.target.TargetAdminBriefInfo;
 import nju.trust.payloads.target.TargetInfo;
 import nju.trust.payloads.user.UserInformation;
 import nju.trust.payloads.user.UserSimpleInfo;
+import nju.trust.service.AdminService;
+import nju.trust.service.TargetService;
+import nju.trust.service.admin.OverdueCalUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 
 import java.awt.print.Pageable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Author: 161250127
- * @Description:
+ * @Description: 管理员模块的逻辑层实现
  * @Date: 2018/8/26
  */
 public class AdminServiceImpl implements AdminService {
     @Autowired
     private TargetService targetService;
     @Autowired
-    private UserService userService;
-
-    @Override
-    public ArrayList<UserSimpleInfo> getUserList() {
-        return null;
-    }
+    private AdminUserRepository adminUserRepository;
+    @Autowired
+    private RepaymentReposity repaymentReposity;
 
     /**
-     * 管理员添加用户(默认用户为初级用户)
-     * @param userInfo 用户信息
-     *                 用户名邮箱手机等非空
-     * @return
-     */
-    @Override
-    public ApiResponse addUser(SignUpRequest userInfo) {
-        return userService.addUser(userInfo);
-    }
-
-    /**
-     * 管理员修改用户信息
+     * 查找所有用户的概要信息
+     * @param keyword 关键字
+     * @param type 用户类别（借款用户：无借款用户、待还款用户、逾期用户；投资用户）
      * TODO
-     * @param userInfo 初级用户信息
-     *                 默认用户为初级用户
-     *                 用户名邮箱手机等非空
-     * @return
+     * @return List<UserSimpleInfo>
      */
     @Override
-    public ApiResponse modifyUser(UserInformation userInfo) {
+    public List<UserSimpleInfo> getUserList(Pageable pageable, String keyword, UserType type) {
+        List<String> usernames;
+        // 通过模糊查询查找用户姓名
+        if(keyword == null || keyword.equals("")) { // 关键字不存在，返回所有用户姓名
+            usernames = adminUserRepository.getAllName();
+        }else {
+            usernames = adminUserRepository.getNamesByKeyword(keyword);
+        }
+
+        // TODO 通过用户类别筛选用户
+        List<UserSimpleInfo> infoList = new ArrayList<>();
+        switch (type) {
+            case NOLOAN:    // 无借款用户
+                infoList = getLoanUserInfo(usernames, type);
+                break;
+            case HAVELOAN:  // 待还款用户
+                infoList = getLoanUserInfo(usernames, type);
+                break;
+            case OVERDUE:   // 逾期用户
+                infoList = getOverdueUserInfo(usernames);
+                break;
+            case INVESTMENT:// 投资用户
+                infoList = getInvestorInfo(usernames);
+                break;
+            default:        // 不区分usertype
+                break;
+        }
+
+        if(infoList == null || infoList.size() == 0) {
+            return new ArrayList<>();
+        }
+
+        Page<UserSimpleInfo> pages = null;
+        infoList = pages.stream().map(UserSimpleInfo::new).collect(Collectors.toList());
+
+        return infoList;
+    }
+    // TODO test 查找用户是否欠款，返回未欠款/欠款用户的UserSimpleInfo
+    private List<UserSimpleInfo> getLoanUserInfo(List<String> usernames, UserType type) {
+        List<UserSimpleInfo> list = new ArrayList<>();
+        for (String username : usernames) {
+            Double remainingAmount = repaymentReposity.getRemainingAmount(username);
+            if ((remainingAmount == 0 && type == UserType.NOLOAN) || // 为未欠款用户
+                    remainingAmount > 0 && type == UserType.HAVELOAN) { // 欠款用户
+                User user = adminUserRepository.findById(username).get();
+                UserSimpleInfo userSimpleInfo = new UserSimpleInfo(user);
+                list.add(userSimpleInfo);
+            }
+        }
+        return list;
+    }
+    // TODO test 查找逾期用户（逾期金额>0）
+    private List<UserSimpleInfo> getOverdueUserInfo(List<String> usernames) {
+        for (String username : usernames) {
+            OverdueCalUtil calUtil = new OverdueCalUtil(username);
+            if(!calUtil.isOverdue()) {
+                usernames.remove(username);
+            }
+        }
+        List<User> users = (List<User>)adminUserRepository.findAllById(usernames);
+        return getSimpleInfo(users);
+    }
+    // TODO 查找投资者
+    private List<UserSimpleInfo> getInvestorInfo(List<String> usernames) {
+
         return null;
     }
-
-    /**
-     * 管理员删除用户
-     * TODO
-     * @param username 用户昵称
-     * @return
-     */
-    @Override
-    public ApiResponse deleteUser(UserInformation username) {
-        return null;
+    private List<UserSimpleInfo> getSimpleInfo(List<User> users) {
+        List<UserSimpleInfo> infos = new ArrayList<>();
+        for(User user : users) {
+            UserSimpleInfo info = new UserSimpleInfo(user);
+            infos.add(info);
+        }
+        return infos;
     }
-
     /**
      * 管理员查找用户信息
      * TODO
