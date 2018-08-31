@@ -13,8 +13,8 @@ import java.time.LocalDate;
  * Description:
  */
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "type")
+@Inheritance
+@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 public abstract class Repayment {
 
     @Id
@@ -48,7 +48,8 @@ public abstract class Repayment {
     @DecimalMax("100.0")
     private Double difficultyStar;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", nullable = false, insertable = false, updatable = false)
     private RepaymentType type;
 
     /**
@@ -56,6 +57,14 @@ public abstract class Repayment {
      * @return 本月应还金额
      */
     public abstract double getThisMonthAmount();
+
+    public RepaymentType getType() {
+        return type;
+    }
+
+    public void setType(RepaymentType type) {
+        this.type = type;
+    }
 
     public Long getId() {
         return id;
