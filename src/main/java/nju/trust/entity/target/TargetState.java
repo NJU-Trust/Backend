@@ -16,5 +16,9 @@ public enum TargetState {
     /**
      * 已还款
      */
-    PAY_OFF
+    PAY_OFF,
+    /**
+     * 审核不通过
+     */
+    DISAPPROVE
 }
