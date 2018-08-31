@@ -1,31 +1,29 @@
 package nju.trust.service.admin;
 
 import nju.trust.dao.admin.RepaymentReposity;
+import nju.trust.entity.UserType;
 import nju.trust.entity.user.Repayment;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.xml.ws.soap.Addressing;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 /**
  * @Author: 许杨
- * @Description: 用于计算用户的逾期数目
+ * @Description: 用于判定用户的借款数目
  * @Date: 2018/8/30
  */
 // Repayment中的startDate（开始时间）repaymentDuration（还款期限）
-public class OverdueCalUtil {
+public class LoanStateCheckUtil {
     @Autowired
     private RepaymentReposity repaymentReposity;
 
-    private String username = "";
+    private String username;
     private LocalDate today;
     private List<Repayment> records;
-    private boolean hasGetInfo = false;
+    private boolean hasGetInfo;
 
-    public OverdueCalUtil(String username) {
+    LoanStateCheckUtil(String username) {
         this.username = username;
         today = LocalDate.now();
         hasGetInfo = false;
@@ -42,25 +40,33 @@ public class OverdueCalUtil {
     }
 
     /**
-     * 判断用户是否有逾期情况存在
-     * 即：是否为逾期用户
-     * @return true：是逾期用户
-     *         false：不是逾期用户
+     * 判断用户的借款情况（无借款、待还款、逾期）
+     * @return UserType
      */
-    public boolean isOverdue() {
+    public UserType checkUserType() {
         // TODO test
         check();
+        boolean haveLoan = false;    // 用户是否存在还款
 
-        for(int i = 0 ; i < records.size() ; i++) {
-            Repayment record = records.get(i);
+        if(records == null || records.size() == 0) {
+            return UserType.NOLOAN;
+        }
+
+        for (Repayment record : records) {
             LocalDate begin = record.getStartDate();
-            int length = (int)(today.toEpochDay() - begin.toEpochDay());
-            if(length > record.getRepaymentDuration()) {// 逾期
-                return true;
+            int length = (int) (today.toEpochDay() - begin.toEpochDay());
+            if (length > record.getRepaymentDuration()) {// 逾期
+                return UserType.OVERDUE;
+            }
+            if (!haveLoan && record.getRemainingAmount() > 0) {   // 存在待还款
+                haveLoan = true;
             }
         }
-        return false;
+
+        if(haveLoan) {
+            return UserType.HAVELOAN;
+        }else {
+            return UserType.NOLOAN;
+        }
     }
-
-
 }
