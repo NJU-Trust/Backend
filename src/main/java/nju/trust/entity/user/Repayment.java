@@ -48,6 +48,9 @@ public abstract class Repayment {
     @DecimalMax("100.0")
     private Double difficultyStar;
 
+    @Enumerated
+    private RepaymentType type;
+
     /**
      * 获得本月还款金额
      * @return 本月应还金额

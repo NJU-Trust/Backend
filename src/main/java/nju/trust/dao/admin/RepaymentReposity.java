@@ -27,6 +27,6 @@ public interface RepaymentReposity extends CrudRepository<Repayment, Long> {
      * @param username 用户名
      * @return
      */
-    @Query(value = "select * from Repayment r where r.user = ?1")
+    @Query(value = "select r from Repayment r where r.user = ?1")
     List<Repayment> getRepaymentByUsername(String username);
 }
