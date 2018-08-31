@@ -27,16 +27,22 @@ import java.util.List;
  */
 @Service
 public interface AdminService {
-    public ArrayList<UserSimpleInfo> getUserList();
-
     // 用户管理
+    /**
+     * 查找所有用户的概要信息
+     * @param keyword 关键字
+     * @param type 用户类别（借款用户：无借款用户、待还款用户、逾期用户；投资用户）
+     * @return List<UserSimpleInfo>
+     */
+    List<UserSimpleInfo> getUserList(Pageable pageable, String keyword, UserType type);
+
     /**
      * 管理员添加用户(默认用户为初级用户)
      * @param userInfo 用户信息
      * 用户名邮箱手机等非空
      * @return
      */
-    ApiResponse addUser(SignUpRequest userInfo);
+    /*    ApiResponse addUser(SignUpRequest userInfo);*/
 
     /**
      * 管理员修改用户信息
@@ -45,14 +51,14 @@ public interface AdminService {
      *                 用户名邮箱手机等非空
      * @return
      */
-    ApiResponse modifyUser(UserInformation userInfo);
+    /*    ApiResponse modifyUser(UserInformation userInfo);*/
 
     /**
      * 管理员删除用户
      * @param username 用户昵称
      * @return
      */
-    ApiResponse deleteUser(UserInformation username);
+    /*  ApiResponse deleteUser(UserInformation username);*/
 
     /**
      * 管理员查找用户信息
@@ -65,7 +71,7 @@ public interface AdminService {
     ArrayList<UserSimpleInfo> searchBorrowers(String keyword, UserType userType);
 
     /**
-     * 财务信息
+     * TODO 财务信息
      * @param username 用户昵称
      * @return 财务信息
      */

@@ -1,15 +1,25 @@
 package nju.trust.payloads.user;
 
+import nju.trust.entity.CreditRating;
+import nju.trust.entity.user.User;
+
 /**
  * @Author: 161250127
  * @Description: 用于管理员查看列表信息，只有四项内容所以写了这个类
  * @Date: 2018/8/26
  */
 public class UserSimpleInfo {
-    String username;
-    String level;
-    String tel;
-    String email;
+    private String username;
+    private CreditRating level;
+    private String tel;
+    private String email;
+
+    public UserSimpleInfo(UserSimpleInfo userSimpleInfo) {
+        this.username = userSimpleInfo.getUsername();
+        this.level = userSimpleInfo.getLevel();
+        this.tel = userSimpleInfo.getTel();
+        this.email = userSimpleInfo.getEmail();
+    }
 
     public String getUsername() {
         return username;
@@ -19,11 +29,11 @@ public class UserSimpleInfo {
         this.username = username;
     }
 
-    public String getLevel() {
+    public CreditRating getLevel() {
         return level;
     }
 
-    public void setLevel(String level) {
+    public void setLevel(CreditRating level) {
         this.level = level;
     }
 
@@ -41,5 +51,14 @@ public class UserSimpleInfo {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public UserSimpleInfo() { }
+
+    public UserSimpleInfo(User user) {
+        this.username = user.getUsername();
+        this.level = user.getCreditRating();
+        this.email = user.getEmail();
+        this.tel = user.getPhoneNumber();
     }
 }
