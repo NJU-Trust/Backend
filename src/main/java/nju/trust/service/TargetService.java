@@ -33,4 +33,6 @@ public interface TargetService {
     ApiResponse schoolFellowInvestTarget(Long targetId, String username, String interestPlan);
 
     Range<Double> getLoanTimeRange(String username, double money);
+
+    Double getRemainingAmount(String username);
 }

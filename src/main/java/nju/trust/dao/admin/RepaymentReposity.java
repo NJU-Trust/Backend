@@ -19,7 +19,7 @@ public interface RepaymentReposity extends CrudRepository<Repayment, Long> {
      * @return
      */
     // TODO user
-    @Query(value = "select sum(remainingAmount) from Repayment r where r.user = ?1")
+    @Query(value = "select sum(r.remainingAmount) from Repayment r where r.user = ?1")
     Double getRemainingAmount(String username);
 
     /**
@@ -29,4 +29,6 @@ public interface RepaymentReposity extends CrudRepository<Repayment, Long> {
      */
     @Query(value = "select r from Repayment r where r.user = ?1")
     List<Repayment> getRepaymentByUsername(String username);
+
+    List<Repayment> findAllByUserUsername(String username);
 }

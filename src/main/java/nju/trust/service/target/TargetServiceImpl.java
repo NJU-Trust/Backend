@@ -1,5 +1,6 @@
 package nju.trust.service.target;
 
+import nju.trust.dao.admin.RepaymentReposity;
 import nju.trust.dao.record.InvestmentRecordRepository;
 import nju.trust.dao.target.*;
 import nju.trust.dao.user.UserMonthlyStatisticsRepository;
@@ -12,6 +13,7 @@ import nju.trust.entity.record.InvestmentRecord;
 import nju.trust.entity.target.BaseTarget;
 import nju.trust.entity.target.LargeTarget;
 import nju.trust.entity.target.SmallTarget;
+import nju.trust.entity.user.Repayment;
 import nju.trust.entity.user.User;
 import nju.trust.entity.user.UserMonthStatistics;
 import nju.trust.exception.InternalException;
@@ -71,18 +73,21 @@ public class TargetServiceImpl implements TargetService {
 
     private InvestmentRecordRepository recordRepository;
 
+    private RepaymentReposity repaymentReposity;
     @Autowired
     public TargetServiceImpl(TargetRepository targetRepository,
                              SmallTargetRepository smallTargetRepository,
                              LargeTargetRepository largeTargetRepository,
                              UserRepository userRepository,
                              UserMonthlyStatisticsRepository monthlyStatisticsRepository,
-                             InvestmentRecordRepository recordRepository) {
+                             InvestmentRecordRepository recordRepository,
+                             RepaymentReposity repaymentReposity) {
         this.targetRepository = targetRepository;
         this.smallTargetRepository = smallTargetRepository;
         this.largeTargetRepository = largeTargetRepository;
         this.userRepository = userRepository;
         this.monthlyStatisticsRepository = monthlyStatisticsRepository;
+        this.recordRepository = recordRepository;
         this.recordRepository = recordRepository;
     }
 
@@ -269,6 +274,16 @@ public class TargetServiceImpl implements TargetService {
         double upper = Math.min(12., Math.ceil(money / (k0 + a0)));
 
         return new Range<>(lower, upper);
+    }
+
+    @Override
+    public Double getRemainingAmount(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        List<Repayment> repayments = repaymentReposity.findAllByUserUsername(username);
+        return user.getCreditRating().getBorrowingAmount() -
+                repayments.stream().mapToDouble(Repayment::getRemainingAmount).sum();
     }
 
     private ApiResponse setFileAndSaveTarget(BaseTarget target) {

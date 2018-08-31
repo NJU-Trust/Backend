@@ -81,4 +81,9 @@ public class TargetController {
     public Range<Double> getLoanTimeRange(Principal principal, double money) {
         return targetService.getLoanTimeRange(principal.getName(), money);
     }
+
+    @RequestMapping("/remainAmount")
+    public Double getRemainingAmount(Principal principal) {
+        return targetService.getRemainingAmount(principal.getName());
+    }
 }

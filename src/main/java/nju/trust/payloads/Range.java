@@ -5,7 +5,7 @@ package nju.trust.payloads;
  * Date: 2018/8/30
  * Description:
  */
-public class Range<T> {
+public class Range<T extends Comparable<T>> {
 
     private final T lower;
 
@@ -14,6 +14,10 @@ public class Range<T> {
     public Range(T lower, T upper) {
         this.lower = lower;
         this.upper = upper;
+    }
+
+    public boolean inRange(T t) {
+        return t.compareTo(lower) >= 0 && t.compareTo(upper) <= 0;
     }
 
     public T getLower() {
