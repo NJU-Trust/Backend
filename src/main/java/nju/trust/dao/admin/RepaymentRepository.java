@@ -11,21 +11,19 @@ import java.util.List;
  * @Description:
  * @Date: 2018/8/30
  */
-public interface RepaymentReposity extends CrudRepository<Repayment, Long> {
+public interface RepaymentRepository extends CrudRepository<Repayment, Long> {
 
     /**
-     * 查找用户的欠款总额
+     * 查找用户的欠款
      * @param username 用户名
      * @return
      */
-    // TODO user
-    @Query(value = "select sum(r.remainingAmount) from Repayment r where r.user = ?1")
-    Double getRemainingAmount(String username);
+    //List<Double> findRemainingAmountByUserUsername(String username);
 
     /**
      *
      * @param username 用户名
-     * @return
+     * @return 还款记录
      */
     @Query(value = "select r from Repayment r where r.user = ?1")
     List<Repayment> getRepaymentByUsername(String username);

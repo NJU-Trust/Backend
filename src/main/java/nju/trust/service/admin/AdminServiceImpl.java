@@ -1,31 +1,30 @@
 package nju.trust.service.admin;
 
 import nju.trust.dao.admin.AdminUserRepository;
-import nju.trust.dao.admin.RepaymentReposity;
+import nju.trust.dao.admin.BaseTargetReposity;
+import nju.trust.dao.admin.InvestmentRecordRepository;
 import nju.trust.entity.CheckState;
+import nju.trust.entity.target.BaseTarget;
 import nju.trust.entity.target.TargetState;
 import nju.trust.entity.target.TargetType;
 import nju.trust.entity.UserType;
 import nju.trust.entity.user.User;
-import nju.trust.payloads.ApiResponse;
-import nju.trust.payloads.SignUpRequest;
 import nju.trust.payloads.admin.BaseStatistics;
 import nju.trust.payloads.admin.BreakContractStatistics;
 import nju.trust.payloads.admin.UserStateList;
 import nju.trust.payloads.target.LargeTargetInfo;
 import nju.trust.payloads.target.SmallTargetInfo;
-import nju.trust.payloads.target.TargetAdminBriefInfo;
+import nju.trust.payloads.admin.TargetAdminBriefInfo;
 import nju.trust.payloads.target.TargetInfo;
-import nju.trust.payloads.user.UserInformation;
 import nju.trust.payloads.user.UserSimpleInfo;
 import nju.trust.service.AdminService;
 import nju.trust.service.TargetService;
-import nju.trust.service.admin.OverdueCalUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 
 import java.awt.print.Pageable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,13 +39,15 @@ public class AdminServiceImpl implements AdminService {
     @Autowired
     private AdminUserRepository adminUserRepository;
     @Autowired
-    private RepaymentReposity repaymentReposity;
+    private BaseTargetReposity baseTargetReposity;
+    @Autowired
+    private InvestmentRecordRepository investmentRecordRepository;
 
     /**
      * 查找所有用户的概要信息
      * @param keyword 关键字
      * @param type 用户类别（借款用户：无借款用户、待还款用户、逾期用户；投资用户）
-     * TODO
+     * TODO test
      * @return List<UserSimpleInfo>
      */
     @Override
@@ -59,8 +60,8 @@ public class AdminServiceImpl implements AdminService {
             usernames = adminUserRepository.getNamesByKeyword(keyword);
         }
 
-        // TODO 通过用户类别筛选用户
-        List<UserSimpleInfo> infoList = new ArrayList<>();
+        // 通过用户类别筛选用户
+        List<UserSimpleInfo> infoList;
         switch (type) {
             case NOLOAN:    // 无借款用户
                 infoList = getLoanUserInfo(usernames, type);
@@ -71,10 +72,11 @@ public class AdminServiceImpl implements AdminService {
             case OVERDUE:   // 逾期用户
                 infoList = getOverdueUserInfo(usernames);
                 break;
-            case INVESTMENT:// 投资用户
+            /*case INVESTMENT:// 投资用户
                 infoList = getInvestorInfo(usernames);
-                break;
+                break;*/
             default:        // 不区分usertype
+                infoList = getLoanUserInfo(usernames);
                 break;
         }
 
@@ -91,126 +93,121 @@ public class AdminServiceImpl implements AdminService {
     private List<UserSimpleInfo> getLoanUserInfo(List<String> usernames, UserType type) {
         List<UserSimpleInfo> list = new ArrayList<>();
         for (String username : usernames) {
-            Double remainingAmount = repaymentReposity.getRemainingAmount(username);
-            if ((remainingAmount == 0 && type == UserType.NOLOAN) || // 为未欠款用户
-                    remainingAmount > 0 && type == UserType.HAVELOAN) { // 欠款用户
-                User user = adminUserRepository.findById(username).get();
-                UserSimpleInfo userSimpleInfo = new UserSimpleInfo(user);
-                list.add(userSimpleInfo);
+            LoanStateCheckUtil calUtil = new LoanStateCheckUtil(username);
+            if ((calUtil.checkUserType().equals(type))) {   // 是所求用户
+                if(adminUserRepository.existsById(username)) {
+                    User user = adminUserRepository.findById(username).get();
+                    UserSimpleInfo userSimpleInfo = new UserSimpleInfo(user, type);
+                    list.add(userSimpleInfo);
+                }
             }
         }
         return list;
     }
     // TODO test 查找逾期用户（逾期金额>0）
     private List<UserSimpleInfo> getOverdueUserInfo(List<String> usernames) {
-        for (String username : usernames) {
-            OverdueCalUtil calUtil = new OverdueCalUtil(username);
-            if(!calUtil.isOverdue()) {
-                usernames.remove(username);
+        int i = 0;
+        while (i < usernames.size()) {
+            String username = usernames.get(i);
+            LoanStateCheckUtil calUtil = new LoanStateCheckUtil(username);
+            if(!calUtil.checkUserType().equals(UserType.OVERDUE)) {// 不是逾期用户
+                usernames.remove(i);
+            }else {
+                i++;
             }
         }
         List<User> users = (List<User>)adminUserRepository.findAllById(usernames);
-        return getSimpleInfo(users);
+        return getSimpleInfo(users, UserType.OVERDUE);
     }
-    // TODO 查找投资者
+    // TODO test 不区分用户类别时查看用户概要信息
+    private List<UserSimpleInfo> getLoanUserInfo(List<String> usernames) {
+        List<UserSimpleInfo> list = new ArrayList<>();
+        for (String username : usernames) {
+            LoanStateCheckUtil calUtil = new LoanStateCheckUtil(username);
+            UserType type = calUtil.checkUserType();
+            User user = adminUserRepository.findById(username).get();
+            UserSimpleInfo userSimpleInfo = new UserSimpleInfo(user, type);
+            list.add(userSimpleInfo);
+        }
+        return list;
+    }
+    /*    // 查找投资者
     private List<UserSimpleInfo> getInvestorInfo(List<String> usernames) {
 
         return null;
-    }
-    private List<UserSimpleInfo> getSimpleInfo(List<User> users) {
+    }*/
+    private List<UserSimpleInfo> getSimpleInfo(List<User> users, UserType type) {
         List<UserSimpleInfo> infos = new ArrayList<>();
         for(User user : users) {
-            UserSimpleInfo info = new UserSimpleInfo(user);
+            UserSimpleInfo info = new UserSimpleInfo(user, type);
             infos.add(info);
         }
         return infos;
     }
-    /**
-     * 管理员查找用户信息
-     * TODO
-     * @param keyword  关键字
-     *                 模糊查找(通过编号、昵称等搜索)
-     * @param userType 用户类型
-     *                 (无借款用户、待还款用户、逾期用户)
-     * @return 用户编号 昵称 财务信息  信用评级标的查看
-     */
-    @Override
-    public ArrayList<UserSimpleInfo> searchBorrowers(String keyword, UserType userType) {
-        return null;
-    }
-
-    /**
-     * 财务信息
-     * TODO
-     * @param username 用户昵称
-     * @return 财务信息
-     */
-/*    @Override
-    public AssetStatistics searchFinancialInfo(String username) {
-        return null;
-    }*/
-
-    /**
-     * 标的查看
-     * TODO
-     * @param username 用户昵称
-     * @return 发起过的标的
-     */
-    @Override
-    public ArrayList<TargetInfo> seeLaunchTargets(String username) {
-        return null;
-    }
-
-    /**
-     * 投资历史
-     * TODO
-     * @param username 用户昵称
-     * @return 投资过的标的
-     */
-    @Override
-    public ArrayList<TargetInfo> seeInvestTargets(String username) {
-        return null;
-    }
 
     /**
      * 查看项目
-     * TODO
+     * TODO test
      * @param state 项目状态(招标中,审核中,还款中,已还款)
      * @param type  项目类型（小额拆借类、学习培训类）
-     * @return
+     * @return 项目的概要信息列表
      */
     @Override
-    public ArrayList<TargetAdminBriefInfo> seeTarget(Pageable pageable, TargetState state, TargetType type) {
-        ArrayList<TargetAdminBriefInfo> infos = new ArrayList<>();
-        switch (type) {
-            case LARGE: infos = getLargeTargetInfo(pageable, state);
-            case SMALL: infos = getSmallTargetInfo(pageable, state);
-            default: infos = getTargetInfo(pageable, state);
+    public List<TargetAdminBriefInfo> seeTarget(Pageable pageable, TargetState state, TargetType type) {
+        List<BaseTarget> records;
+
+        // 通过状态查看标的
+        if(state != null && type != null) {
+            records = baseTargetReposity.findDistinctByTargetStateAndTargetType(state, type);
+        }else if(state == null){
+            records = (List<BaseTarget>)baseTargetReposity.findAll();
+            records = getTargetInfoByType(records, type, pageable);
+        }else {
+            records = baseTargetReposity.findDistinctByTargetState(state);
+            records = getTargetInfoByType(records, type, pageable);
+        }
+        if(records == null || records.size() == 0) {
+            return new ArrayList<>();
+        }
+
+        // BaseTarget转TargetAdminBriefInfo
+        List<TargetAdminBriefInfo> infos = baseTargetsToBriefInfos(records);
+
+        // 分页
+        Page<TargetAdminBriefInfo> pages = null;
+        infos = pages.stream().map(TargetAdminBriefInfo::new).collect(Collectors.toList());
+        return infos;
+    }
+    // TODO test 通过type对target进行筛选并分页
+    private List<BaseTarget> getTargetInfoByType(List<BaseTarget> records, TargetType type, Pageable pageable) {
+        if(type != null) {  // 通过type对target进行筛选
+            int i = 0;
+            while(i < records.size()) {
+                if(!records.get(i).getTargetType().equals(type)) {
+                    records.remove(i);
+                }else {
+                    i++;
+                }
+            }
+        }
+        return records;
+    }
+    // 将BaseTarget列表转为TargetAdminBriefInfo列表
+    private List<TargetAdminBriefInfo> baseTargetsToBriefInfos(List<BaseTarget> records) {
+        List<TargetAdminBriefInfo> infos = new ArrayList<>();
+        for(BaseTarget baseTarget : records){
+            TargetAdminBriefInfo info = baseTargetToBriefInfo(baseTarget);
+            infos.add(info);
         }
         return infos;
     }
-    // TODO 大额
-    private ArrayList<TargetAdminBriefInfo> getLargeTargetInfo(Pageable pageable, TargetState state) {
-        ArrayList<TargetAdminBriefInfo> infos= new ArrayList<>();
-        if(infos == null) {
-            infos = new ArrayList<>();
-        }
-        return infos;
-    }
-    // TODO 小额
-    private ArrayList<TargetAdminBriefInfo> getSmallTargetInfo(Pageable pageable, TargetState state) {
-        ArrayList<TargetAdminBriefInfo> infos = new ArrayList<>();
-        if(infos == null) {
-            infos = new ArrayList<>();
-        }
-        return infos;
-    }
-    // 不区分大额、小额
-    private ArrayList<TargetAdminBriefInfo> getTargetInfo(Pageable pageable, TargetState state) {
-        ArrayList<TargetAdminBriefInfo> infos = new ArrayList<>();
-        infos.addAll(getSmallTargetInfo(pageable, state));
-        infos.addAll(getLargeTargetInfo(pageable, state));
-        return infos;
+    // 将BaseTarget转为TargetAdminBriefInfo
+    private TargetAdminBriefInfo baseTargetToBriefInfo(BaseTarget baseTarget) {
+        Long targetId = baseTarget.getId();
+        List<String> investors = investmentRecordRepository.findUserUsernameById(targetId);
+        List nameList = new ArrayList(new HashSet(investors));// 去重
+        TargetAdminBriefInfo briefInfo = new TargetAdminBriefInfo(baseTarget, nameList);
+        return briefInfo;
     }
 
     /**

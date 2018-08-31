@@ -1,6 +1,6 @@
 package nju.trust.service.target;
 
-import nju.trust.dao.admin.RepaymentReposity;
+import nju.trust.dao.admin.RepaymentRepository;
 import nju.trust.dao.record.InvestmentRecordRepository;
 import nju.trust.dao.target.*;
 import nju.trust.dao.user.UserMonthlyStatisticsRepository;
@@ -73,7 +73,7 @@ public class TargetServiceImpl implements TargetService {
 
     private InvestmentRecordRepository recordRepository;
 
-    private RepaymentReposity repaymentReposity;
+    private RepaymentRepository repaymentRepository;
     @Autowired
     public TargetServiceImpl(TargetRepository targetRepository,
                              SmallTargetRepository smallTargetRepository,
@@ -81,7 +81,7 @@ public class TargetServiceImpl implements TargetService {
                              UserRepository userRepository,
                              UserMonthlyStatisticsRepository monthlyStatisticsRepository,
                              InvestmentRecordRepository recordRepository,
-                             RepaymentReposity repaymentReposity) {
+                             RepaymentRepository repaymentRepository) {
         this.targetRepository = targetRepository;
         this.smallTargetRepository = smallTargetRepository;
         this.largeTargetRepository = largeTargetRepository;
@@ -281,7 +281,7 @@ public class TargetServiceImpl implements TargetService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        List<Repayment> repayments = repaymentReposity.findAllByUserUsername(username);
+        List<Repayment> repayments = repaymentRepository.findAllByUserUsername(username);
         return user.getCreditRating().getBorrowingAmount() -
                 repayments.stream().mapToDouble(Repayment::getRemainingAmount).sum();
     }

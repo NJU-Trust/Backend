@@ -8,16 +8,12 @@ import nju.trust.payloads.admin.BreakContractStatistics;
 import nju.trust.payloads.admin.UserStateList;
 import nju.trust.payloads.target.LargeTargetInfo;
 import nju.trust.payloads.target.SmallTargetInfo;
-import nju.trust.payloads.target.TargetAdminBriefInfo;
+import nju.trust.payloads.admin.TargetAdminBriefInfo;
 import nju.trust.payloads.target.TargetInfo;
 import nju.trust.payloads.user.UserSimpleInfo;
-import nju.trust.payloads.ApiResponse;
-import nju.trust.payloads.SignUpRequest;
-import nju.trust.payloads.user.UserInformation;
 import org.springframework.stereotype.Service;
 
 import java.awt.print.Pageable;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,45 +33,11 @@ public interface AdminService {
     List<UserSimpleInfo> getUserList(Pageable pageable, String keyword, UserType type);
 
     /**
-     * 管理员添加用户(默认用户为初级用户)
-     * @param userInfo 用户信息
-     * 用户名邮箱手机等非空
-     * @return
-     */
-    /*    ApiResponse addUser(SignUpRequest userInfo);*/
-
-    /**
-     * 管理员修改用户信息
-     * @param userInfo 初级用户信息
-     *                 默认用户为初级用户
-     *                 用户名邮箱手机等非空
-     * @return
-     */
-    /*    ApiResponse modifyUser(UserInformation userInfo);*/
-
-    /**
-     * 管理员删除用户
-     * @param username 用户昵称
-     * @return
-     */
-    /*  ApiResponse deleteUser(UserInformation username);*/
-
-    /**
-     * 管理员查找用户信息
-     * @param keyword 关键字
-     *                模糊查找(通过编号、昵称等搜索)
-     * @param userType 用户类型
-     *                 (无借款用户、待还款用户、逾期用户)
-     * @return 用户编号 昵称 财务信息  信用评级标的查看
-     */
-    ArrayList<UserSimpleInfo> searchBorrowers(String keyword, UserType userType);
-
-    /**
-     * TODO 财务信息
+     * 财务信息
      * @param username 用户昵称
      * @return 财务信息
      */
-    // TODO 修改返回值
+    // 修改返回值
     //AssetStatistics searchFinancialInfo(String username);
 
     /**
@@ -83,14 +45,14 @@ public interface AdminService {
      * @param username 用户昵称
      * @return 发起过的标的
      */
-    ArrayList<TargetInfo> seeLaunchTargets(String username);
+    //ArrayList<TargetInfo> seeLaunchTargets(String username);
 
     /**
      * 投资历史
      * @param username 用户昵称
      * @return 投资过的标的
      */
-    ArrayList<TargetInfo> seeInvestTargets(String username);
+    //ArrayList<TargetInfo> seeInvestTargets(String username);
 
 
     // 标的管理
@@ -100,13 +62,14 @@ public interface AdminService {
      * @param type 项目类型（小额拆借类、学习培训类）
      * @return
      */
-    ArrayList<TargetAdminBriefInfo> seeTarget(Pageable pageable, TargetState state, TargetType type);
+    List<TargetAdminBriefInfo> seeTarget(Pageable pageable, TargetState state, TargetType type);
 
     /**
      * 查看项目信息
      * @param id 项目编号
      * @return 项目的详细信息
      */
+    // TODO 还款方案
     TargetInfo seeTarget(Long id);
 
     // 数据统计（针对平台）
@@ -136,8 +99,6 @@ public interface AdminService {
      * @return List<UserStateList>
      */
     List<UserStateList> getUserStateList();
-
-
 
     // 标的发布审核
     /**

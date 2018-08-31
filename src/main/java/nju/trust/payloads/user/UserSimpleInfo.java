@@ -1,6 +1,7 @@
 package nju.trust.payloads.user;
 
 import nju.trust.entity.CreditRating;
+import nju.trust.entity.UserType;
 import nju.trust.entity.user.User;
 
 /**
@@ -13,12 +14,21 @@ public class UserSimpleInfo {
     private CreditRating level;
     private String tel;
     private String email;
+    private String state;
 
     public UserSimpleInfo(UserSimpleInfo userSimpleInfo) {
         this.username = userSimpleInfo.getUsername();
         this.level = userSimpleInfo.getLevel();
         this.tel = userSimpleInfo.getTel();
         this.email = userSimpleInfo.getEmail();
+        this.state = userSimpleInfo.getState();
+    }
+    public UserSimpleInfo(User user, UserType type) {
+        this.username = user.getUsername();
+        this.level = user.getCreditRating();
+        this.email = user.getEmail();
+        this.tel = user.getPhoneNumber();
+        this.state = type.getStr();
     }
 
     public String getUsername() {
@@ -55,10 +65,15 @@ public class UserSimpleInfo {
 
     public UserSimpleInfo() { }
 
-    public UserSimpleInfo(User user) {
-        this.username = user.getUsername();
-        this.level = user.getCreditRating();
-        this.email = user.getEmail();
-        this.tel = user.getPhoneNumber();
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public void setState(UserType type) {
+        this.state = type.getStr();
     }
 }
