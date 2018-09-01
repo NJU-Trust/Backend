@@ -1,6 +1,7 @@
 package nju.trust.web.admin;
 
 import nju.trust.entity.UserType;
+import nju.trust.payloads.admin.UserListRequest;
 import nju.trust.payloads.user.UserSimpleInfo;
 import nju.trust.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -24,7 +26,9 @@ public class AdminUserController {
 
     @GetMapping(value = "/manage")
     @PreAuthorize("hasRole('ADMIN')")
-    public List<UserSimpleInfo> getUserList(Pageable pageable, String keyword, UserType type) {
+    public List<UserSimpleInfo> getUserList(Pageable pageable, @Valid UserListRequest request) {
+        String keyword = request.getKeyword();
+        UserType type = request.getType();
         return adminService.getUserList(pageable, keyword, type);
     }
 }
