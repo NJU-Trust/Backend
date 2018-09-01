@@ -3,9 +3,13 @@ package nju.trust.service.admin;
 import nju.trust.dao.admin.AdminUserRepository;
 import nju.trust.dao.admin.BaseTargetRepository;
 import nju.trust.dao.admin.InvestmentRecordRepository;
+import nju.trust.dao.admin.UserInfoCheckRecordRepository;
 import nju.trust.dao.target.LargeTargetRepository;
 import nju.trust.dao.target.SmallTargetRepository;
 import nju.trust.dao.target.TargetRepository;
+import nju.trust.entity.CheckState;
+import nju.trust.entity.record.ApproveResult;
+import nju.trust.entity.record.UserInfoCheckRecord;
 import nju.trust.entity.target.*;
 import nju.trust.entity.UserType;
 import nju.trust.entity.user.User;
@@ -22,6 +26,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,20 +37,32 @@ import java.util.stream.Collectors;
  * @Date: 2018/8/26
  */
 public class AdminServiceImpl implements AdminService {
-    @Autowired
     private TargetService targetService;
-    @Autowired
     private AdminUserRepository adminUserRepository;
-    @Autowired
     private BaseTargetRepository baseTargetRepository;
-    @Autowired
     private InvestmentRecordRepository investmentRecordRepository;
-    @Autowired
     private SmallTargetRepository smallTargetRepository;
-    @Autowired
     private LargeTargetRepository largeTargetRepository;
-    @Autowired
     private TargetRepository targetRepository;
+    private UserInfoCheckRecordRepository userInfoCheckRecordRepository;
+    @Autowired
+    public AdminServiceImpl(TargetService targetService,
+                            AdminUserRepository adminUserRepository,
+                            BaseTargetRepository baseTargetRepository,
+                            InvestmentRecordRepository investmentRecordRepository,
+                            SmallTargetRepository smallTargetRepository,
+                            LargeTargetRepository largeTargetRepository,
+                            TargetRepository targetRepository,
+                            UserInfoCheckRecordRepository userInfoCheckRecordRepository) {
+        this.targetService = targetService;
+        this.adminUserRepository = adminUserRepository;
+        this.baseTargetRepository = baseTargetRepository;
+        this.investmentRecordRepository = investmentRecordRepository;
+        this.smallTargetRepository = smallTargetRepository;
+        this.largeTargetRepository = largeTargetRepository;
+        this.targetRepository = targetRepository;
+        this.userInfoCheckRecordRepository = userInfoCheckRecordRepository;
+    }
 
     /**
      * 查找所有用户的概要信息
@@ -247,12 +264,44 @@ public class AdminServiceImpl implements AdminService {
     /**
      * 用户审核时得到待审核用户及其状态的列表
      * 优先级：UPDATE > SUBMIT 时间早 > 时间晚
-     * TODO
+     * TODO test
      * @return List<UserStateList>
      */
     @Override
-    public List<UserStateList> getUserStateList() {
-        return null;
+    public List<UserStateList> getUserStateList(Pageable pageable) {
+        List<UserInfoCheckRecord> records = userInfoCheckRecordRepository.findByCheckStateOrCheckState(CheckState.UPDATE, CheckState.ONGING);
+        List<UserStateList> list = getList(records);
+
+        Collections.sort(list);
+
+        Page<UserStateList> pages = null;
+        list = pages.stream().map(UserStateList::new).collect(Collectors.toList());
+        return list;
+    }
+    private List<UserStateList> getList(List<UserInfoCheckRecord> records) {
+        List<UserStateList> list = new ArrayList<>();
+
+        if(records == null || records.size() == 0) {
+            return list;
+        }
+
+        List<String> usernames = new ArrayList<>();
+        for(UserInfoCheckRecord record : records) {
+            String username = record.getUser().getUsername();
+            if(usernames.contains(username)) {
+               int index = usernames.indexOf(username);
+               UserStateList pre = list.get(index);
+               if(record.getCheckState().equals(CheckState.UPDATE) && pre.getCheckState().equals(CheckState.ONGING)) {
+                   pre.setCheckState(CheckState.UPDATE);
+               }
+            }else {
+                usernames.add(username);
+                UserStateList userStateList = new UserStateList(record);
+                list.add(userStateList);
+            }
+        }
+
+        return list;
     }
 
     /**

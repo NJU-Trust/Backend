@@ -19,5 +19,10 @@ public enum CheckState {
     /**
      * The application was rejected
      */
-    REJECT
+    REJECT,
+
+    /**
+     * 用户在不通过后更新信息
+     */
+    UPDATE
 }

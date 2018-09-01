@@ -1,4 +1,4 @@
-package nju.trust.payloads.admin;
+package nju.trust.entity.record;
 
 import nju.trust.entity.target.TargetState;
 
@@ -8,6 +8,7 @@ import nju.trust.entity.target.TargetState;
  * @Date: 2018/8/31
  */
 public enum ApproveResult {
+    ONGOING("等待审批", TargetState.PENDING),
     PASS("审批通过", TargetState.ON_GOING),
     HARMFULINFORMATION("含有恶意信息，审批不通过", TargetState.HARMFUL),
     LACKINFO("信息缺失，审批不通过", TargetState.LACKINFO),

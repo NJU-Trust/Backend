@@ -1,7 +1,7 @@
 package nju.trust.service;
 
 import nju.trust.entity.*;
-import nju.trust.payloads.admin.ApproveResult;
+import nju.trust.entity.record.ApproveResult;
 import nju.trust.entity.target.TargetState;
 import nju.trust.entity.target.TargetType;
 import nju.trust.payloads.ApiResponse;
@@ -97,7 +97,7 @@ public interface AdminService {
      * 优先级：UPDATE > SUBMIT 时间早 > 时间晚
      * @return List<UserStateList>
      */
-    List<UserStateList> getUserStateList();
+    List<UserStateList> getUserStateList(Pageable pageable);
 
     // 标的发布审核
     /**
