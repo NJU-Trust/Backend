@@ -6,18 +6,24 @@ package nju.trust.entity;
  * @Date: 2018/8/29
  */
 public enum UserCheckState {
-    SUBMIT("用户提交审核"),
-    PASS("审核通过"),
-    REJECT("审核未通过"),
-    UPDATE("用户更新审核信息");
+    SUBMIT("用户提交审核", 1),
+    PASS("审核通过", -1),
+    REJECT("审核未通过", -1),
+    UPDATE("用户更新审核信息", 0);
 
-    private String str = "";
+    private String str;
+    private int priority;
 
-    UserCheckState(String str) {
+    UserCheckState(String str, int priority) {
         this.str = str;
+        this.priority = priority;
     }
 
     public String getStr() {
         return str;
+    }
+
+    public int getPriority() {
+        return priority;
     }
 }

@@ -16,5 +16,17 @@ public enum TargetState {
     /**
      * 已还款
      */
-    PAY_OFF
+    PAY_OFF,
+    /**
+     * 含有恶意信息，审批不通过
+     */
+    HARMFUL,
+    /**
+     * 信息缺失，审批不通过
+     */
+    LACKINFO,
+    /**
+     * 信息不规范，审批不通过
+     */
+    INFROMAL
 }

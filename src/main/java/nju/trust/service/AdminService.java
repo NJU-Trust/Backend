@@ -1,19 +1,18 @@
 package nju.trust.service;
 
 import nju.trust.entity.*;
+import nju.trust.payloads.admin.ApproveResult;
 import nju.trust.entity.target.TargetState;
 import nju.trust.entity.target.TargetType;
-import nju.trust.payloads.admin.BaseStatistics;
-import nju.trust.payloads.admin.BreakContractStatistics;
-import nju.trust.payloads.admin.UserStateList;
+import nju.trust.payloads.ApiResponse;
+import nju.trust.payloads.admin.*;
 import nju.trust.payloads.target.LargeTargetInfo;
 import nju.trust.payloads.target.SmallTargetInfo;
-import nju.trust.payloads.admin.TargetAdminBriefInfo;
 import nju.trust.payloads.target.TargetInfo;
 import nju.trust.payloads.user.UserSimpleInfo;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Pageable;
 
-import java.awt.print.Pageable;
 import java.util.List;
 
 /**
@@ -102,10 +101,17 @@ public interface AdminService {
 
     // 标的发布审核
     /**
+     * 得到待审核的标的列表
+     * @param type 标的类别
+     * @return 标的概要信息
+     */
+    public List<PendingTargetBriefInfo> getPendingTargets(Pageable pageable, TargetType type);
+
+    /**
      * 得到待审核的小额标的编号
      * @return 项目编号
      */
-    List<Long> getPendingSmallTargets();
+//    List<Long> getPendingSmallTargets();
 
     /**
      * 查看小额标的内容
@@ -119,7 +125,7 @@ public interface AdminService {
      * 得到待审核的大额标的编号
      * @return 项目编号
      */
-    List<Long> getPendingLargeTargets();
+//    List<Long> getPendingLargeTargets();
 
     /**
      * 查看大额标的内容
@@ -132,7 +138,8 @@ public interface AdminService {
     /**
      * 审批标的
      * @param targetId 标的编号
-     * @return PASS|REJECT
+     * @param result 审批结果
+     * @return 是否成功
      */
-    CheckState approveTarget(Long targetId);
+    ApiResponse approveTarget(Long targetId, ApproveResult result);
 }

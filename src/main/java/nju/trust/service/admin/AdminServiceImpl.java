@@ -1,28 +1,26 @@
 package nju.trust.service.admin;
 
 import nju.trust.dao.admin.AdminUserRepository;
-import nju.trust.dao.admin.BaseTargetReposity;
+import nju.trust.dao.admin.BaseTargetRepository;
 import nju.trust.dao.admin.InvestmentRecordRepository;
-import nju.trust.entity.CheckState;
-import nju.trust.entity.target.BaseTarget;
-import nju.trust.entity.target.TargetState;
-import nju.trust.entity.target.TargetType;
+import nju.trust.dao.target.LargeTargetRepository;
+import nju.trust.dao.target.SmallTargetRepository;
+import nju.trust.dao.target.TargetRepository;
+import nju.trust.entity.target.*;
 import nju.trust.entity.UserType;
 import nju.trust.entity.user.User;
-import nju.trust.payloads.admin.BaseStatistics;
-import nju.trust.payloads.admin.BreakContractStatistics;
-import nju.trust.payloads.admin.UserStateList;
+import nju.trust.payloads.ApiResponse;
+import nju.trust.payloads.admin.*;
 import nju.trust.payloads.target.LargeTargetInfo;
 import nju.trust.payloads.target.SmallTargetInfo;
-import nju.trust.payloads.admin.TargetAdminBriefInfo;
 import nju.trust.payloads.target.TargetInfo;
 import nju.trust.payloads.user.UserSimpleInfo;
 import nju.trust.service.AdminService;
 import nju.trust.service.TargetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-import java.awt.print.Pageable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -39,9 +37,15 @@ public class AdminServiceImpl implements AdminService {
     @Autowired
     private AdminUserRepository adminUserRepository;
     @Autowired
-    private BaseTargetReposity baseTargetReposity;
+    private BaseTargetRepository baseTargetRepository;
     @Autowired
     private InvestmentRecordRepository investmentRecordRepository;
+    @Autowired
+    private SmallTargetRepository smallTargetRepository;
+    @Autowired
+    private LargeTargetRepository largeTargetRepository;
+    @Autowired
+    private TargetRepository targetRepository;
 
     /**
      * 查找所有用户的概要信息
@@ -131,11 +135,6 @@ public class AdminServiceImpl implements AdminService {
         }
         return list;
     }
-    /*    // 查找投资者
-    private List<UserSimpleInfo> getInvestorInfo(List<String> usernames) {
-
-        return null;
-    }*/
     private List<UserSimpleInfo> getSimpleInfo(List<User> users, UserType type) {
         List<UserSimpleInfo> infos = new ArrayList<>();
         for(User user : users) {
@@ -158,12 +157,12 @@ public class AdminServiceImpl implements AdminService {
 
         // 通过状态查看标的
         if(state != null && type != null) {
-            records = baseTargetReposity.findDistinctByTargetStateAndTargetType(state, type);
+            records = baseTargetRepository.findDistinctByTargetStateAndTargetType(state, type);
         }else if(state == null){
-            records = (List<BaseTarget>)baseTargetReposity.findAll();
+            records = (List<BaseTarget>) baseTargetRepository.findAll();
             records = getTargetInfoByType(records, type, pageable);
         }else {
-            records = baseTargetReposity.findDistinctByTargetState(state);
+            records = baseTargetRepository.findDistinctByTargetState(state);
             records = getTargetInfoByType(records, type, pageable);
         }
         if(records == null || records.size() == 0) {
@@ -257,57 +256,83 @@ public class AdminServiceImpl implements AdminService {
     }
 
     /**
-     * 得到待审核的小额标的编号
-     * TODO
-     * @return 项目编号
+     * 得到待审核的标的列表
+     * TODO test
+     * @param type 标的类别
+     * @return 标的概要信息
      */
     @Override
-    public List<Long> getPendingSmallTargets() {
-        return null;
+    public List<PendingTargetBriefInfo> getPendingTargets(Pageable pageable, TargetType type) {
+        TargetState state = TargetState.PENDING;
+        // 通过标的类型筛选得到标的信息
+        List<BaseTarget> records;
+        if(type == null) {
+            records = targetRepository.findByTargetState(state, pageable);
+        }else {
+            records = targetRepository.findByTargetTypeAndTargetState(type, state, pageable);
+        }
+
+        // 生产标的的概要信息
+        List<PendingTargetBriefInfo> list = new ArrayList<>();
+        if(records == null || records.size() == 0) {
+            return list;
+        }
+        for(BaseTarget target : records) {
+            PendingTargetBriefInfo briefInfo = new PendingTargetBriefInfo(target);
+            list.add(briefInfo);
+        }
+        return list;
     }
 
     /**
      * 查看小额标的内容
-     * TODO
      * @param id 标的编号
      * @return 小额标的的详细内容
      * 若id对应的不是小额标的，则返回null
      */
     @Override
     public SmallTargetInfo getSmallTargetInfo(Long id) {
-        return null;
-    }
-
-    /**
-     * 得到待审核的大额标的编号
-     * TODO
-     * @return 项目编号
-     */
-    @Override
-    public List<Long> getPendingLargeTargets() {
-        return null;
+        SmallTarget target = smallTargetRepository.findById(id).get();
+        SmallTargetInfo info = new SmallTargetInfo(target);
+        return info;
     }
 
     /**
      * 查看大额标的内容
-     * TODO
      * @param id 标的编号
      * @return 大额标的的详细内容
      * 若id对应的不是大额标的，则返回null
      */
     @Override
     public LargeTargetInfo getLargeTargetInfo(Long id) {
-        return null;
+        LargeTarget target = largeTargetRepository.findById(id).get();
+        LargeTargetInfo info = new LargeTargetInfo(target);
+        return info;
     }
 
     /**
      * 审批标的
-     * TODO
+     * TODO test
      * @param targetId 标的编号
-     * @return PASS|REJECT
+     * @param result 审批结果
+     * @return 是否成功
      */
     @Override
-    public CheckState approveTarget(Long targetId) {
-        return null;
+    public ApiResponse approveTarget(Long targetId, ApproveResult result) {
+        BaseTarget target = targetRepository.findById(targetId).get();
+        if(target == null) {
+            ApiResponse response = new ApiResponse(false, "该任务不存在");
+        }
+        if(!target.getTargetState().equals(TargetState.PENDING)) {
+            ApiResponse response = new ApiResponse(false, "该任务已经审核通过");
+        }
+        if(result == null) {
+            ApiResponse response = new ApiResponse(false, "请选择“通过”或“拒绝”");
+        }
+
+        // 审核操作成功，数据库进行存储
+        target.setTargetState(result.getState());
+        targetRepository.save(target);
+        return ApiResponse.successResponse();
     }
 }
