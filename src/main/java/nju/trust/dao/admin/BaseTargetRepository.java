@@ -12,7 +12,7 @@ import java.util.List;
  * @Description:
  * @Date: 2018/8/31
  */
-public interface BaseTargetReposity extends CrudRepository<BaseTarget, Long> {
+public interface BaseTargetRepository extends CrudRepository<BaseTarget, Long> {
     /**
      * 通过标的状态查看记录
      * @param targetState 标的状态
