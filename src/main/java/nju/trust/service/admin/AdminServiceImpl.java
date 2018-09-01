@@ -2,7 +2,7 @@ package nju.trust.service.admin;
 
 import nju.trust.dao.admin.AdminUserRepository;
 import nju.trust.dao.admin.BaseTargetRepository;
-import nju.trust.dao.admin.InvestmentRecordRepository;
+import nju.trust.dao.admin.AdminInvestmentRecordRepository;
 import nju.trust.dao.admin.UserInfoCheckRecordRepository;
 import nju.trust.dao.target.LargeTargetRepository;
 import nju.trust.dao.target.SmallTargetRepository;
@@ -28,7 +28,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,7 +41,7 @@ public class AdminServiceImpl implements AdminService {
     private TargetService targetService;
     private AdminUserRepository adminUserRepository;
     private BaseTargetRepository baseTargetRepository;
-    private InvestmentRecordRepository investmentRecordRepository;
+    private AdminInvestmentRecordRepository adminInvestmentRecordRepository;
     private SmallTargetRepository smallTargetRepository;
     private LargeTargetRepository largeTargetRepository;
     private TargetRepository targetRepository;
@@ -51,7 +50,7 @@ public class AdminServiceImpl implements AdminService {
     public AdminServiceImpl(TargetService targetService,
                             AdminUserRepository adminUserRepository,
                             BaseTargetRepository baseTargetRepository,
-                            InvestmentRecordRepository investmentRecordRepository,
+                            AdminInvestmentRecordRepository adminInvestmentRecordRepository,
                             SmallTargetRepository smallTargetRepository,
                             LargeTargetRepository largeTargetRepository,
                             TargetRepository targetRepository,
@@ -59,7 +58,7 @@ public class AdminServiceImpl implements AdminService {
         this.targetService = targetService;
         this.adminUserRepository = adminUserRepository;
         this.baseTargetRepository = baseTargetRepository;
-        this.investmentRecordRepository = investmentRecordRepository;
+        this.adminInvestmentRecordRepository = adminInvestmentRecordRepository;
         this.smallTargetRepository = smallTargetRepository;
         this.largeTargetRepository = largeTargetRepository;
         this.targetRepository = targetRepository;
@@ -222,7 +221,7 @@ public class AdminServiceImpl implements AdminService {
     // 将BaseTarget转为TargetAdminBriefInfo
     private TargetAdminBriefInfo baseTargetToBriefInfo(BaseTarget baseTarget) {
         Long targetId = baseTarget.getId();
-        List<User> investors = investmentRecordRepository.findUserById(targetId);
+        List<User> investors = adminInvestmentRecordRepository.findUserById(targetId);
         List nameList = new ArrayList();
         for(User user : investors) {
             String username = user.getUsername();
@@ -230,8 +229,7 @@ public class AdminServiceImpl implements AdminService {
                 nameList.add(username);
             }
         }
-        TargetAdminBriefInfo briefInfo = new TargetAdminBriefInfo(baseTarget, nameList);
-        return briefInfo;
+        return new TargetAdminBriefInfo(baseTarget, nameList);
     }
 
     /**

@@ -12,6 +12,6 @@ import java.util.List;
  * @Description: 管理员查询投资记录
  * @Date: 2018/8/31
  */
-public interface InvestmentRecordRepository extends CrudRepository<InvestmentRecord, Long> {
+public interface AdminInvestmentRecordRepository extends CrudRepository<InvestmentRecord, Long> {
     List<User> findUserById(Long id);
 }
