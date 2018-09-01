@@ -222,8 +222,14 @@ public class AdminServiceImpl implements AdminService {
     // 将BaseTarget转为TargetAdminBriefInfo
     private TargetAdminBriefInfo baseTargetToBriefInfo(BaseTarget baseTarget) {
         Long targetId = baseTarget.getId();
-        List<String> investors = investmentRecordRepository.findUserUsernameById(targetId);
-        List nameList = new ArrayList(new HashSet(investors));// 去重
+        List<User> investors = investmentRecordRepository.findUserById(targetId);
+        List nameList = new ArrayList();
+        for(User user : investors) {
+            String username = user.getUsername();
+            if(!nameList.contains(username)) {
+                nameList.add(username);
+            }
+        }
         TargetAdminBriefInfo briefInfo = new TargetAdminBriefInfo(baseTarget, nameList);
         return briefInfo;
     }
