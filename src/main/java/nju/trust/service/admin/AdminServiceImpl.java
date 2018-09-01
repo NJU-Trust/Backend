@@ -24,6 +24,7 @@ import nju.trust.service.TargetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,6 +37,7 @@ import java.util.stream.Collectors;
  * @Description: 管理员模块的逻辑层实现
  * @Date: 2018/8/26
  */
+@Service
 public class AdminServiceImpl implements AdminService {
     private TargetService targetService;
     private AdminUserRepository adminUserRepository;
@@ -278,6 +280,19 @@ public class AdminServiceImpl implements AdminService {
         list = pages.stream().map(UserStateList::new).collect(Collectors.toList());
         return list;
     }
+
+    /**
+     * 返回用户的待审核条目
+     * TODO
+     * @param username 用户名
+     * @return 待审核条目信息
+     */
+    @Override
+    public List<UserCheckItem> getUserCheckItems(String username) {
+
+        return null;
+    }
+
     private List<UserStateList> getList(List<UserInfoCheckRecord> records) {
         List<UserStateList> list = new ArrayList<>();
 

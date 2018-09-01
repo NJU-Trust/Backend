@@ -99,6 +99,13 @@ public interface AdminService {
      */
     List<UserStateList> getUserStateList(Pageable pageable);
 
+    /**
+     * 返回用户的待审核条目
+     * @param username 用户名
+     * @return 待审核条目信息
+     */
+    List<UserCheckItem> getUserCheckItems(String username);
+
     // 标的发布审核
     /**
      * 得到待审核的标的列表
