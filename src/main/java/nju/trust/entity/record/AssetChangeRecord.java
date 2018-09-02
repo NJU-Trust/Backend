@@ -3,8 +3,6 @@ package nju.trust.entity.record;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 public class AssetChangeRecord extends BaseRecord {
@@ -19,8 +17,8 @@ public class AssetChangeRecord extends BaseRecord {
 
     private Double balance;
 
-    public AssetChangeRecord(String username, String reason, Double changeMoney, Double balance) {
-        super(username);
+    public AssetChangeRecord(String reason, Double changeMoney, Double balance) {
+        super();
         this.reason = reason;
         this.changeMoney = changeMoney;
         this.balance = balance;

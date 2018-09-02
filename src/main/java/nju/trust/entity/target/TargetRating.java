@@ -1,4 +1,4 @@
-package nju.trust.entity;
+package nju.trust.entity.target;
 
 /**
  * 项目风险评级，A, B, C, D 风险依次上升

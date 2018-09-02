@@ -1,4 +1,4 @@
-package nju.trust.entity;
+package nju.trust.entity.target;
 
 /**
  * Author: J.D. Liao

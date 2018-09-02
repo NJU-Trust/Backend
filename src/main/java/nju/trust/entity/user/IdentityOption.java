@@ -1,4 +1,4 @@
-package nju.trust.entity;
+package nju.trust.entity.user;
 
 /**
  * 参考《不同信息披露层级设计》"

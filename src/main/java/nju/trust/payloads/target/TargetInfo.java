@@ -1,11 +1,10 @@
 package nju.trust.payloads.target;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import nju.trust.entity.TargetRating;
-import nju.trust.entity.TargetState;
-import nju.trust.entity.TargetType;
+import nju.trust.entity.target.TargetRating;
+import nju.trust.entity.target.TargetState;
+import nju.trust.entity.target.TargetType;
 import nju.trust.entity.target.BaseTarget;
 import nju.trust.entity.user.User;
 
@@ -45,12 +44,6 @@ public class TargetInfo {
     @JsonProperty("completionRate")
     private Double rate;
 
-    @JsonIgnore
-    private String riskAnalysis;
-
-    @JsonIgnore
-    private String consumptionAdvise;
-
     /**
      * 利率（同时也是项目收益情况）
      */
@@ -73,12 +66,9 @@ public class TargetInfo {
         collectedMoney = baseTarget.getCollectedMoney();
         state = baseTarget.getTargetState();
         rate = baseTarget.getCompletionRate();
-        riskAnalysis = baseTarget.getRiskAnalysis();
-        consumptionAdvise = baseTarget.getConsumptionAdvise();
-        interestRate = baseTarget.getInterestRate();
+        interestRate = baseTarget.getRepayment().getYearInterestRate();
         targetRating = baseTarget.getTargetRating();
         projectDescription = baseTarget.getProjectDescription();
-
         User user = baseTarget.getUser();
         username = user.getUsername();
     }
@@ -95,8 +85,6 @@ public class TargetInfo {
                 ", collectedMoney=" + collectedMoney +
                 ", state=" + state +
                 ", rate=" + rate +
-                ", riskAnalysis='" + riskAnalysis + '\'' +
-                ", consumptionAdvise='" + consumptionAdvise + '\'' +
                 ", interestRate=" + interestRate +
                 ", targetRating=" + targetRating +
                 ", projectDescription='" + projectDescription + '\'' +
@@ -125,14 +113,6 @@ public class TargetInfo {
 
     public void setTargetRating(TargetRating targetRating) {
         this.targetRating = targetRating;
-    }
-
-    public String getConsumptionAdvise() {
-        return consumptionAdvise;
-    }
-
-    public void setConsumptionAdvise(String consumptionAdvise) {
-        this.consumptionAdvise = consumptionAdvise;
     }
 
     public Double getInterestRate() {
@@ -207,11 +187,4 @@ public class TargetInfo {
         this.rate = rate;
     }
 
-    public String getRiskAnalysis() {
-        return riskAnalysis;
-    }
-
-    public void setRiskAnalysis(String riskAnalysis) {
-        this.riskAnalysis = riskAnalysis;
-    }
 }

@@ -7,9 +7,19 @@ package nju.trust.entity;
  */
 public enum UserType {
     // 借款用户：
-    NOLOAN,     // 无借款用户
-    HAVELOAN,   // 待还款用户
-    OVERDUE,    // 逾期用户
+    NOLOAN("无借款"),     // 无借款用户
+    HAVELOAN("待还款"),   // 待还款用户
+    OVERDUE("逾期"),    // 逾期用户
     // 投资用户:
-    INVESTMENT; // 投资用户
+    INVESTMENT("投资"); // 投资用户
+
+    private String str;
+
+    UserType(String str) {
+        this.str = str;
+    }
+
+    public String getStr() {
+        return str;
+    }
 }

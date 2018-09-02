@@ -1,13 +1,16 @@
 package nju.trust.service;
 
 import nju.trust.dao.user.UserRepository;
-import nju.trust.entity.IdentityOption;
+import nju.trust.entity.user.IdentityOption;
 import nju.trust.entity.UserLevel;
 import nju.trust.entity.user.RoleName;
 import nju.trust.entity.user.User;
+import nju.trust.exception.ResourceNotFoundException;
 import nju.trust.payloads.ApiResponse;
+import nju.trust.payloads.Range;
 import nju.trust.payloads.SignUpRequest;
 import nju.trust.payloads.user.*;
+import nju.trust.util.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -78,5 +81,18 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserInformation getUserInformation(String username, IdentityOption identityOption) {
         return null;
+    }
+
+    @Override
+    public Range<Double> getInterestRange(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        double upper = Constant.BENCHMARK_INTEREST_RATE +
+                user.getCreditScore() * (Constant.INTEREST_RATE_UPPER_BOUND - Constant.BENCHMARK_INTEREST_RATE);
+        double lower = Constant.BENCHMARK_INTEREST_RATE -
+                user.getCreditScore() * (Constant.BENCHMARK_INTEREST_RATE - Constant.INTEREST_RATE_LOWER_BOUND);
+
+        return new Range<>(lower, upper);
     }
 }

@@ -1,21 +1,18 @@
 package nju.trust.service;
 
 import nju.trust.entity.*;
-import nju.trust.payloads.admin.BaseStatistics;
-import nju.trust.payloads.admin.BreakContractStatistics;
-import nju.trust.payloads.admin.UserStateList;
+import nju.trust.entity.record.ApproveResult;
+import nju.trust.entity.target.TargetState;
+import nju.trust.entity.target.TargetType;
+import nju.trust.payloads.ApiResponse;
+import nju.trust.payloads.admin.*;
 import nju.trust.payloads.target.LargeTargetInfo;
 import nju.trust.payloads.target.SmallTargetInfo;
-import nju.trust.payloads.target.TargetAdminBriefInfo;
 import nju.trust.payloads.target.TargetInfo;
 import nju.trust.payloads.user.UserSimpleInfo;
-import nju.trust.payloads.ApiResponse;
-import nju.trust.payloads.SignUpRequest;
-import nju.trust.payloads.user.UserInformation;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Pageable;
 
-import java.awt.print.Pageable;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,49 +22,21 @@ import java.util.List;
  */
 @Service
 public interface AdminService {
-    public ArrayList<UserSimpleInfo> getUserList();
-
     // 用户管理
     /**
-     * 管理员添加用户(默认用户为初级用户)
-     * @param userInfo 用户信息
-     * 用户名邮箱手机等非空
-     * @return
-     */
-    ApiResponse addUser(SignUpRequest userInfo);
-
-    /**
-     * 管理员修改用户信息
-     * @param userInfo 初级用户信息
-     *                 默认用户为初级用户
-     *                 用户名邮箱手机等非空
-     * @return
-     */
-    ApiResponse modifyUser(UserInformation userInfo);
-
-    /**
-     * 管理员删除用户
-     * @param username 用户昵称
-     * @return
-     */
-    ApiResponse deleteUser(UserInformation username);
-
-    /**
-     * 管理员查找用户信息
+     * 查找所有用户的概要信息
      * @param keyword 关键字
-     *                模糊查找(通过编号、昵称等搜索)
-     * @param userType 用户类型
-     *                 (无借款用户、待还款用户、逾期用户)
-     * @return 用户编号 昵称 财务信息  信用评级标的查看
+     * @param type 用户类别（借款用户：无借款用户、待还款用户、逾期用户；投资用户）
+     * @return List<UserSimpleInfo>
      */
-    ArrayList<UserSimpleInfo> searchBorrowers(String keyword, UserType userType);
+    List<UserSimpleInfo> getUserList(Pageable pageable, String keyword, UserType type);
 
     /**
      * 财务信息
      * @param username 用户昵称
      * @return 财务信息
      */
-    // TODO 修改返回值
+    // 修改返回值
     //AssetStatistics searchFinancialInfo(String username);
 
     /**
@@ -75,14 +44,14 @@ public interface AdminService {
      * @param username 用户昵称
      * @return 发起过的标的
      */
-    ArrayList<TargetInfo> seeLaunchTargets(String username);
+    //ArrayList<TargetInfo> seeLaunchTargets(String username);
 
     /**
      * 投资历史
      * @param username 用户昵称
      * @return 投资过的标的
      */
-    ArrayList<TargetInfo> seeInvestTargets(String username);
+    //ArrayList<TargetInfo> seeInvestTargets(String username);
 
 
     // 标的管理
@@ -92,13 +61,14 @@ public interface AdminService {
      * @param type 项目类型（小额拆借类、学习培训类）
      * @return
      */
-    ArrayList<TargetAdminBriefInfo> seeTarget(Pageable pageable, TargetState state, TargetType type);
+    List<TargetAdminBriefInfo> seeTarget(Pageable pageable, TargetState state, TargetType type);
 
     /**
      * 查看项目信息
      * @param id 项目编号
      * @return 项目的详细信息
      */
+    // TODO 还款方案
     TargetInfo seeTarget(Long id);
 
     // 数据统计（针对平台）
@@ -127,16 +97,28 @@ public interface AdminService {
      * 优先级：UPDATE > SUBMIT 时间早 > 时间晚
      * @return List<UserStateList>
      */
-    List<UserStateList> getUserStateList();
+    List<UserStateList> getUserStateList(Pageable pageable);
 
-
+    /**
+     * 返回用户的待审核条目
+     * @param username 用户名
+     * @return 待审核条目信息
+     */
+    List<UserCheckItem> getUserCheckItems(String username);
 
     // 标的发布审核
+    /**
+     * 得到待审核的标的列表
+     * @param type 标的类别
+     * @return 标的概要信息
+     */
+    public List<PendingTargetBriefInfo> getPendingTargets(Pageable pageable, TargetType type);
+
     /**
      * 得到待审核的小额标的编号
      * @return 项目编号
      */
-    List<Long> getPendingSmallTargets();
+//    List<Long> getPendingSmallTargets();
 
     /**
      * 查看小额标的内容
@@ -150,7 +132,7 @@ public interface AdminService {
      * 得到待审核的大额标的编号
      * @return 项目编号
      */
-    List<Long> getPendingLargeTargets();
+//    List<Long> getPendingLargeTargets();
 
     /**
      * 查看大额标的内容
@@ -163,7 +145,8 @@ public interface AdminService {
     /**
      * 审批标的
      * @param targetId 标的编号
-     * @return PASS|REJECT
+     * @param result 审批结果
+     * @return 是否成功
      */
-    CheckState approveTarget(Long targetId);
+    ApiResponse approveTarget(Long targetId, ApproveResult result);
 }

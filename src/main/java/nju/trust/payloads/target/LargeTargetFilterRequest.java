@@ -1,8 +1,7 @@
 package nju.trust.payloads.target;
 
 import nju.trust.entity.CreditRating;
-import nju.trust.entity.LargeProjectClassification;
-import nju.trust.entity.SmallProjectClassification;
+import nju.trust.entity.target.LargeProjectClassification;
 
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
@@ -13,6 +12,21 @@ import java.time.LocalDateTime;
  * Description:
  */
 public class LargeTargetFilterRequest {
+
+    public static LargeTargetFilterRequest testData() {
+        LargeTargetFilterRequest filter = new LargeTargetFilterRequest();
+        filter.setInterestRate(new Double[]{0., 0.});
+        filter.setMoney(new Double[]{0., 0.});
+        filter.setRepaymentDuration(new Integer[]{0, 0});
+        filter.setTime(new LocalDateTime[]{LocalDateTime.now(), LocalDateTime.now()});
+        filter.setClassifications(new LargeProjectClassification[]{
+                LargeProjectClassification.CERTIFICATE_TEST, LargeProjectClassification.GMAT});
+        filter.setUserCreditRating(new CreditRating[]{});
+        filter.setUserFailedSubject(new Integer[]{0, null});
+        filter.setUserRankingRate(new Double[]{null, 50.});
+
+        return filter;
+    }
 
     @Size(min = 2, max = 2)
     private Double[] money;

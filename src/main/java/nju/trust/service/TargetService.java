@@ -1,6 +1,8 @@
 package nju.trust.service;
 
 import nju.trust.payloads.ApiResponse;
+import nju.trust.payloads.Range;
+import nju.trust.payloads.investment.InvestmentStrategy;
 import nju.trust.payloads.target.*;
 import org.springframework.data.domain.Pageable;
 
@@ -24,7 +26,13 @@ public interface TargetService {
 
     List<TargetInfo> filterSmallTargets(Pageable pageable, SmallTargetFilterRequest filterRequest);
 
+    List<TargetInfo> recommendSmallTargets(SmallTargetFilterRequest filterRequest);
+
+    List<InvestmentStrategy> recommendStrategy(List<Long> targetIds, double money, double interestRate);
+
     ApiResponse schoolFellowInvestTarget(Long targetId, String username, String interestPlan);
 
+    Range<Double> getLoanTimeRange(String username, double money);
 
+    Double getRemainingAmount(String username);
 }

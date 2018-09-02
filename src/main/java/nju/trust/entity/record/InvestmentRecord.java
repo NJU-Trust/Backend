@@ -15,8 +15,8 @@ public class InvestmentRecord extends BaseRecord {
 
     private Double investedMoney;
 
-    public InvestmentRecord(Long targetId, Double investedMoney, String username) {
-        super(username);
+    public InvestmentRecord(Long targetId, Double investedMoney) {
+        super();
         this.targetId = targetId;
         this.investedMoney = investedMoney;
     }

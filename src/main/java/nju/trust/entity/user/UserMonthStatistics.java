@@ -18,6 +18,7 @@ public class UserMonthStatistics {
     private LocalDate date;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "username")
     private User user;
 
     private Double dress;

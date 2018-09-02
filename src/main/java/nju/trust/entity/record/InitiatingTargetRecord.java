@@ -13,8 +13,8 @@ public class InitiatingTargetRecord extends BaseRecord {
 
     private Long targetId;
 
-    public InitiatingTargetRecord(String username, Long targetId) {
-        super(username);
+    public InitiatingTargetRecord(Long targetId) {
+        super();
         this.targetId = targetId;
     }
 
@@ -23,7 +23,6 @@ public class InitiatingTargetRecord extends BaseRecord {
         return "InitiatingTargetRecord{" +
                 "id=" + id +
                 ", targetId=" + targetId +
-                ", username='" + username + '\'' +
                 ", time=" + time +
                 '}';
     }

@@ -1,7 +1,6 @@
 package nju.trust.payloads.target;
 
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
-import nju.trust.entity.LargeProjectClassification;
+import nju.trust.entity.target.LargeProjectClassification;
 
 /**
  * Author: J.D. Liao

@@ -1,18 +1,14 @@
 package nju.trust.entity.target;
 
-import nju.trust.entity.IdentityOption;
-import nju.trust.entity.TargetRating;
-import nju.trust.entity.TargetState;
-import nju.trust.entity.TargetType;
+import nju.trust.entity.user.IdentityOption;
+import nju.trust.entity.user.Repayment;
 import nju.trust.entity.user.User;
 import nju.trust.payloads.target.BasicTargetRequest;
 
 import javax.persistence.*;
-import javax.validation.constraints.DecimalMax;
-import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -29,6 +25,12 @@ public abstract class BaseTarget {
 
     private LocalDateTime startTime;
 
+    /**
+     * 借款募集截止时间：如果在这个时间之前就满标，则将改时间改为
+     * 满标时的时间，并从此时开始计算利息
+     */
+    private LocalDateTime completeDate;
+
     private String name;
 
     private Double money;
@@ -43,22 +45,8 @@ public abstract class BaseTarget {
      */
     private Double completionRate;
 
-    private String riskAnalysis;
-
     /**
-     * 消费修正建议
-     */
-    private String consumptionAdvise;
-
-    /**
-     * 项目利率，同时也是收益情况，百分数
-     */
-    @DecimalMin("0.0")
-    @DecimalMax("100.0")
-    private Double interestRate;
-
-    /**
-     * 平台项目评级
+     * 平台项目评级（风险评级）
      */
     @Enumerated(value = EnumType.STRING)
     private TargetRating targetRating;
@@ -71,18 +59,15 @@ public abstract class BaseTarget {
     @Enumerated(EnumType.STRING)
     @NotNull TargetType targetType;
 
+    @Lob
     private String projectDescription;
 
-    @Lob
-    @ElementCollection
-    @Basic(fetch = FetchType.LAZY)
-    private List<byte[]> files;
-
     /**
-     * 还款期限
-     * todo 考虑从哪里赋值
+     * 还款方案
      */
-    private Integer repaymentDuration;
+    @OneToOne(fetch = FetchType.LAZY)
+    @NotNull
+    private Repayment repayment;
 
     IdentityOption identityOption;
 
@@ -98,24 +83,20 @@ public abstract class BaseTarget {
         targetState = TargetState.PENDING;
     }
 
-    @Override
-    public String toString() {
-        return "BaseTarget{" +
-                "id=" + id +
-                ", startTime=" + startTime +
-                ", name='" + name + '\'' +
-                ", money=" + money +
-                ", collectedMoney=" + collectedMoney +
-                ", targetState=" + targetState +
-                ", completionRate=" + completionRate +
-                ", riskAnalysis='" + riskAnalysis + '\'' +
-                ", consumptionAdvise='" + consumptionAdvise + '\'' +
-                ", interestRate=" + interestRate +
-                ", targetRating=" + targetRating +
-                ", targetType=" + targetType +
-                ", identityOption=" + identityOption +
-                ", projectDescription=" + projectDescription +
-                '}';
+    public LocalDateTime getCompleteDate() {
+        return completeDate;
+    }
+
+    public void setCompleteDate(LocalDateTime completeDate) {
+        this.completeDate = completeDate;
+    }
+
+    public Repayment getRepayment() {
+        return repayment;
+    }
+
+    public void setRepayment(Repayment repayment) {
+        this.repayment = repayment;
     }
 
     public Double getTargetRatingScore() {
@@ -134,22 +115,6 @@ public abstract class BaseTarget {
         this.user = user;
     }
 
-    public Integer getRepaymentDuration() {
-        return repaymentDuration;
-    }
-
-    public void setRepaymentDuration(Integer repaymentDuration) {
-        this.repaymentDuration = repaymentDuration;
-    }
-
-    public List<byte[]> getFiles() {
-        return files;
-    }
-
-    public void setFiles(List<byte[]> files) {
-        this.files = files;
-    }
-
     public String getProjectDescription() {
         return projectDescription;
     }
@@ -164,22 +129,6 @@ public abstract class BaseTarget {
 
     public void setTargetRating(TargetRating targetRating) {
         this.targetRating = targetRating;
-    }
-
-    public Double getInterestRate() {
-        return interestRate;
-    }
-
-    public void setInterestRate(Double interestRate) {
-        this.interestRate = interestRate;
-    }
-
-    public String getConsumptionAdvise() {
-        return consumptionAdvise;
-    }
-
-    public void setConsumptionAdvise(String consumptionAdvise) {
-        this.consumptionAdvise = consumptionAdvise;
     }
 
     public IdentityOption getIdentityOption() {
@@ -244,14 +193,6 @@ public abstract class BaseTarget {
 
     public void setCompletionRate(Double completionRate) {
         this.completionRate = completionRate;
-    }
-
-    public String getRiskAnalysis() {
-        return riskAnalysis;
-    }
-
-    public void setRiskAnalysis(String riskAnalysis) {
-        this.riskAnalysis = riskAnalysis;
     }
 
     public TargetType getTargetType() {

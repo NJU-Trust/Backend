@@ -1,24 +1,29 @@
 package nju.trust.service.target;
 
+import nju.trust.dao.admin.RepaymentRepository;
 import nju.trust.dao.record.InvestmentRecordRepository;
 import nju.trust.dao.target.*;
+import nju.trust.dao.user.UserMonthlyStatisticsRepository;
 import nju.trust.dao.user.UserRepository;
 import nju.trust.entity.CreditRating;
-import nju.trust.entity.TargetRating;
-import nju.trust.entity.TargetState;
-import nju.trust.entity.TargetType;
+import nju.trust.entity.target.TargetRating;
+import nju.trust.entity.target.TargetState;
+import nju.trust.entity.target.TargetType;
 import nju.trust.entity.record.InvestmentRecord;
 import nju.trust.entity.target.BaseTarget;
 import nju.trust.entity.target.LargeTarget;
 import nju.trust.entity.target.SmallTarget;
+import nju.trust.entity.user.Repayment;
 import nju.trust.entity.user.User;
 import nju.trust.entity.user.UserMonthStatistics;
 import nju.trust.exception.InternalException;
 import nju.trust.exception.ResourceNotFoundException;
 import nju.trust.payloads.ApiResponse;
+import nju.trust.payloads.Range;
 import nju.trust.payloads.investment.InvestmentStrategy;
 import nju.trust.payloads.target.*;
 import nju.trust.service.TargetService;
+import nju.trust.util.SimpleExponentialSmoothing;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -27,14 +32,15 @@ import org.apache.commons.math3.optim.linear.*;
 import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.Predicate;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -63,17 +69,25 @@ public class TargetServiceImpl implements TargetService {
 
     private UserRepository userRepository;
 
+    private UserMonthlyStatisticsRepository monthlyStatisticsRepository;
+
     private InvestmentRecordRepository recordRepository;
 
+    private RepaymentRepository repaymentRepository;
+    @Autowired
     public TargetServiceImpl(TargetRepository targetRepository,
                              SmallTargetRepository smallTargetRepository,
                              LargeTargetRepository largeTargetRepository,
                              UserRepository userRepository,
-                             InvestmentRecordRepository recordRepository) {
+                             UserMonthlyStatisticsRepository monthlyStatisticsRepository,
+                             InvestmentRecordRepository recordRepository,
+                             RepaymentRepository repaymentRepository) {
         this.targetRepository = targetRepository;
         this.smallTargetRepository = smallTargetRepository;
         this.largeTargetRepository = largeTargetRepository;
         this.userRepository = userRepository;
+        this.monthlyStatisticsRepository = monthlyStatisticsRepository;
+        this.recordRepository = recordRepository;
         this.recordRepository = recordRepository;
     }
 
@@ -86,14 +100,14 @@ public class TargetServiceImpl implements TargetService {
     public ApiResponse applySmallTarget(SmallTargetRequest request, String username) {
         User user = userRepository.findByUsername(username).orElseThrow(InternalError::new);
         SmallTarget smallTarget = new SmallTarget(request, user);
-        return setFileAndSaveTarget(smallTarget, request);
+        return setFileAndSaveTarget(smallTarget);
     }
 
     @Override
     public ApiResponse applyLargeTarget(LargeTargetRequest request, String username) {
         User user = userRepository.findByUsername(username).orElseThrow(InternalError::new);
         LargeTarget largeTarget = new LargeTarget(request, user);
-        return setFileAndSaveTarget(largeTarget, request);
+        return setFileAndSaveTarget(largeTarget);
     }
 
     @Override
@@ -119,7 +133,7 @@ public class TargetServiceImpl implements TargetService {
         targetRepository.save(baseTarget);
 
         // Add record
-        recordRepository.save(new InvestmentRecord(targetId, money, username));
+        recordRepository.save(new InvestmentRecord(targetId, money));
         return ApiResponse.successResponse();
     }
 
@@ -140,6 +154,7 @@ public class TargetServiceImpl implements TargetService {
         return targets.stream().map(SmallTargetInfo::new).collect(Collectors.toList());
     }
 
+    @Override
     public List<TargetInfo> recommendSmallTargets(SmallTargetFilterRequest filterRequest) {
         // Get top 8 targets with highest success rate
         Specification<SmallTarget> specification = new SmallTargetSpecification(filterRequest);
@@ -149,7 +164,8 @@ public class TargetServiceImpl implements TargetService {
         return null;
     }
 
-    public List<InvestmentStrategy> recommendStrategy(List<Long> targetIds, double money, double interstRate) {
+    @Override
+    public List<InvestmentStrategy> recommendStrategy(List<Long> targetIds, double money, double interestRate) {
         List<SmallTarget> targets = targetIds.stream()
                 .map(id -> smallTargetRepository.findById(id)
                         .orElseThrow(() -> new ResourceNotFoundException("target", "targetId", id)))
@@ -194,7 +210,7 @@ public class TargetServiceImpl implements TargetService {
         for (int i = 0; i < matrixSize; i++) {
             double yield = 0.;
             for (int j = 0; j < matrixSize; j++) {
-                yield += weightMatrix.getEntry(i, j) * targets.get(j).getInterestRate();
+                yield += weightMatrix.getEntry(i, j) * targets.get(j).getRepayment().getYearInterestRate();
             }
             yieldVector.setEntry(i, yield);
         }
@@ -205,7 +221,7 @@ public class TargetServiceImpl implements TargetService {
             double yield = yieldVector.getEntry(i);
             for (int j = 0; j < matrixSize; j++) {
                 sigma += weightMatrix.getEntry(i, j) *
-                        Math.pow(targets.get(j).getInterestRate() - yield, 2);
+                        Math.pow(targets.get(j).getRepayment().getYearInterestRate() - yield, 2);
             }
             stdDeviation.setEntry(i, Math.sqrt(sigma));
         }
@@ -213,7 +229,7 @@ public class TargetServiceImpl implements TargetService {
         // Linear programming part
         LinearObjectiveFunction objectiveFunction = new LinearObjectiveFunction(stdDeviation, 0);
         List<LinearConstraint> constraints = new ArrayList<>();
-        LinearConstraint constraint1 = new LinearConstraint(yieldVector, Relationship.EQ, interstRate);
+        LinearConstraint constraint1 = new LinearConstraint(yieldVector, Relationship.EQ, interestRate);
         LinearConstraint constraint2 = new LinearConstraint(new ArrayRealVector(matrixSize, 1.),
                 Relationship.EQ, 1);
         constraints.add(constraint1);
@@ -239,15 +255,38 @@ public class TargetServiceImpl implements TargetService {
         return null;
     }
 
-    private ApiResponse setFileAndSaveTarget(BaseTarget target, BasicTargetRequest request) {
-        try {
-            target.setFiles(request.convertFileToByte());
-        } catch (IOException e) {
-            e.printStackTrace();
-            log.error("Error occurs when getting bytes from MultiPartFile");
-            return ApiResponse.serverGoesWrong();
-        }
+    @Override
+    public Range<Double> getLoanTimeRange(String username, double money) {
+        List<UserMonthStatistics> statistics = monthlyStatisticsRepository
+                .findAllByUserUsername(username, Sort.by(Sort.Direction.ASC, "date"));
 
+        List<Double> surplusData = statistics.stream().map(UserMonthStatistics::getSurplus).collect(Collectors.toList());
+        List<Double> discData = statistics.stream().map(UserMonthStatistics::getDisc).collect(Collectors.toList());
+        double k0 = SimpleExponentialSmoothing.forecast(surplusData);
+        double a0 = SimpleExponentialSmoothing.forecast(discData);
+
+        if (money <= k0)
+            return new Range<>(0., 1.);
+
+        double lower = Math.ceil(money / k0);
+        if (lower > 12.)
+            lower = 12.;
+        double upper = Math.min(12., Math.ceil(money / (k0 + a0)));
+
+        return new Range<>(lower, upper);
+    }
+
+    @Override
+    public Double getRemainingAmount(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        List<Repayment> repayments = repaymentRepository.findAllByUserUsername(username);
+        return user.getCreditRating().getBorrowingAmount() -
+                repayments.stream().mapToDouble(Repayment::getRemainingAmount).sum();
+    }
+
+    private ApiResponse setFileAndSaveTarget(BaseTarget target) {
         setTargetRating(target);
         targetRepository.save(target);
 
@@ -263,8 +302,8 @@ public class TargetServiceImpl implements TargetService {
         User user = target.getUser();
 
         double money = target.getMoney();
-        double interestRate = target.getInterestRate();
-        int duration = target.getRepaymentDuration();
+        double interestRate = target.getRepayment().getYearInterestRate();
+        int duration = target.getRepayment().getRepaymentDuration();
 
         CreditRating creditRating = CreditRating.of(user.getCreditScore());
         double avgMonthlyIncome = user.getMonthStatistics().stream()

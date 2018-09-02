@@ -1,16 +1,10 @@
 package nju.trust.entity.target;
 
-import nju.trust.entity.SmallProjectClassification;
-import nju.trust.entity.TargetType;
 import nju.trust.entity.user.User;
 import nju.trust.payloads.target.SmallTargetRequest;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.DiscriminatorValue;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import java.util.List;
 
 @Entity
 @DiscriminatorValue("SMALL")
