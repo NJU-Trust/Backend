@@ -52,7 +52,7 @@ public class TargetServiceImpl implements TargetService {
 
     private static final int RECOMMENDATION_NUMBER = 8;
 
-    private static final double BANDWIDTH = 0.0274;
+
 
     private TargetRepository targetRepository;
 
@@ -68,8 +68,6 @@ public class TargetServiceImpl implements TargetService {
 
     private RepaymentRepository repaymentRepository;
 
-    private UserTotalStatisticsRepository totalStatisticsRepository;
-
     @Autowired
     public TargetServiceImpl(TargetRepository targetRepository,
                              SmallTargetRepository smallTargetRepository,
@@ -77,8 +75,7 @@ public class TargetServiceImpl implements TargetService {
                              UserRepository userRepository,
                              UserMonthlyStatisticsRepository monthlyStatisticsRepository,
                              InvestmentRecordRepository recordRepository,
-                             RepaymentRepository repaymentRepository,
-                             UserTotalStatisticsRepository totalStatisticsRepository) {
+                             RepaymentRepository repaymentRepository) {
         this.targetRepository = targetRepository;
         this.smallTargetRepository = smallTargetRepository;
         this.largeTargetRepository = largeTargetRepository;
@@ -86,7 +83,6 @@ public class TargetServiceImpl implements TargetService {
         this.monthlyStatisticsRepository = monthlyStatisticsRepository;
         this.recordRepository = recordRepository;
         this.repaymentRepository = repaymentRepository;
-        this.totalStatisticsRepository = totalStatisticsRepository;
     }
 
     @Override
@@ -169,83 +165,7 @@ public class TargetServiceImpl implements TargetService {
                         .orElseThrow(() -> new ResourceNotFoundException("target", "targetId", id)))
                 .collect(Collectors.toList());
 
-        int matrixSize = targetIds.size();
-
-        // Calculate distance matrix
-        RealMatrix distanceMatrix = MatrixUtils.createRealMatrix(matrixSize, matrixSize);
-        for (int i = 0; i < matrixSize; i++) {
-            for (int j = i + 1; j < matrixSize; j++) {
-                double iScore = targets.get(i).getTargetRatingScore();
-                double jScore = targets.get(j).getTargetRatingScore();
-                double distance = Math.abs(iScore - jScore);
-                distanceMatrix.setEntry(i, j, distance);
-                distanceMatrix.setEntry(j, i, distance);
-            }
-        }
-
-        RealMatrix kernelValueMatrix = distanceMatrix.copy();
-        for (int i = 0; i < matrixSize; i++) {
-            for (int j = i; j < matrixSize; j++) {
-                double ijDistance = kernelValueMatrix.getEntry(i, j);
-                double kernelValue = gaussianKernel(ijDistance / BANDWIDTH);
-                kernelValueMatrix.setEntry(i, j, kernelValue);
-                kernelValueMatrix.setEntry(j, i, kernelValue);
-            }
-        }
-
-        // Calculate weight for each distance
-        RealMatrix weightMatrix = MatrixUtils.createRealMatrix(matrixSize, matrixSize);
-        for (int i = 0; i < matrixSize; i++) {
-            double rowSum = sum(kernelValueMatrix.getRow(i));
-            for (int j = 0; j < matrixSize; j++) {
-                double weight = kernelValueMatrix.getEntry(i, j) / rowSum;
-                weightMatrix.setEntry(i, j, weight);
-            }
-        }
-
-        // Calculate yield
-        RealVector yieldVector = new ArrayRealVector(matrixSize);
-        for (int i = 0; i < matrixSize; i++) {
-            double yield = 0.;
-            for (int j = 0; j < matrixSize; j++) {
-                yield += weightMatrix.getEntry(i, j) * targets.get(j).getRepayment().getYearInterestRate();
-            }
-            yieldVector.setEntry(i, yield);
-        }
-
-        RealVector stdDeviation = new ArrayRealVector(matrixSize);
-        for (int i = 0; i < matrixSize; i++) {
-            double sigma = 0.;
-            double yield = yieldVector.getEntry(i);
-            for (int j = 0; j < matrixSize; j++) {
-                sigma += weightMatrix.getEntry(i, j) *
-                        Math.pow(targets.get(j).getRepayment().getYearInterestRate() - yield, 2);
-            }
-            stdDeviation.setEntry(i, Math.sqrt(sigma));
-        }
-
-        // Linear programming part
-        LinearObjectiveFunction objectiveFunction = new LinearObjectiveFunction(stdDeviation, 0);
-        List<LinearConstraint> constraints = new ArrayList<>();
-        LinearConstraint constraint1 = new LinearConstraint(yieldVector, Relationship.EQ, interestRate);
-        LinearConstraint constraint2 = new LinearConstraint(new ArrayRealVector(matrixSize, 1.),
-                Relationship.EQ, 1);
-        constraints.add(constraint1);
-        constraints.add(constraint2);
-        for (int i = 0; i < matrixSize; i++) {
-            double e = targets.get(i).getMoney() - targets.get(i).getCollectedMoney();
-            constraints.add(new LinearConstraint(new double[]{money}, Relationship.LEQ, e));
-        }
-        SimplexSolver optimizer = new SimplexSolver();
-        double[] result = optimizer.optimize(objectiveFunction,
-                new LinearConstraintSet(constraints), GoalType.MINIMIZE).getPoint();
-
-        List<InvestmentStrategy> strategies = new ArrayList<>();
-        for (int i = 0; i < matrixSize; i++) {
-            strategies.add(new InvestmentStrategy(targetIds.get(i), result[i], result[i] * money));
-        }
-
-        return strategies;
+        return new InvestmentRecommendation(targets, money, interestRate).recommend();
     }
 
     @Override
@@ -258,19 +178,17 @@ public class TargetServiceImpl implements TargetService {
         List<UserMonthStatistics> statistics = monthlyStatisticsRepository
                 .findAllByUserUsername(username, Sort.by(Sort.Direction.ASC, "date"));
 
-        List<Double> surplusData = statistics.stream().map(UserMonthStatistics::getSurplus).collect(Collectors.toList());
-        List<Double> discData = statistics.stream().map(UserMonthStatistics::getDisc).collect(Collectors.toList());
-        double k = SimpleExponentialSmoothing.forecast(surplusData);
-        double a = SimpleExponentialSmoothing.forecast(discData);
-        double k0 = surplusData.stream().mapToDouble(t -> t).sum(); // Total surplus
+        UserMonthlyDataHelper helper = new UserMonthlyDataHelper(statistics);
+        double k = helper.forecastSurplus();
+        double a = helper.forecastDisc();
+        double k0 = helper.getTotalSurplus(); // Total surplus
+        double a0 = helper.getTotalDisc();
 
         if (money <= k0)
             return new Range<>(0., 1.);
 
-        double lower = Math.ceil((money - k0) / k);
-        if (lower > 12.)
-            lower = 12.;
-        double upper = Math.min(12., Math.ceil((money - k0) / (k + a)));
+        double upper = Math.min(12., Math.ceil((money - k0) / k));
+        double lower = Math.min(12., Math.ceil((money - k0 - a0) / (k + a)));
 
         return new Range<>(lower, upper);
     }
@@ -327,18 +245,11 @@ public class TargetServiceImpl implements TargetService {
             throw new ResourceNotFoundException(message);
         }
 
-        List<Double> surplusData = statistics.stream().map(UserMonthStatistics::getSurplus).collect(Collectors.toList());
-        List<Double> discData = statistics.stream().map(UserMonthStatistics::getDisc).collect(Collectors.toList());
-
-        double k0 = surplusData.stream().mapToDouble(t -> t).sum();
-        double a0 = discData.stream().mapToDouble(t -> t).sum();
-        double k = SimpleExponentialSmoothing.forecast(surplusData);
-        double a = SimpleExponentialSmoothing.forecast(discData);
-
-        double totalDebt = statistics.stream().mapToDouble(UserMonthStatistics::getDebt).sum();
+        UserMonthlyDataHelper helper = new UserMonthlyDataHelper(statistics);
 
         // Calculate difficulty value
-        RepaymentNoteHelper noteHelper = new RepaymentNoteHelper(k0, a0, k, a, totalDebt,
+        RepaymentNoteHelper noteHelper = new RepaymentNoteHelper(helper.getTotalSurplus(), helper.getTotalDisc(),
+                helper.forecastSurplus(), helper.forecastDisc(), helper.getTotalDebt(),
                 duration, totalRepayment, monthlyRepayment);
 
         // Calculate disc ratios
@@ -346,7 +257,7 @@ public class TargetServiceImpl implements TargetService {
         List<Double> discRatios = Arrays.asList(latest.getDailyToAll(), latest.getFoodToAll(),
                 latest.getTravelToAll(), latest.getFunToAll());
 
-        return new RepaymentNote(noteHelper.evaluateSurplus(), null,
+        return new RepaymentNote(noteHelper.evaluateSurplus(), discRatios,
                 noteHelper.evaluateDisc(), noteHelper.evaluateDifficulty());
     }
 
