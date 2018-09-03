@@ -2,6 +2,9 @@ package nju.trust.entity;
 
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.junit.Test;
+import org.springframework.util.ResourceUtils;
+
+import java.io.File;
 
 import static org.junit.Assert.*;
 
