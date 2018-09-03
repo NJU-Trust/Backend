@@ -5,24 +5,17 @@ import nju.trust.dao.record.InvestmentRecordRepository;
 import nju.trust.dao.target.*;
 import nju.trust.dao.user.UserMonthlyStatisticsRepository;
 import nju.trust.dao.user.UserRepository;
+import nju.trust.dao.user.UserTotalStatisticsRepository;
 import nju.trust.entity.CreditRating;
-import nju.trust.entity.target.TargetRating;
-import nju.trust.entity.target.TargetState;
-import nju.trust.entity.target.TargetType;
 import nju.trust.entity.record.InvestmentRecord;
-import nju.trust.entity.target.BaseTarget;
-import nju.trust.entity.target.LargeTarget;
-import nju.trust.entity.target.SmallTarget;
-import nju.trust.entity.user.Repayment;
-import nju.trust.entity.user.User;
-import nju.trust.entity.user.UserMonthStatistics;
+import nju.trust.entity.target.*;
+import nju.trust.entity.user.*;
 import nju.trust.exception.InternalException;
 import nju.trust.exception.ResourceNotFoundException;
 import nju.trust.payloads.ApiResponse;
 import nju.trust.payloads.Range;
 import nju.trust.payloads.investment.InvestmentStrategy;
 import nju.trust.payloads.target.*;
-import nju.trust.service.TargetService;
 import nju.trust.util.SimpleExponentialSmoothing;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.MatrixUtils;
@@ -74,6 +67,9 @@ public class TargetServiceImpl implements TargetService {
     private InvestmentRecordRepository recordRepository;
 
     private RepaymentRepository repaymentRepository;
+
+    private UserTotalStatisticsRepository totalStatisticsRepository;
+
     @Autowired
     public TargetServiceImpl(TargetRepository targetRepository,
                              SmallTargetRepository smallTargetRepository,
@@ -81,14 +77,16 @@ public class TargetServiceImpl implements TargetService {
                              UserRepository userRepository,
                              UserMonthlyStatisticsRepository monthlyStatisticsRepository,
                              InvestmentRecordRepository recordRepository,
-                             RepaymentRepository repaymentRepository) {
+                             RepaymentRepository repaymentRepository,
+                             UserTotalStatisticsRepository totalStatisticsRepository) {
         this.targetRepository = targetRepository;
         this.smallTargetRepository = smallTargetRepository;
         this.largeTargetRepository = largeTargetRepository;
         this.userRepository = userRepository;
         this.monthlyStatisticsRepository = monthlyStatisticsRepository;
         this.recordRepository = recordRepository;
-        this.recordRepository = recordRepository;
+        this.repaymentRepository = repaymentRepository;
+        this.totalStatisticsRepository = totalStatisticsRepository;
     }
 
     @Override
@@ -161,7 +159,7 @@ public class TargetServiceImpl implements TargetService {
         List<SmallTarget> targets = smallTargetRepository
                 .findAll(specification, PageRequest.of(0, RECOMMENDATION_NUMBER)).getContent();
 
-        return null;
+        return targets.stream().map(SmallTargetInfo::new).collect(Collectors.toList());
     }
 
     @Override
@@ -262,16 +260,17 @@ public class TargetServiceImpl implements TargetService {
 
         List<Double> surplusData = statistics.stream().map(UserMonthStatistics::getSurplus).collect(Collectors.toList());
         List<Double> discData = statistics.stream().map(UserMonthStatistics::getDisc).collect(Collectors.toList());
-        double k0 = SimpleExponentialSmoothing.forecast(surplusData);
-        double a0 = SimpleExponentialSmoothing.forecast(discData);
+        double k = SimpleExponentialSmoothing.forecast(surplusData);
+        double a = SimpleExponentialSmoothing.forecast(discData);
+        double k0 = surplusData.stream().mapToDouble(t -> t).sum(); // Total surplus
 
         if (money <= k0)
             return new Range<>(0., 1.);
 
-        double lower = Math.ceil(money / k0);
+        double lower = Math.ceil((money - k0) / k);
         if (lower > 12.)
             lower = 12.;
-        double upper = Math.min(12., Math.ceil(money / (k0 + a0)));
+        double upper = Math.min(12., Math.ceil((money - k0) / (k + a)));
 
         return new Range<>(lower, upper);
     }
@@ -285,6 +284,72 @@ public class TargetServiceImpl implements TargetService {
         return user.getCreditRating().getBorrowingAmount() -
                 repayments.stream().mapToDouble(Repayment::getRemainingAmount).sum();
     }
+
+    @Override
+    public RepaymentTotalInfo getRepaymentInfo(String username, RepaymentType type, double principal,
+                                               double duration, double interestRate) {
+
+        RepaymentCalculator calculator;
+
+        switch (type) {
+            case EQUAL_PRINCIPAL:
+                calculator = new EPRepaymentCalculator(principal, duration, interestRate);
+                break;
+            case PRE_INTEREST:
+                calculator = new PIRepaymentCalculator(principal, duration, interestRate);
+                break;
+            case ONE_TIME_PAYMENT:
+                calculator = new OTPRepaymentCalculator(principal, duration, interestRate);
+                break;
+            case EQUAL_INSTALLMENT_OF_PRINCIPAL_AND_INTEREST:
+                calculator = new EIPIRepaymentCalculator(principal, duration, interestRate);
+                break;
+            default:
+                throw new ResourceNotFoundException("Repayment type not found");
+        }
+
+        double totalRepayment = calculator.getTotalRepayment();
+        double totalInterest = calculator.getTotalInterest();
+        RepaymentNote note = getRepaymentNote(username, calculator.getMonthlyRepayment(),
+                duration, totalRepayment);
+
+        return new RepaymentTotalInfo(totalInterest, totalRepayment, calculator.monthlyRepayment, note);
+    }
+
+    private RepaymentNote getRepaymentNote(String username, List<Double> monthlyRepayment, double duration, double totalRepayment) {
+        // Generate repayment note
+        List<UserMonthStatistics> statistics = monthlyStatisticsRepository
+                .findAllByUserUsername(username, Sort.by(Sort.Direction.ASC, "date"));
+
+        if (statistics.isEmpty()) {
+            String message = "User " + username + " doesn't have history data";
+            log.error(message);
+            throw new ResourceNotFoundException(message);
+        }
+
+        List<Double> surplusData = statistics.stream().map(UserMonthStatistics::getSurplus).collect(Collectors.toList());
+        List<Double> discData = statistics.stream().map(UserMonthStatistics::getDisc).collect(Collectors.toList());
+
+        double k0 = surplusData.stream().mapToDouble(t -> t).sum();
+        double a0 = discData.stream().mapToDouble(t -> t).sum();
+        double k = SimpleExponentialSmoothing.forecast(surplusData);
+        double a = SimpleExponentialSmoothing.forecast(discData);
+
+        double totalDebt = statistics.stream().mapToDouble(UserMonthStatistics::getDebt).sum();
+
+        // Calculate difficulty value
+        RepaymentNoteHelper noteHelper = new RepaymentNoteHelper(k0, a0, k, a, totalDebt,
+                duration, totalRepayment, monthlyRepayment);
+
+        // Calculate disc ratios
+        UserMonthStatistics latest = statistics.get(statistics.size() - 1);
+        List<Double> discRatios = Arrays.asList(latest.getDailyToAll(), latest.getFoodToAll(),
+                latest.getTravelToAll(), latest.getFunToAll());
+
+        return new RepaymentNote(noteHelper.evaluateSurplus(), null,
+                noteHelper.evaluateDisc(), noteHelper.evaluateDifficulty());
+    }
+
 
     private ApiResponse setFileAndSaveTarget(BaseTarget target) {
         setTargetRating(target);

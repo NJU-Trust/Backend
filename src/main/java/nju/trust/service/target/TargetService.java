@@ -1,5 +1,6 @@
-package nju.trust.service;
+package nju.trust.service.target;
 
+import nju.trust.entity.user.RepaymentType;
 import nju.trust.payloads.ApiResponse;
 import nju.trust.payloads.Range;
 import nju.trust.payloads.investment.InvestmentStrategy;
@@ -20,8 +21,6 @@ public interface TargetService {
 
     ApiResponse applyLargeTarget(LargeTargetRequest request, String username);
 
-    ApiResponse investTarget(Long targetId, String username, Double money);
-
     List<TargetInfo> filterLargeTargets(Pageable pageable, LargeTargetFilterRequest filterRequest);
 
     List<TargetInfo> filterSmallTargets(Pageable pageable, SmallTargetFilterRequest filterRequest);
@@ -30,9 +29,14 @@ public interface TargetService {
 
     List<InvestmentStrategy> recommendStrategy(List<Long> targetIds, double money, double interestRate);
 
-    ApiResponse schoolFellowInvestTarget(Long targetId, String username, String interestPlan);
-
     Range<Double> getLoanTimeRange(String username, double money);
 
     Double getRemainingAmount(String username);
+
+    RepaymentTotalInfo getRepaymentInfo(String username, RepaymentType type, double principal,
+                                        double duration, double interestRate);
+
+    ApiResponse investTarget(Long targetId, String username, Double money);
+
+    ApiResponse schoolFellowInvestTarget(Long targetId, String username, String interestPlan);
 }

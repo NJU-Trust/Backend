@@ -17,7 +17,7 @@ import nju.trust.payloads.target.SmallTargetInfo;
 import nju.trust.payloads.target.TargetInfo;
 import nju.trust.payloads.user.UserSimpleInfo;
 import nju.trust.service.AdminService;
-import nju.trust.service.TargetService;
+import nju.trust.service.target.TargetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
