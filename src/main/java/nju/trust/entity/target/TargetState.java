@@ -18,7 +18,15 @@ public enum TargetState {
      */
     PAY_OFF,
     /**
-     * 审核不通过
+     * 含有恶意信息，审批不通过
      */
-    DISAPPROVE
+    HARMFUL,
+    /**
+     * 信息缺失，审批不通过
+     */
+    LACKINFO,
+    /**
+     * 信息不规范，审批不通过
+     */
+    INFROMAL
 }

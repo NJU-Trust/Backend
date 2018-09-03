@@ -1,6 +1,7 @@
 package nju.trust.service;
 
 import nju.trust.entity.*;
+import nju.trust.entity.record.ApproveResult;
 import nju.trust.entity.target.TargetState;
 import nju.trust.entity.target.TargetType;
 import nju.trust.payloads.ApiResponse;
@@ -96,7 +97,14 @@ public interface AdminService {
      * 优先级：UPDATE > SUBMIT 时间早 > 时间晚
      * @return List<UserStateList>
      */
-    List<UserStateList> getUserStateList();
+    List<UserStateList> getUserStateList(Pageable pageable);
+
+    /**
+     * 返回用户的待审核条目
+     * @param username 用户名
+     * @return 待审核条目信息
+     */
+    List<UserCheckItem> getUserCheckItems(String username);
 
     // 标的发布审核
     /**
@@ -137,9 +145,8 @@ public interface AdminService {
     /**
      * 审批标的
      * @param targetId 标的编号
-     * @param check PASS|REJECT
-     * @param note 备注（若REJECT，则备注原因）
+     * @param result 审批结果
      * @return 是否成功
      */
-    ApiResponse approveTarget(Long targetId, CheckState check, String note);
+    ApiResponse approveTarget(Long targetId, ApproveResult result);
 }

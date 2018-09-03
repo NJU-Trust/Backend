@@ -2,11 +2,14 @@ package nju.trust.service.admin;
 
 import nju.trust.dao.admin.AdminUserRepository;
 import nju.trust.dao.admin.BaseTargetRepository;
-import nju.trust.dao.admin.InvestmentRecordRepository;
+import nju.trust.dao.admin.AdminInvestmentRecordRepository;
+import nju.trust.dao.admin.UserInfoCheckRecordRepository;
 import nju.trust.dao.target.LargeTargetRepository;
 import nju.trust.dao.target.SmallTargetRepository;
 import nju.trust.dao.target.TargetRepository;
 import nju.trust.entity.CheckState;
+import nju.trust.entity.record.ApproveResult;
+import nju.trust.entity.record.UserInfoCheckRecord;
 import nju.trust.entity.target.*;
 import nju.trust.entity.UserType;
 import nju.trust.entity.user.User;
@@ -21,9 +24,10 @@ import nju.trust.service.target.TargetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,21 +36,34 @@ import java.util.stream.Collectors;
  * @Description: 管理员模块的逻辑层实现
  * @Date: 2018/8/26
  */
+@Service
 public class AdminServiceImpl implements AdminService {
-    @Autowired
     private TargetService targetService;
-    @Autowired
     private AdminUserRepository adminUserRepository;
-    @Autowired
     private BaseTargetRepository baseTargetRepository;
-    @Autowired
-    private InvestmentRecordRepository investmentRecordRepository;
-    @Autowired
+    private AdminInvestmentRecordRepository adminInvestmentRecordRepository;
     private SmallTargetRepository smallTargetRepository;
-    @Autowired
     private LargeTargetRepository largeTargetRepository;
-    @Autowired
     private TargetRepository targetRepository;
+    private UserInfoCheckRecordRepository userInfoCheckRecordRepository;
+    @Autowired
+    public AdminServiceImpl(TargetService targetService,
+                            AdminUserRepository adminUserRepository,
+                            BaseTargetRepository baseTargetRepository,
+                            AdminInvestmentRecordRepository adminInvestmentRecordRepository,
+                            SmallTargetRepository smallTargetRepository,
+                            LargeTargetRepository largeTargetRepository,
+                            TargetRepository targetRepository,
+                            UserInfoCheckRecordRepository userInfoCheckRecordRepository) {
+        this.targetService = targetService;
+        this.adminUserRepository = adminUserRepository;
+        this.baseTargetRepository = baseTargetRepository;
+        this.adminInvestmentRecordRepository = adminInvestmentRecordRepository;
+        this.smallTargetRepository = smallTargetRepository;
+        this.largeTargetRepository = largeTargetRepository;
+        this.targetRepository = targetRepository;
+        this.userInfoCheckRecordRepository = userInfoCheckRecordRepository;
+    }
 
     /**
      * 查找所有用户的概要信息
@@ -136,11 +153,6 @@ public class AdminServiceImpl implements AdminService {
         }
         return list;
     }
-    /*    // 查找投资者
-    private List<UserSimpleInfo> getInvestorInfo(List<String> usernames) {
-
-        return null;
-    }*/
     private List<UserSimpleInfo> getSimpleInfo(List<User> users, UserType type) {
         List<UserSimpleInfo> infos = new ArrayList<>();
         for(User user : users) {
@@ -209,10 +221,15 @@ public class AdminServiceImpl implements AdminService {
     // 将BaseTarget转为TargetAdminBriefInfo
     private TargetAdminBriefInfo baseTargetToBriefInfo(BaseTarget baseTarget) {
         Long targetId = baseTarget.getId();
-        List<String> investors = investmentRecordRepository.findUserUsernameById(targetId);
-        List nameList = new ArrayList(new HashSet(investors));// 去重
-        TargetAdminBriefInfo briefInfo = new TargetAdminBriefInfo(baseTarget, nameList);
-        return briefInfo;
+        List<User> investors = adminInvestmentRecordRepository.findUserById(targetId);
+        List nameList = new ArrayList();
+        for(User user : investors) {
+            String username = user.getUsername();
+            if(!nameList.contains(username)) {
+                nameList.add(username);
+            }
+        }
+        return new TargetAdminBriefInfo(baseTarget, nameList);
     }
 
     /**
@@ -253,12 +270,57 @@ public class AdminServiceImpl implements AdminService {
     /**
      * 用户审核时得到待审核用户及其状态的列表
      * 优先级：UPDATE > SUBMIT 时间早 > 时间晚
-     * TODO
+     * TODO test
      * @return List<UserStateList>
      */
     @Override
-    public List<UserStateList> getUserStateList() {
+    public List<UserStateList> getUserStateList(Pageable pageable) {
+        List<UserInfoCheckRecord> records = userInfoCheckRecordRepository.findByCheckStateOrCheckState(CheckState.UPDATE, CheckState.ONGING);
+        List<UserStateList> list = getList(records);
+
+        Collections.sort(list);
+
+        Page<UserStateList> pages = null;
+        list = pages.stream().map(UserStateList::new).collect(Collectors.toList());
+        return list;
+    }
+
+    /**
+     * 返回用户的待审核条目
+     * TODO
+     * @param username 用户名
+     * @return 待审核条目信息
+     */
+    @Override
+    public List<UserCheckItem> getUserCheckItems(String username) {
+
         return null;
+    }
+
+    private List<UserStateList> getList(List<UserInfoCheckRecord> records) {
+        List<UserStateList> list = new ArrayList<>();
+
+        if(records == null || records.size() == 0) {
+            return list;
+        }
+
+        List<String> usernames = new ArrayList<>();
+        for(UserInfoCheckRecord record : records) {
+            String username = record.getUser().getUsername();
+            if(usernames.contains(username)) {
+               int index = usernames.indexOf(username);
+               UserStateList pre = list.get(index);
+               if(record.getCheckState().equals(CheckState.UPDATE) && pre.getCheckState().equals(CheckState.ONGING)) {
+                   pre.setCheckState(CheckState.UPDATE);
+               }
+            }else {
+                usernames.add(username);
+                UserStateList userStateList = new UserStateList(record);
+                list.add(userStateList);
+            }
+        }
+
+        return list;
     }
 
     /**
@@ -318,14 +380,13 @@ public class AdminServiceImpl implements AdminService {
 
     /**
      * 审批标的
-     * TODO 标的未通过，数据库进行信息存储的设计
+     * TODO test
      * @param targetId 标的编号
-     * @param check PASS|REJECT
-     * @param note 备注（若REJECT，则备注原因）
+     * @param result 审批结果
      * @return 是否成功
      */
     @Override
-    public ApiResponse approveTarget(Long targetId, CheckState check, String note) {
+    public ApiResponse approveTarget(Long targetId, ApproveResult result) {
         BaseTarget target = targetRepository.findById(targetId).get();
         if(target == null) {
             ApiResponse response = new ApiResponse(false, "该任务不存在");
@@ -333,19 +394,13 @@ public class AdminServiceImpl implements AdminService {
         if(!target.getTargetState().equals(TargetState.PENDING)) {
             ApiResponse response = new ApiResponse(false, "该任务已经审核通过");
         }
-        if(check == null) {
+        if(result == null) {
             ApiResponse response = new ApiResponse(false, "请选择“通过”或“拒绝”");
         }
 
-        if(check.equals(CheckState.PASS)) { // 审核通过
-            target.setTargetState(TargetState.ON_GOING);
-            targetRepository.save(target);
-        }else { // 未通过
-            target.setTargetState(TargetState.DISAPPROVE);
-            targetRepository.save(target);
-            // TODO 标的未通过，数据库进行信息存储
-        }
-
+        // 审核操作成功，数据库进行存储
+        target.setTargetState(result.getState());
+        targetRepository.save(target);
         return ApiResponse.successResponse();
     }
 }
