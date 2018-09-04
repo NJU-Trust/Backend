@@ -61,4 +61,12 @@ public class UserEvidenceRecord {
     public void setEvidence(String evidence) {
         this.evidence = evidence;
     }
+
+    public CheckState getState() {
+        return state;
+    }
+
+    public void setState(CheckState state) {
+        this.state = state;
+    }
 }

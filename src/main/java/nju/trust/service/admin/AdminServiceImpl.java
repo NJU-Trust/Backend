@@ -1,17 +1,17 @@
 package nju.trust.service.admin;
 
-import nju.trust.dao.admin.AdminUserRepository;
-import nju.trust.dao.admin.BaseTargetRepository;
-import nju.trust.dao.admin.AdminInvestmentRecordRepository;
-import nju.trust.dao.admin.UserInfoCheckRecordRepository;
+import nju.trust.dao.admin.*;
 import nju.trust.dao.target.LargeTargetRepository;
 import nju.trust.dao.target.SmallTargetRepository;
 import nju.trust.dao.target.TargetRepository;
+import nju.trust.entity.CheckItem;
 import nju.trust.entity.CheckState;
 import nju.trust.entity.record.ApproveResult;
+import nju.trust.entity.record.UserEvidenceRecord;
 import nju.trust.entity.record.UserInfoCheckRecord;
 import nju.trust.entity.target.*;
 import nju.trust.entity.UserType;
+import nju.trust.entity.user.Repayment;
 import nju.trust.entity.user.User;
 import nju.trust.payloads.ApiResponse;
 import nju.trust.payloads.admin.*;
@@ -46,6 +46,8 @@ public class AdminServiceImpl implements AdminService {
     private LargeTargetRepository largeTargetRepository;
     private TargetRepository targetRepository;
     private UserInfoCheckRecordRepository userInfoCheckRecordRepository;
+    private RepaymentRepository repaymentRepository;
+    private UserEvidenceRecordRepository userEvidenceRecordRepository;
     @Autowired
     public AdminServiceImpl(TargetService targetService,
                             AdminUserRepository adminUserRepository,
@@ -54,7 +56,9 @@ public class AdminServiceImpl implements AdminService {
                             SmallTargetRepository smallTargetRepository,
                             LargeTargetRepository largeTargetRepository,
                             TargetRepository targetRepository,
-                            UserInfoCheckRecordRepository userInfoCheckRecordRepository) {
+                            UserInfoCheckRecordRepository userInfoCheckRecordRepository,
+                            RepaymentRepository repaymentRepository,
+                            UserEvidenceRecordRepository userEvidenceRecordRepository) {
         this.targetService = targetService;
         this.adminUserRepository = adminUserRepository;
         this.baseTargetRepository = baseTargetRepository;
@@ -63,6 +67,8 @@ public class AdminServiceImpl implements AdminService {
         this.largeTargetRepository = largeTargetRepository;
         this.targetRepository = targetRepository;
         this.userInfoCheckRecordRepository = userInfoCheckRecordRepository;
+        this.repaymentRepository = repaymentRepository;
+        this.userEvidenceRecordRepository = userEvidenceRecordRepository;
     }
 
     /**
@@ -234,12 +240,20 @@ public class AdminServiceImpl implements AdminService {
 
     /**
      * 查看项目信息
+     * TODO test
      * @param id 项目编号
      * @return 项目的详细信息
      */
     @Override
-    public TargetInfo seeTarget(Long id) {
-        return targetService.getTargetInfo(id);
+    public TargetAdminDetailInfo seeTarget(Long id) {
+        TargetInfo targetInfo = targetService.getTargetInfo(id);
+        if(repaymentRepository.existsById(id)) {
+            Repayment repayment = repaymentRepository.findById(id).get();
+            return new TargetAdminDetailInfo(targetInfo, repayment.getType());
+        }else {
+            return new TargetAdminDetailInfo();
+        }
+        //return targetService.getTargetInfo(id);
     }
 
     /**
@@ -287,16 +301,64 @@ public class AdminServiceImpl implements AdminService {
 
     /**
      * 返回用户的待审核条目
-     * TODO
+     * TODO test
      * @param username 用户名
      * @return 待审核条目信息
      */
     @Override
-    public List<UserCheckItem> getUserCheckItems(String username) {
+    public UserCheckResponse getUserCheckItems(String username) {
+        List<UserCheckItem> toApprove = new ArrayList<>();
+        List<UserCheckItem> haveApproved = new ArrayList<>();
 
-        return null;
+        List<UserInfoCheckRecord> records = userInfoCheckRecordRepository.findByUserUsername(username);
+        for(UserInfoCheckRecord record : records) {
+            CheckState state = record.getCheckState();
+            List<String> evidences = userEvidenceRecordRepository.findEvidencesByItem(record);
+            UserCheckItem item = new UserCheckItem(record, evidences);
+            if(state.equals(CheckState.ONGING) || state.equals(CheckState.UPDATE)) {
+                toApprove.add(item);
+            }else {
+                haveApproved.add(item);
+            }
+        }
+
+        return new UserCheckResponse(true, "success", haveApproved, toApprove);
     }
 
+    /**
+     * 审批用户条目
+     * TODO
+     * @param username 用户名
+     * @param id       条目编号
+     * @param result   审批结果
+     * @return
+     */
+    @Override
+    public ApiResponse approveItem(String username, Long id, ApproveResult result) {
+
+        UserInfoCheckRecord checkRecord = userInfoCheckRecordRepository.findById(id).get();
+        CheckState state = result.getCheckState();
+        String message = result.getStr();
+        checkRecord.setCheckState(state);
+        checkRecord.setMessage(message);
+        userInfoCheckRecordRepository.save(checkRecord);
+
+        List<UserEvidenceRecord> userEvidenceRecords = userEvidenceRecordRepository.findByItem(checkRecord);
+        for(UserEvidenceRecord record : userEvidenceRecords) {
+            record.setState(state);
+            userEvidenceRecordRepository.save(record);
+        }
+
+        // TODO 计算得分
+        CheckItem checkItem = checkRecord.getCheckItem();
+        ScoreCalUtil scoreCalUtil = new ScoreCalUtil(checkItem);
+        scoreCalUtil.calScore();
+
+        return ApiResponse.successResponse();
+    }
+
+
+    // 将UserInfoCheckRecord列表转为UserStateList列表
     private List<UserStateList> getList(List<UserInfoCheckRecord> records) {
         List<UserStateList> list = new ArrayList<>();
 
@@ -308,11 +370,11 @@ public class AdminServiceImpl implements AdminService {
         for(UserInfoCheckRecord record : records) {
             String username = record.getUser().getUsername();
             if(usernames.contains(username)) {
-               int index = usernames.indexOf(username);
-               UserStateList pre = list.get(index);
-               if(record.getCheckState().equals(CheckState.UPDATE) && pre.getCheckState().equals(CheckState.ONGING)) {
-                   pre.setCheckState(CheckState.UPDATE);
-               }
+                int index = usernames.indexOf(username);
+                UserStateList pre = list.get(index);
+                if(record.getCheckState().equals(CheckState.UPDATE) && pre.getCheckState().equals(CheckState.ONGING)) {
+                    pre.setCheckState(CheckState.UPDATE);
+                }
             }else {
                 usernames.add(username);
                 UserStateList userStateList = new UserStateList(record);
@@ -399,7 +461,7 @@ public class AdminServiceImpl implements AdminService {
         }
 
         // 审核操作成功，数据库进行存储
-        target.setTargetState(result.getState());
+        target.setTargetState(result.getTargetState());
         targetRepository.save(target);
         return ApiResponse.successResponse();
     }

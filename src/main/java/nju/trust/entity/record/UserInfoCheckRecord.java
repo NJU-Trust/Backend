@@ -30,6 +30,8 @@ public class UserInfoCheckRecord {
 
     private LocalDateTime time; // 申请时间
 
+    private String description; // 用户对应条目的描述（如：获奖的奖项名等）
+
     private String message;    // 管理员的不通过原因
 
     public Long getId() {
@@ -70,6 +72,14 @@ public class UserInfoCheckRecord {
 
     public void setTime(LocalDateTime time) {
         this.time = time;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getMessage() {
