@@ -8,7 +8,7 @@ import java.util.List;
  * Date: 2018/9/3
  * Description:
  */
-public class RepaymentNoteHelper {
+class RepaymentNoteHelper {
 
     private double remainingSurplus;
 
@@ -29,9 +29,9 @@ public class RepaymentNoteHelper {
 
     private List<Double> monthlyRepayment;
 
-    public RepaymentNoteHelper(double remainingSurplus, double remainingDisc, double surplusPerMonth,
-                               double discPerMonth, double debt, double duration, double totalRepayment,
-                               List<Double> monthlyRepayment) {
+    RepaymentNoteHelper(double remainingSurplus, double remainingDisc, double surplusPerMonth,
+                        double discPerMonth, double debt, double duration, double totalRepayment,
+                        List<Double> monthlyRepayment) {
         this.remainingSurplus = remainingSurplus;
         this.remainingDisc = remainingDisc;
         this.surplusPerMonth = surplusPerMonth;
@@ -45,7 +45,7 @@ public class RepaymentNoteHelper {
             throw new IllegalStateException();
     }
 
-    public double evaluateDifficulty() {
+    double evaluateDifficulty() {
         double totalSurplus = remainingSurplus + duration * surplusPerMonth;
         double totalDisc = remainingDisc + duration * discPerMonth;
         double difficulty;
@@ -60,8 +60,8 @@ public class RepaymentNoteHelper {
         return difficulty;
     }
 
-    public List<Integer> evaluateSurplus() {
-        double remaining = remainingSurplus + surplusPerMonth;
+    List<Integer> evaluateSurplus() {
+        double remaining = remainingSurplus + surplusPerMonth - debt;
         List<Integer> months = new ArrayList<>();
         for (int i = 0; i < duration; i++) {
             remaining -= monthlyRepayment.get(i);
@@ -76,8 +76,8 @@ public class RepaymentNoteHelper {
         return months;
     }
 
-    public List<Integer> evaluateDisc() {
-        double remainingS = remainingSurplus + surplusPerMonth;
+    List<Integer> evaluateDisc() {
+        double remainingS = remainingSurplus + surplusPerMonth - debt;
         double remainingD = remainingDisc + discPerMonth;
         List<Integer> months = new ArrayList<>();
 

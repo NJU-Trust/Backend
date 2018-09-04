@@ -2,10 +2,12 @@ package nju.trust.service.target;
 
 import nju.trust.dao.admin.RepaymentRepository;
 import nju.trust.dao.record.InvestmentRecordRepository;
+import nju.trust.dao.record.RepaymentRecordRepository;
 import nju.trust.dao.target.*;
 import nju.trust.dao.user.UserMonthlyStatisticsRepository;
 import nju.trust.dao.user.UserRepository;
 import nju.trust.entity.record.InvestmentRecord;
+import nju.trust.entity.record.RepaymentRecord;
 import nju.trust.entity.target.*;
 import nju.trust.entity.user.Repayment;
 import nju.trust.entity.user.RepaymentType;
@@ -59,6 +61,8 @@ public class TargetServiceImpl implements TargetService {
 
     private RepaymentRepository repaymentRepository;
 
+    private RepaymentRecordRepository repaymentRecordRepository;
+
     @Autowired
     public TargetServiceImpl(TargetRepository targetRepository,
                              SmallTargetRepository smallTargetRepository,
@@ -66,7 +70,8 @@ public class TargetServiceImpl implements TargetService {
                              UserRepository userRepository,
                              UserMonthlyStatisticsRepository monthlyStatisticsRepository,
                              InvestmentRecordRepository recordRepository,
-                             RepaymentRepository repaymentRepository) {
+                             RepaymentRepository repaymentRepository,
+                             RepaymentRecordRepository repaymentRecordRepository) {
         this.targetRepository = targetRepository;
         this.smallTargetRepository = smallTargetRepository;
         this.largeTargetRepository = largeTargetRepository;
@@ -74,6 +79,7 @@ public class TargetServiceImpl implements TargetService {
         this.monthlyStatisticsRepository = monthlyStatisticsRepository;
         this.recordRepository = recordRepository;
         this.repaymentRepository = repaymentRepository;
+        this.repaymentRecordRepository = repaymentRecordRepository;
     }
 
     @Override
@@ -225,6 +231,26 @@ public class TargetServiceImpl implements TargetService {
         return new RepaymentTotalInfo(totalInterest, totalRepayment, calculator.monthlyRepayment, note);
     }
 
+    @Override
+    public ConsumptionCorrection getConsumptionCorrection(String username, Long targetId) {
+        BaseTarget target = targetRepository.findById(targetId)
+                .orElseThrow(() -> new ResourceNotFoundException("Target not found"));
+
+        // Get monthly repayment information
+        List<RepaymentRecord> records = repaymentRecordRepository
+                .findAllByTargetId(targetId, Sort.by(Sort.Direction.ASC, "returnDate"));
+        List<Double> monthlyRepayment = records.stream().map(RepaymentRecord::getSum).collect(Collectors.toList());
+
+        // Get user statistics
+        List<UserMonthStatistics> statistics = monthlyStatisticsRepository
+                .findAllByUserUsername(username, Sort.by(Sort.Direction.ASC, "date"));
+
+        ConsumptionCorrectionEvaluator evaluator = new ConsumptionCorrectionEvaluator(statistics,
+                target, monthlyRepayment);
+
+        return evaluator.evaluate();
+    }
+
     private RepaymentNote getRepaymentNote(String username, List<Double> monthlyRepayment, double duration, double totalRepayment) {
         // Generate repayment note
         List<UserMonthStatistics> statistics = monthlyStatisticsRepository
@@ -240,7 +266,7 @@ public class TargetServiceImpl implements TargetService {
 
         // Calculate difficulty value
         RepaymentNoteHelper noteHelper = new RepaymentNoteHelper(helper.getTotalSurplus(), helper.getTotalDisc(),
-                helper.forecastSurplus(), helper.forecastDisc(), helper.getTotalDebt(),
+                helper.forecastSurplus(), helper.forecastDisc(), helper.getCurrentDebt(),
                 duration, totalRepayment, monthlyRepayment);
 
         // Calculate disc ratios
@@ -266,8 +292,6 @@ public class TargetServiceImpl implements TargetService {
      * @param target 目标标的
      */
     private void setTargetRating(BaseTarget target) {
-        User user = target.getUser();
-
         // Count number of success target
         long numberOfSuccess = targetRepository.count((Specification<BaseTarget>)
                 (root, criteriaQuery, criteriaBuilder) -> {

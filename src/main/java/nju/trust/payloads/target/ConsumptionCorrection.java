@@ -1,6 +1,6 @@
 package nju.trust.payloads.target;
 
-import java.time.LocalDate;
+import java.util.List;
 
 /**
  * Author: J.D. Liao
@@ -9,50 +9,38 @@ import java.time.LocalDate;
  */
 public class ConsumptionCorrection {
 
-    private LocalDate date;
-
     /**
-     * 结余占用率
+     * 下次还款时间
      */
-    private double surplusRatio;
-    /**
-     * 可调支出占用率
-     */
-    private double discRatio;
-    /**
-     * 额外收入金额
-     */
-    private double extraIncome;
+    private long nextDue;
 
-    public LocalDate getDate() {
-        return date;
+    private List<Double> surplusRatios;
+
+    private List<Double> discRatios;
+
+    private List<Double> extraIncomes;
+
+    public ConsumptionCorrection(long nextDue, List<Double> surplusRatios,
+                                 List<Double> discRatios, List<Double> extraIncomes) {
+        this.nextDue = nextDue;
+        this.surplusRatios = surplusRatios;
+        this.discRatios = discRatios;
+        this.extraIncomes = extraIncomes;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
+    public long getNextDue() {
+        return nextDue;
     }
 
-    public double getSurplusRatio() {
-        return surplusRatio;
+    public List<Double> getSurplusRatios() {
+        return surplusRatios;
     }
 
-    public void setSurplusRatio(double surplusRatio) {
-        this.surplusRatio = surplusRatio;
+    public List<Double> getDiscRatios() {
+        return discRatios;
     }
 
-    public double getDiscRatio() {
-        return discRatio;
-    }
-
-    public void setDiscRatio(double discRatio) {
-        this.discRatio = discRatio;
-    }
-
-    public double getExtraIncome() {
-        return extraIncome;
-    }
-
-    public void setExtraIncome(double extraIncome) {
-        this.extraIncome = extraIncome;
+    public List<Double> getExtraIncomes() {
+        return extraIncomes;
     }
 }

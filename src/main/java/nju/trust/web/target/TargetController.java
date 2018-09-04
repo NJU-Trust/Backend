@@ -113,4 +113,9 @@ public class TargetController {
                 repaymentRequest.getMoney(), repaymentRequest.getDuration(), repaymentRequest.getInterestRate());
     }
 
+    @RequestMapping("/repayment/consumptionCorrection")
+    public ConsumptionCorrection getConsumptionCorrection(Principal principal, Long targetId) {
+        return targetService.getConsumptionCorrection(principal.getName(), targetId);
+    }
+
 }

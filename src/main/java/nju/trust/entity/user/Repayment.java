@@ -6,6 +6,7 @@ import javax.persistence.*;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 /**
  * Author: J.D. Liao
@@ -57,6 +58,23 @@ public abstract class Repayment {
      * @return 本月应还金额
      */
     public abstract double getThisMonthAmount();
+
+    /**
+     * 距离最近的一次还款时间还有多少天
+     * @return 距离最近的一次还款时间的天数，如果
+     * 还未开始还款，则返回-1
+     */
+    public long nextDue() {
+        if (LocalDate.now().isBefore(startDate))
+            return -1L;
+
+        LocalDate now = LocalDate.now();
+        LocalDate pointer = startDate;
+        while (pointer.isBefore(now)) {
+            pointer = pointer.plusMonths(1);
+        }
+        return now.until(pointer, ChronoUnit.DAYS);
+    }
 
     public RepaymentType getType() {
         return type;

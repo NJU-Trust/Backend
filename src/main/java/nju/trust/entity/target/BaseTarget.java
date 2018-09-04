@@ -4,11 +4,13 @@ import nju.trust.entity.user.IdentityOption;
 import nju.trust.entity.user.Repayment;
 import nju.trust.entity.user.User;
 import nju.trust.payloads.target.BasicTargetRequest;
+import nju.trust.payloads.target.RepaymentMonthInfo;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)

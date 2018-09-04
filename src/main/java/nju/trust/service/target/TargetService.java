@@ -36,6 +36,8 @@ public interface TargetService {
     RepaymentTotalInfo getRepaymentInfo(String username, RepaymentType type, double principal,
                                         double duration, double interestRate);
 
+    ConsumptionCorrection getConsumptionCorrection(String username, Long targetId);
+
     ApiResponse investTarget(Long targetId, String username, Double money);
 
     ApiResponse schoolFellowInvestTarget(Long targetId, String username, String interestPlan);

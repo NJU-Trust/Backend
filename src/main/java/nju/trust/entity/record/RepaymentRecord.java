@@ -1,8 +1,9 @@
 package nju.trust.entity.record;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import nju.trust.entity.target.BaseTarget;
+
+import javax.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 public class RepaymentRecord extends BaseRecord {
@@ -11,24 +12,41 @@ public class RepaymentRecord extends BaseRecord {
     @GeneratedValue
     private Long id;
 
-    private Double money;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "target_id")
+    private BaseTarget target;
 
-    private Long targetId;
+    private Double sum;
+
+    private Double principal;
+
+    private Double interest;
+
+    private Double remainingPrincipal;
+
+    private boolean payOff;
+
+    private LocalDate returnDate;
 
     public RepaymentRecord(Double money, Long targetId) {
         super();
-        this.money = money;
-        this.targetId = targetId;
+        payOff = false;
     }
 
-    @Override
-    public String toString() {
-        return "RepaymentRecord{" +
-                "id=" + id +
-                ", money=" + money +
-                ", targetId=" + targetId +
-                ", time=" + time +
-                '}';
+    public boolean isPayOff() {
+        return payOff;
+    }
+
+    public void setPayOff(boolean payOff) {
+        this.payOff = payOff;
+    }
+
+    public LocalDate getReturnDate() {
+        return returnDate;
+    }
+
+    public void setReturnDate(LocalDate returnDate) {
+        this.returnDate = returnDate;
     }
 
     public Long getId() {
@@ -39,19 +57,43 @@ public class RepaymentRecord extends BaseRecord {
         this.id = id;
     }
 
-    public Double getMoney() {
-        return money;
+    public BaseTarget getTarget() {
+        return target;
     }
 
-    public void setMoney(Double money) {
-        this.money = money;
+    public void setTarget(BaseTarget target) {
+        this.target = target;
     }
 
-    public Long getTargetId() {
-        return targetId;
+    public Double getSum() {
+        return sum;
     }
 
-    public void setTargetId(Long targetId) {
-        this.targetId = targetId;
+    public void setSum(Double sum) {
+        this.sum = sum;
+    }
+
+    public Double getPrincipal() {
+        return principal;
+    }
+
+    public void setPrincipal(Double principal) {
+        this.principal = principal;
+    }
+
+    public Double getInterest() {
+        return interest;
+    }
+
+    public void setInterest(Double interest) {
+        this.interest = interest;
+    }
+
+    public Double getRemainingPrincipal() {
+        return remainingPrincipal;
+    }
+
+    public void setRemainingPrincipal(Double remainingPrincipal) {
+        this.remainingPrincipal = remainingPrincipal;
     }
 }

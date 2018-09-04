@@ -2,6 +2,7 @@ package nju.trust.service.target;
 
 import nju.trust.entity.user.UserMonthStatistics;
 import nju.trust.exception.InternalException;
+import nju.trust.exception.ResourceNotFoundException;
 import nju.trust.util.SimpleExponentialSmoothing;
 
 import java.util.List;
@@ -39,8 +40,10 @@ class UserMonthlyDataHelper {
         return SimpleExponentialSmoothing.forecast(discData);
     }
 
-    double getTotalDebt() {
-        return statistics.stream().mapToDouble(UserMonthStatistics::getDebt).sum();
+    double getCurrentDebt() {
+        if (statistics.isEmpty())
+            throw new ResourceNotFoundException("User statistics not found");
+        return statistics.get(statistics.size() - 1).getDebt();
     }
 
     double getAvgMonthlyIncomeLevel() {
