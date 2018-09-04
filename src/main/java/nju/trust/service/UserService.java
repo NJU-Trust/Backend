@@ -39,17 +39,6 @@ public interface UserService {
     ApiResponse applyIntermediateUser(ApplyIntermediateUserRequest request, String username);
 
     /**
-     * Submit an application to upgrade to an complete
-     * user to the server
-     *
-     * @param request  information for complete user
-     * @param username username
-     * @return result of submitting the request to the server
-     */
-    @Deprecated
-    ApiResponse applyCompleteUser(ApplyCompleteUserRequest request, String username);
-
-    /**
      * Submit an application to upgrade to an schoolFellow
      * user to the server
      *

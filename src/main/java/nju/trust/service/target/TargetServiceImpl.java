@@ -5,24 +5,17 @@ import nju.trust.dao.record.InvestmentRecordRepository;
 import nju.trust.dao.target.*;
 import nju.trust.dao.user.UserMonthlyStatisticsRepository;
 import nju.trust.dao.user.UserRepository;
-import nju.trust.dao.user.UserTotalStatisticsRepository;
-import nju.trust.entity.CreditRating;
 import nju.trust.entity.record.InvestmentRecord;
 import nju.trust.entity.target.*;
-import nju.trust.entity.user.*;
-import nju.trust.exception.InternalException;
+import nju.trust.entity.user.Repayment;
+import nju.trust.entity.user.RepaymentType;
+import nju.trust.entity.user.User;
+import nju.trust.entity.user.UserMonthStatistics;
 import nju.trust.exception.ResourceNotFoundException;
 import nju.trust.payloads.ApiResponse;
 import nju.trust.payloads.Range;
 import nju.trust.payloads.investment.InvestmentStrategy;
 import nju.trust.payloads.target.*;
-import nju.trust.util.SimpleExponentialSmoothing;
-import org.apache.commons.math3.linear.ArrayRealVector;
-import org.apache.commons.math3.linear.MatrixUtils;
-import org.apache.commons.math3.linear.RealMatrix;
-import org.apache.commons.math3.linear.RealVector;
-import org.apache.commons.math3.optim.linear.*;
-import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +27,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.Predicate;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -51,7 +43,6 @@ public class TargetServiceImpl implements TargetService {
     private static final Logger log = LoggerFactory.getLogger("TargetService");
 
     private static final int RECOMMENDATION_NUMBER = 8;
-
 
 
     private TargetRepository targetRepository;
@@ -277,49 +268,21 @@ public class TargetServiceImpl implements TargetService {
     private void setTargetRating(BaseTarget target) {
         User user = target.getUser();
 
-        double money = target.getMoney();
-        double interestRate = target.getRepayment().getYearInterestRate();
-        int duration = target.getRepayment().getRepaymentDuration();
-
-        CreditRating creditRating = CreditRating.of(user.getCreditScore());
-        double avgMonthlyIncome = user.getMonthStatistics().stream()
-                .mapToDouble(UserMonthStatistics::getIncome).average()
-                .orElseThrow(() -> new InternalException("Something is wrong"));
-        int monthIncome = getMonthIncomeLevel(avgMonthlyIncome);
-
-        // Count number of success
+        // Count number of success target
         long numberOfSuccess = targetRepository.count((Specification<BaseTarget>)
                 (root, criteriaQuery, criteriaBuilder) -> {
                     Predicate p = criteriaBuilder.equal(root.get("targetState"), TargetState.IN_THE_PAYMENT);
-                    return criteriaBuilder.or(p, criteriaBuilder.equal(root.get("targetState"), TargetState.PAY_OFF));
+                    Predicate p2 = criteriaBuilder.equal(root.get("targetState"), TargetState.PAY_OFF);
+                    return criteriaBuilder.or(p, p2);
                 });
 
-        // Calculate z-value
-        double z = 1.18 - 0.35 * money * 0.001 - 0.82 * interestRate + 1.84 * creditRating.getLevel()
-                + 0.04 * duration + 0.48 * monthIncome + 1.96 * numberOfSuccess;
 
-        double p = 1. / (1 + Math.exp(-z));
-        target.setTargetRating(TargetRating.of(p));
-        target.setTargetRatingScore(z);
+        // Begin evaluating
+        TargetEvaluator evaluator = new TargetEvaluator(target, numberOfSuccess);
+        double evaluatingResult = evaluator.evaluate();
+
+        target.setTargetRating(TargetRating.of(evaluatingResult));
+        target.setTargetRatingScore(evaluatingResult);
     }
 
-    private double gaussianKernel(double t) {
-        return (1 / Math.sqrt(2 * Math.PI)) * Math.exp(-1 / 2 * Math.pow(t, 2.));
-    }
-
-    private double sum(double[] array) {
-        return Arrays.stream(array).sum();
-    }
-
-    private int getMonthIncomeLevel(double averagedMonthIncome) {
-        double[] slices = {1000., 2000., 3000., 4000., 5000., 10000.};
-        int i = 1;
-        for (double slice : slices) {
-            if (averagedMonthIncome < slice)
-                return i;
-            i++;
-        }
-
-        return i;
-    }
 }

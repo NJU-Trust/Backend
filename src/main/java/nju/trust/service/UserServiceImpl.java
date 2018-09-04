@@ -40,11 +40,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ApiResponse applyCompleteUser(ApplyCompleteUserRequest request, String username) {
-        return null;
-    }
-
-    @Override
     public ApiResponse addUser(SignUpRequest request) {
 
         if (userRepository.existsByUsername(request.getUsername())) {
