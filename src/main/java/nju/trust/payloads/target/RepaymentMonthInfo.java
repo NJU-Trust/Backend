@@ -5,7 +5,7 @@ package nju.trust.payloads.target;
  * Date: 2018/8/31
  * Description:
  */
-public class MonthlyRepaymentInfo {
+public class RepaymentMonthInfo {
 
     private double sum;
 
@@ -13,7 +13,14 @@ public class MonthlyRepaymentInfo {
 
     private double interest;
 
-    private double remainPrincipal;
+    private double remainingPrincipal;
+
+    public RepaymentMonthInfo(double sum, double principal, double interest, double remainingPrincipal) {
+        this.sum = sum;
+        this.principal = principal;
+        this.interest = interest;
+        this.remainingPrincipal = remainingPrincipal;
+    }
 
     public double getSum() {
         return sum;
@@ -39,11 +46,11 @@ public class MonthlyRepaymentInfo {
         this.interest = interest;
     }
 
-    public double getRemainPrincipal() {
-        return remainPrincipal;
+    public double getRemainingPrincipal() {
+        return remainingPrincipal;
     }
 
-    public void setRemainPrincipal(double remainPrincipal) {
-        this.remainPrincipal = remainPrincipal;
+    public void setRemainingPrincipal(double remainingPrincipal) {
+        this.remainingPrincipal = remainingPrincipal;
     }
 }
