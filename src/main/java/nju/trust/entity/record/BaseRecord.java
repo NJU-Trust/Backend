@@ -22,6 +22,11 @@ public class BaseRecord {
         time = LocalDateTime.now();
     }
 
+    public BaseRecord(User user) {
+        time = LocalDateTime.now();
+        this.user = user;
+    }
+
     public LocalDateTime getTime() {
         return time;
     }

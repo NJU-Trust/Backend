@@ -1,5 +1,7 @@
 package nju.trust.service.target;
 
+import nju.trust.entity.user.UserMonthStatistics;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +45,13 @@ class RepaymentNoteHelper {
 
         if (monthlyRepayment.size() != duration)
             throw new IllegalStateException();
+    }
+
+    RepaymentNoteHelper(List<UserMonthStatistics> monthlyData, double duration,
+                        List<Double> monthlyRepayment) {
+        this.monthlyRepayment = monthlyRepayment;
+        this.duration = duration;
+        init(monthlyData);
     }
 
     double evaluateDifficulty() {
@@ -96,5 +105,16 @@ class RepaymentNoteHelper {
         }
 
         return months;
+    }
+
+    private void init(List<UserMonthStatistics> monthlyData) {
+        UserMonthlyDataHelper helper = new UserMonthlyDataHelper(monthlyData);
+        remainingSurplus = helper.getTotalSurplus();
+        remainingDisc = helper.getTotalDisc();
+        surplusPerMonth = helper.forecastSurplus();
+        discPerMonth = helper.forecastDisc();
+        debt = helper.getCurrentDebt();
+
+        totalRepayment = monthlyRepayment.stream().mapToDouble(t -> t).sum();
     }
 }

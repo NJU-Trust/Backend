@@ -14,9 +14,7 @@ import java.time.temporal.ChronoUnit;
  * Description:
  */
 @Entity
-@Inheritance
-@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
-public abstract class Repayment {
+public class Repayment {
 
     @Id
     private Long id;
@@ -29,14 +27,19 @@ public abstract class Repayment {
     @JoinColumn(name = "username")
     private User user;
 
-    private Double monthlyRepaymentAmount;
+    private Double interestRate;
 
-    private Double yearInterestRate;
-
-    private Integer repaymentDuration;
+    private Integer duration;
 
     /**
-     * 还款开始时间
+     * 总利息
+     */
+    private Double totalInterest;
+
+    /**
+     * 还款开始时间，同时也是借款募集截止时间。
+     * 如果在这个时间之前就满标，则将改时间改为
+     * 满标时的时间，并从此时开始计算利息
      */
     private LocalDate startDate;
 
@@ -47,17 +50,25 @@ public abstract class Repayment {
 
     @DecimalMin("0.0")
     @DecimalMax("100.0")
-    private Double difficultyStar;
+    private Double difficulty;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false, insertable = false, updatable = false)
     private RepaymentType type;
 
-    /**
-     * 获得本月还款金额
-     * @return 本月应还金额
-     */
-    public abstract double getThisMonthAmount();
+    public Repayment(BaseTarget target, User user, Double interestRate, Double totalInterest,
+                     Integer duration, LocalDate startDate, Double remainingAmount,
+                     @DecimalMin("0.0") @DecimalMax("100.0") Double difficulty, RepaymentType type) {
+        this.target = target;
+        this.user = user;
+        this.interestRate = interestRate;
+        this.duration = duration;
+        this.startDate = startDate;
+        this.remainingAmount = remainingAmount;
+        this.difficulty = difficulty;
+        this.type = type;
+        this.totalInterest = totalInterest;
+    }
 
     /**
      * 距离最近的一次还款时间还有多少天
@@ -74,6 +85,10 @@ public abstract class Repayment {
             pointer = pointer.plusMonths(1);
         }
         return now.until(pointer, ChronoUnit.DAYS);
+    }
+
+    public Double getTotalInterest() {
+        return totalInterest;
     }
 
     public RepaymentType getType() {
@@ -108,28 +123,20 @@ public abstract class Repayment {
         this.user = user;
     }
 
-    public Double getMonthlyRepaymentAmount() {
-        return monthlyRepaymentAmount;
+    public Double getInterestRate() {
+        return interestRate;
     }
 
-    public void setMonthlyRepaymentAmount(Double monthlyRepaymentAmount) {
-        this.monthlyRepaymentAmount = monthlyRepaymentAmount;
+    public void setInterestRate(Double interestRate) {
+        this.interestRate = interestRate;
     }
 
-    public Double getYearInterestRate() {
-        return yearInterestRate;
+    public Integer getDuration() {
+        return duration;
     }
 
-    public void setYearInterestRate(Double yearInterestRate) {
-        this.yearInterestRate = yearInterestRate;
-    }
-
-    public Integer getRepaymentDuration() {
-        return repaymentDuration;
-    }
-
-    public void setRepaymentDuration(Integer repaymentDuration) {
-        this.repaymentDuration = repaymentDuration;
+    public void setDuration(Integer duration) {
+        this.duration = duration;
     }
 
     public LocalDate getStartDate() {
@@ -148,11 +155,11 @@ public abstract class Repayment {
         this.remainingAmount = remainingAmount;
     }
 
-    public Double getDifficultyStar() {
-        return difficultyStar;
+    public Double getDifficulty() {
+        return difficulty;
     }
 
-    public void setDifficultyStar(Double difficultyStar) {
-        this.difficultyStar = difficultyStar;
+    public void setDifficulty(Double difficulty) {
+        this.difficulty = difficulty;
     }
 }

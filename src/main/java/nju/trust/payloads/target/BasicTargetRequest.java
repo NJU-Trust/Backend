@@ -1,13 +1,8 @@
 package nju.trust.payloads.target;
 
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.multipart.MultipartFile;
+import nju.trust.entity.user.RepaymentType;
 
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.time.LocalDate;
 
 /**
  * Author: J.D. Liao
@@ -16,7 +11,7 @@ import java.util.List;
  */
 public class BasicTargetRequest {
 
-    private LocalDateTime startTime;
+    private LocalDate startTime;
 
     private Double money;
 
@@ -24,9 +19,14 @@ public class BasicTargetRequest {
 
     private String projectDescription;
 
-    private MultipartFile[] files;
-
     private Double completionRate;
+
+    private RepaymentType repaymentType;
+
+    private Double interestRate;
+
+    private Integer duration;
+
 
     @Override
     public String toString() {
@@ -35,16 +35,42 @@ public class BasicTargetRequest {
                 ", money=" + money +
                 ", name='" + name + '\'' +
                 ", projectDescription='" + projectDescription + '\'' +
-                ", files=" + Arrays.toString(files) +
                 ", completionRate=" + completionRate +
+                ", repaymentType=" + repaymentType +
+                ", interestRate=" + interestRate +
+                ", duration=" + duration +
                 '}';
     }
 
-    public LocalDateTime getStartTime() {
+    public RepaymentType getRepaymentType() {
+        return repaymentType;
+    }
+
+    public void setRepaymentType(RepaymentType repaymentType) {
+        this.repaymentType = repaymentType;
+    }
+
+    public Double getInterestRate() {
+        return interestRate;
+    }
+
+    public void setInterestRate(Double interestRate) {
+        this.interestRate = interestRate;
+    }
+
+    public Integer getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Integer duration) {
+        this.duration = duration;
+    }
+
+    public LocalDate getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(LocalDateTime startTime) {
+    public void setStartTime(LocalDate startTime) {
         this.startTime = startTime;
     }
 
@@ -72,28 +98,12 @@ public class BasicTargetRequest {
         this.projectDescription = projectDescription;
     }
 
-    public MultipartFile[] getFiles() {
-        return files;
-    }
-
-    public void setFiles(MultipartFile[] files) {
-        this.files = files;
-    }
-
     public Double getCompletionRate() {
         return completionRate;
     }
 
     public void setCompletionRate(Double completionRate) {
         this.completionRate = completionRate;
-    }
-
-    public List<byte[]> convertFileToByte() throws IOException {
-        List<byte[]> result = new ArrayList<>();
-        for (MultipartFile file : files) {
-            result.add(file.getBytes());
-        }
-        return result;
     }
 
 }

@@ -9,7 +9,7 @@ import nju.trust.entity.target.BaseTarget;
 import nju.trust.entity.user.User;
 
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 /**
  * Author: J.D. Liao
@@ -25,7 +25,7 @@ public class TargetInfo {
 
     private String username;
 
-    private LocalDateTime startTime;
+    private LocalDate startTime;
 
     /**
      * Target name
@@ -66,7 +66,7 @@ public class TargetInfo {
         collectedMoney = baseTarget.getCollectedMoney();
         state = baseTarget.getTargetState();
         rate = baseTarget.getCompletionRate();
-        interestRate = baseTarget.getRepayment().getYearInterestRate();
+        interestRate = baseTarget.getRepayment().getInterestRate();
         targetRating = baseTarget.getTargetRating();
         projectDescription = baseTarget.getProjectDescription();
         User user = baseTarget.getUser();
@@ -139,11 +139,11 @@ public class TargetInfo {
         this.username = username;
     }
 
-    public LocalDateTime getStartTime() {
+    public LocalDate getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(LocalDateTime startTime) {
+    public void setStartTime(LocalDate startTime) {
         this.startTime = startTime;
     }
 

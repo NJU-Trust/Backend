@@ -40,7 +40,7 @@ class ConsumptionCorrectionEvaluator {
     ConsumptionCorrection evaluate() {
 
         Repayment repayment = target.getRepayment();
-        int duration = repayment.getRepaymentDuration();
+        int duration = repayment.getDuration();
 
         double remainingS = remainingSurplus + surplusPerMonth - debt;
         double remainingD = remainingDisc + discPerMonth;
@@ -87,7 +87,7 @@ class ConsumptionCorrectionEvaluator {
     }
 
     private void check() {
-        if (target.getRepayment().getRepaymentDuration() != monthlyRepayment.size())
+        if (target.getRepayment().getDuration() != monthlyRepayment.size())
             throw new ResourceNotFoundException("Monthly repayment information not found");
     }
 }

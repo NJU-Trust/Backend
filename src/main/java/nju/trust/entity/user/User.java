@@ -89,12 +89,6 @@ public class User {
     @Min(0)
     private Integer failedSubjects;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
-    private List<UserMonthStatistics> monthStatistics;
-
-    @OneToMany(mappedBy = "user")
-    private List<UnstructuredData> unstructuredData;
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -107,14 +101,6 @@ public class User {
     public int hashCode() {
 
         return Objects.hash(username);
-    }
-
-    public List<UserMonthStatistics> getMonthStatistics() {
-        return monthStatistics;
-    }
-
-    public void setMonthStatistics(List<UserMonthStatistics> monthStatistics) {
-        this.monthStatistics = monthStatistics;
     }
 
     public Double getCreditScore() {
@@ -158,7 +144,6 @@ public class User {
     }
 
     public Integer getAge() {
-
         return age;
     }
 

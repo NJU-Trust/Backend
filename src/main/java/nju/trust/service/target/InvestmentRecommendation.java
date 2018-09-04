@@ -74,7 +74,7 @@ class InvestmentRecommendation {
         for (int i = 0; i < matrixSize; i++) {
             double yield = 0.;
             for (int j = 0; j < matrixSize; j++) {
-                yield += weightMatrix.getEntry(i, j) * targets.get(j).getRepayment().getYearInterestRate();
+                yield += weightMatrix.getEntry(i, j) * targets.get(j).getRepayment().getInterestRate();
             }
             yieldVector.setEntry(i, yield);
         }
@@ -85,7 +85,7 @@ class InvestmentRecommendation {
             double yield = yieldVector.getEntry(i);
             for (int j = 0; j < matrixSize; j++) {
                 sigma += weightMatrix.getEntry(i, j) *
-                        Math.pow(targets.get(j).getRepayment().getYearInterestRate() - yield, 2);
+                        Math.pow(targets.get(j).getRepayment().getInterestRate() - yield, 2);
             }
             stdDeviation.setEntry(i, Math.sqrt(sigma));
         }

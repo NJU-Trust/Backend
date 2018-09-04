@@ -2,11 +2,13 @@ package nju.trust.service.target;
 
 import nju.trust.dao.admin.RepaymentRepository;
 import nju.trust.dao.record.InvestmentRecordRepository;
+import nju.trust.dao.record.RecordDao;
 import nju.trust.dao.record.RepaymentRecordRepository;
 import nju.trust.dao.target.*;
 import nju.trust.dao.user.UserMonthlyStatisticsRepository;
 import nju.trust.dao.user.UserRepository;
 import nju.trust.entity.record.InvestmentRecord;
+import nju.trust.entity.record.LoanRecord;
 import nju.trust.entity.record.RepaymentRecord;
 import nju.trust.entity.target.*;
 import nju.trust.entity.user.Repayment;
@@ -29,6 +31,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.Predicate;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -46,6 +49,7 @@ public class TargetServiceImpl implements TargetService {
 
     private static final int RECOMMENDATION_NUMBER = 8;
 
+    private RecordDao recordDao;
 
     private TargetRepository targetRepository;
 
@@ -70,6 +74,7 @@ public class TargetServiceImpl implements TargetService {
                              UserRepository userRepository,
                              UserMonthlyStatisticsRepository monthlyStatisticsRepository,
                              InvestmentRecordRepository recordRepository,
+                             RecordDao recordDao,
                              RepaymentRepository repaymentRepository,
                              RepaymentRecordRepository repaymentRecordRepository) {
         this.targetRepository = targetRepository;
@@ -80,6 +85,7 @@ public class TargetServiceImpl implements TargetService {
         this.recordRepository = recordRepository;
         this.repaymentRepository = repaymentRepository;
         this.repaymentRecordRepository = repaymentRecordRepository;
+        this.recordDao = recordDao;
     }
 
     @Override
@@ -89,16 +95,36 @@ public class TargetServiceImpl implements TargetService {
 
     @Override
     public ApiResponse applySmallTarget(SmallTargetRequest request, String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(InternalError::new);
-        SmallTarget smallTarget = new SmallTarget(request, user);
-        return setFileAndSaveTarget(smallTarget);
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        SmallTarget smallTarget = new SmallTarget(LocalDate.now(), request.getName(),
+                request.getMoney(), request.getCompletionRate(), request.getProjectDescription(),
+                request.getClassification(), request.getIdentityOption(), user);
+
+        setTargetRepayment(smallTarget, request);
+        setTargetRating(smallTarget);
+
+        smallTarget = targetRepository.save(smallTarget);
+        recordDao.save(new LoanRecord(user, smallTarget));
+        return ApiResponse.successResponse();
     }
 
     @Override
     public ApiResponse applyLargeTarget(LargeTargetRequest request, String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(InternalError::new);
-        LargeTarget largeTarget = new LargeTarget(request, user);
-        return setFileAndSaveTarget(largeTarget);
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        LargeTarget largeTarget = new LargeTarget(LocalDate.now(), request.getName(),
+                request.getMoney(), request.getCompletionRate(), request.getProjectDescription(),
+                request.getClassification(), user);
+        setTargetRepayment(largeTarget, request);
+        setTargetRating(largeTarget);
+
+        largeTarget = targetRepository.save(largeTarget);
+        recordDao.save(new LoanRecord(user, largeTarget));
+
+        return ApiResponse.successResponse();
     }
 
     @Override
@@ -108,12 +134,7 @@ public class TargetServiceImpl implements TargetService {
 
         double amountAfter = baseTarget.getCollectedMoney() + money;
 
-        if (baseTarget.getTargetType() == TargetType.SMALL) {
-            // Check whether collected money has exceeded maximum amount
-            double maximumAmount = ((SmallTarget) baseTarget).getMaximumAmount();
-            if (amountAfter > maximumAmount)
-                return new ApiResponse(false, "Money is too much");
-        } else if (amountAfter > baseTarget.getMoney()) {
+        if (amountAfter > baseTarget.getMoney()) {
             return new ApiResponse(false, "This project has already completed");
         } else if (amountAfter == baseTarget.getMoney()) {
             baseTarget.setTargetState(TargetState.IN_THE_PAYMENT);
@@ -124,7 +145,7 @@ public class TargetServiceImpl implements TargetService {
         targetRepository.save(baseTarget);
 
         // Add record
-        recordRepository.save(new InvestmentRecord(targetId, money));
+        recordDao.save(new InvestmentRecord(targetId, money));
         return ApiResponse.successResponse();
     }
 
@@ -172,8 +193,7 @@ public class TargetServiceImpl implements TargetService {
 
     @Override
     public Range<Double> getLoanTimeRange(String username, double money) {
-        List<UserMonthStatistics> statistics = monthlyStatisticsRepository
-                .findAllByUserUsername(username, Sort.by(Sort.Direction.ASC, "date"));
+        List<UserMonthStatistics> statistics = getUserMonthStatistics(username);
 
         UserMonthlyDataHelper helper = new UserMonthlyDataHelper(statistics);
         double k = helper.forecastSurplus();
@@ -204,24 +224,7 @@ public class TargetServiceImpl implements TargetService {
     public RepaymentTotalInfo getRepaymentInfo(String username, RepaymentType type, double principal,
                                                double duration, double interestRate) {
 
-        RepaymentCalculator calculator;
-
-        switch (type) {
-            case EQUAL_PRINCIPAL:
-                calculator = new EPRepaymentCalculator(principal, duration, interestRate);
-                break;
-            case PRE_INTEREST:
-                calculator = new PIRepaymentCalculator(principal, duration, interestRate);
-                break;
-            case ONE_TIME_PAYMENT:
-                calculator = new OTPRepaymentCalculator(principal, duration, interestRate);
-                break;
-            case EQUAL_INSTALLMENT_OF_PRINCIPAL_AND_INTEREST:
-                calculator = new EIPIRepaymentCalculator(principal, duration, interestRate);
-                break;
-            default:
-                throw new ResourceNotFoundException("Repayment type not found");
-        }
+        RepaymentCalculator calculator = RepaymentCalculator.getCalculator(type, principal, duration, interestRate);
 
         double totalRepayment = calculator.getTotalRepayment();
         double totalInterest = calculator.getTotalInterest();
@@ -242,8 +245,7 @@ public class TargetServiceImpl implements TargetService {
         List<Double> monthlyRepayment = records.stream().map(RepaymentRecord::getSum).collect(Collectors.toList());
 
         // Get user statistics
-        List<UserMonthStatistics> statistics = monthlyStatisticsRepository
-                .findAllByUserUsername(username, Sort.by(Sort.Direction.ASC, "date"));
+        List<UserMonthStatistics> statistics = getUserMonthStatistics(username);
 
         ConsumptionCorrectionEvaluator evaluator = new ConsumptionCorrectionEvaluator(statistics,
                 target, monthlyRepayment);
@@ -253,8 +255,7 @@ public class TargetServiceImpl implements TargetService {
 
     private RepaymentNote getRepaymentNote(String username, List<Double> monthlyRepayment, double duration, double totalRepayment) {
         // Generate repayment note
-        List<UserMonthStatistics> statistics = monthlyStatisticsRepository
-                .findAllByUserUsername(username, Sort.by(Sort.Direction.ASC, "date"));
+        List<UserMonthStatistics> statistics = getUserMonthStatistics(username);
 
         if (statistics.isEmpty()) {
             String message = "User " + username + " doesn't have history data";
@@ -278,14 +279,6 @@ public class TargetServiceImpl implements TargetService {
                 noteHelper.evaluateDisc(), noteHelper.evaluateDifficulty());
     }
 
-
-    private ApiResponse setFileAndSaveTarget(BaseTarget target) {
-        setTargetRating(target);
-        targetRepository.save(target);
-
-        return ApiResponse.successResponse();
-    }
-
     /**
      * 标的风险评定
      *
@@ -297,16 +290,48 @@ public class TargetServiceImpl implements TargetService {
                 (root, criteriaQuery, criteriaBuilder) -> {
                     Predicate p = criteriaBuilder.equal(root.get("targetState"), TargetState.IN_THE_PAYMENT);
                     Predicate p2 = criteriaBuilder.equal(root.get("targetState"), TargetState.PAY_OFF);
-                    return criteriaBuilder.or(p, p2);
+                    Predicate p3 = criteriaBuilder.equal(root.get("user").get("username"),
+                            target.getUser().getUsername());
+                    return criteriaBuilder.and(p3, criteriaBuilder.or(p, p2));
                 });
 
-
         // Begin evaluating
-        TargetEvaluator evaluator = new TargetEvaluator(target, numberOfSuccess);
+        TargetEvaluator evaluator = new TargetEvaluator(target, numberOfSuccess,
+                getUserMonthStatistics(target.getUser().getUsername()));
         double evaluatingResult = evaluator.evaluate();
 
         target.setTargetRating(TargetRating.of(evaluatingResult));
         target.setTargetRatingScore(evaluatingResult);
     }
 
+    private List<UserMonthStatistics> getUserMonthStatistics(String username) {
+        return monthlyStatisticsRepository
+                .findAllByUserUsername(username, Sort.by(Sort.Direction.ASC, "date"));
+    }
+
+
+    private void setTargetRepayment(BaseTarget target, BasicTargetRequest request) {
+        RepaymentCalculator calculator = RepaymentCalculator.getCalculator(request.getRepaymentType(),
+                request.getMoney(), request.getDuration(), request.getInterestRate());
+
+        RepaymentNoteHelper noteHelper =
+                new RepaymentNoteHelper(getUserMonthStatistics(target.getUser().getUsername()),
+                        request.getDuration(), calculator.getMonthlyRepayment());
+
+        Repayment repayment = new Repayment(target, target.getUser(), request.getInterestRate(),
+                calculator.getTotalInterest(), request.getDuration(), request.getStartTime(),
+                request.getMoney(), noteHelper.evaluateDifficulty(), request.getRepaymentType());
+
+        target.setRepayment(repayment);
+
+        // Create repayment records
+        LocalDate startRepayingTime = request.getStartTime();
+        for (int i = 0; i < repayment.getDuration(); i++) {
+            RepaymentMonthInfo monthInfo = calculator.monthlyRepayment.get(i);
+            RepaymentRecord record = new RepaymentRecord(target.getUser(), target,
+                    monthInfo.getSum(), monthInfo.getPrincipal(), monthInfo.getInterest(),
+                    monthInfo.getRemainingPrincipal(), startRepayingTime.plusMonths(i + 1));
+            repaymentRecordRepository.save(record);
+        }
+    }
 }

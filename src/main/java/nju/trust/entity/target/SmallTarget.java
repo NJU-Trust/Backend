@@ -1,10 +1,11 @@
 package nju.trust.entity.target;
 
+import nju.trust.entity.user.IdentityOption;
 import nju.trust.entity.user.User;
-import nju.trust.payloads.target.SmallTargetRequest;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import java.time.LocalDate;
 
 @Entity
 @DiscriminatorValue("SMALL")
@@ -12,17 +13,13 @@ public class SmallTarget extends BaseTarget {
 
     private SmallProjectClassification classification;
 
-    /**
-     * 可承受额外费用偏好（希望为这笔融资至多付多少费用）
-     */
-    private Double maximumAmount;
+    public SmallTarget(LocalDate startTime, String name, Double money, Double completionRate,
+                       String projectDescription, SmallProjectClassification classification,
+                       IdentityOption identityOption, User user) {
+        super(startTime, name, money, completionRate, projectDescription, user);
 
-    public SmallTarget(SmallTargetRequest request, User user) {
-        super(request, user);
-        maximumAmount = request.getMaximumAmount();
-        classification = request.getClassification();
-        identityOption = request.getIdentityOption();
-
+        this.classification = classification;
+        this.identityOption = identityOption;
         targetType = TargetType.SMALL;
     }
 
@@ -30,7 +27,6 @@ public class SmallTarget extends BaseTarget {
     public String toString() {
         return "SmallTarget{" +
                 "classification=" + classification +
-                ", maximumAmount=" + maximumAmount +
                 '}';
     }
 
@@ -42,11 +38,4 @@ public class SmallTarget extends BaseTarget {
         this.classification = classification;
     }
 
-    public Double getMaximumAmount() {
-        return maximumAmount;
-    }
-
-    public void setMaximumAmount(Double maximumAmount) {
-        this.maximumAmount = maximumAmount;
-    }
 }

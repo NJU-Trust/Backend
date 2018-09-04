@@ -37,13 +37,11 @@ public class TargetController {
 
     @PostMapping("/new/small")
     public ApiResponse createSmallTarget(SmallTargetRequest smallTargetRequest, Principal principal) {
-        System.out.println(smallTargetRequest);
         return targetService.applySmallTarget(smallTargetRequest, principal.getName());
     }
 
     @PostMapping("/new/large")
     public ApiResponse createLargeTarget(LargeTargetRequest largeTargetRequest, Principal principal) {
-        System.out.println(largeTargetRequest);
         return targetService.applyLargeTarget(largeTargetRequest, principal.getName());
     }
 

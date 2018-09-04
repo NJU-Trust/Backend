@@ -2,9 +2,9 @@ package nju.trust.entity.target;
 
 import nju.trust.entity.user.IdentityOption;
 import nju.trust.entity.user.User;
-import nju.trust.payloads.target.LargeTargetRequest;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @DiscriminatorValue("LARGE")
@@ -15,10 +15,12 @@ public class LargeTarget extends BaseTarget {
      */
     private LargeProjectClassification classification;
 
-    public LargeTarget(LargeTargetRequest request, User user) {
-        super(request, user);
-        classification = request.getClassification();
+    public LargeTarget(LocalDate startTime, String name, Double money,
+                       Double completionRate, String projectDescription,
+                       LargeProjectClassification classification, User user) {
+        super(startTime, name, money, completionRate, projectDescription, user);
 
+        this.classification = classification;
         identityOption = IdentityOption.ONE;
         targetType = TargetType.LARGE;
     }

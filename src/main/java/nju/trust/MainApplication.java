@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.format.Formatter;
 
 import java.text.ParseException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
@@ -28,6 +29,21 @@ public class MainApplication {
             @Override
             public String print(LocalDateTime localDateTime, Locale locale) {
                 return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(localDateTime);
+            }
+        };
+    }
+
+    @Bean
+    public Formatter<LocalDate> localDateFormatter() {
+        return new Formatter<LocalDate>() {
+            @Override
+            public LocalDate parse(String s, Locale locale) throws ParseException {
+                return LocalDate.parse(s, DateTimeFormatter.ISO_LOCAL_DATE);
+            }
+
+            @Override
+            public String print(LocalDate localDate, Locale locale) {
+                return DateTimeFormatter.ISO_LOCAL_DATE.format(localDate);
             }
         };
     }

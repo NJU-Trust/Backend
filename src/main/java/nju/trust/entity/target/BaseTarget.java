@@ -3,14 +3,10 @@ package nju.trust.entity.target;
 import nju.trust.entity.user.IdentityOption;
 import nju.trust.entity.user.Repayment;
 import nju.trust.entity.user.User;
-import nju.trust.payloads.target.BasicTargetRequest;
-import nju.trust.payloads.target.RepaymentMonthInfo;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -25,13 +21,10 @@ public abstract class BaseTarget {
     @JoinColumn(name = "username", nullable = false)
     private User user;
 
-    private LocalDateTime startTime;
-
     /**
-     * 借款募集截止时间：如果在这个时间之前就满标，则将改时间改为
-     * 满标时的时间，并从此时开始计算利息
+     * 开始进行募集的时间
      */
-    private LocalDateTime completeDate;
+    private LocalDate startTime;
 
     private String name;
 
@@ -73,24 +66,17 @@ public abstract class BaseTarget {
 
     IdentityOption identityOption;
 
-    BaseTarget(BasicTargetRequest request, User user) {
+    public BaseTarget(LocalDate startTime, String name, Double money,
+                      Double completionRate, String projectDescription, User user) {
+        this.startTime = startTime;
+        this.name = name;
+        this.money = money;
+        this.completionRate = completionRate;
+        this.projectDescription = projectDescription;
         this.user = user;
-        startTime = request.getStartTime();
-        name = request.getName();
-        money = request.getMoney();
-        completionRate = request.getCompletionRate();
-        projectDescription = request.getProjectDescription();
 
-        collectedMoney = 0.;
         targetState = TargetState.PENDING;
-    }
-
-    public LocalDateTime getCompleteDate() {
-        return completeDate;
-    }
-
-    public void setCompleteDate(LocalDateTime completeDate) {
-        this.completeDate = completeDate;
+        collectedMoney = 0.;
     }
 
     public Repayment getRepayment() {
@@ -149,11 +135,11 @@ public abstract class BaseTarget {
         this.id = id;
     }
 
-    public LocalDateTime getStartTime() {
+    public LocalDate getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(LocalDateTime startTime) {
+    public void setStartTime(LocalDate startTime) {
         this.startTime = startTime;
     }
 

@@ -6,7 +6,7 @@ import nju.trust.entity.target.TargetState;
 import nju.trust.entity.user.RepaymentType;
 import nju.trust.payloads.target.TargetInfo;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 /**
  * @Author: 许杨
@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class TargetAdminDetailInfo {
     private Long id;    // 编号
     private String username;    // 用户名
-    private LocalDateTime startTime;    // 起始时间
+    private LocalDate startTime;    // 起始时间
     private Double money;   // 金额
     private Double collectedMoney;  // 已筹集金额
     private String projectDescription;  // 项目说明
@@ -42,11 +42,11 @@ public class TargetAdminDetailInfo {
         this.username = username;
     }
 
-    public LocalDateTime getStartTime() {
+    public LocalDate getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(LocalDateTime startTime) {
+    public void setStartTime(LocalDate startTime) {
         this.startTime = startTime;
     }
 
@@ -108,7 +108,7 @@ public class TargetAdminDetailInfo {
 
     public TargetAdminDetailInfo() {
     }
-    public TargetAdminDetailInfo(Long id, String username, LocalDateTime startTime, Double money, Double collectedMoney, String projectDescription, TargetState state, Double interestRate, TargetRating targetRating, RepaymentType type) {
+    public TargetAdminDetailInfo(Long id, String username, LocalDate startTime, Double money, Double collectedMoney, String projectDescription, TargetState state, Double interestRate, TargetRating targetRating, RepaymentType type) {
         this.id = id;
         this.username = username;
         this.startTime = startTime;

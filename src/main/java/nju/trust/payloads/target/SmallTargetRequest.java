@@ -12,15 +12,12 @@ public class SmallTargetRequest extends BasicTargetRequest {
 
     private SmallProjectClassification classification;
 
-    private Double maximumAmount;
-
     private IdentityOption identityOption;
 
     @Override
     public String toString() {
         return "SmallTargetRequest{" +
                 "classification=" + classification +
-                ", maximumAmount=" + maximumAmount +
                 ", identityOption=" + identityOption +
                 '}';
     }
@@ -31,14 +28,6 @@ public class SmallTargetRequest extends BasicTargetRequest {
 
     public void setIdentityOption(IdentityOption identityOption) {
         this.identityOption = identityOption;
-    }
-
-    public Double getMaximumAmount() {
-        return maximumAmount;
-    }
-
-    public void setMaximumAmount(Double maximumAmount) {
-        this.maximumAmount = maximumAmount;
     }
 
     public SmallProjectClassification getClassification() {

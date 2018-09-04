@@ -55,7 +55,7 @@ public class LoanStateCheckUtil {
         for (Repayment record : records) {
             LocalDate begin = record.getStartDate();
             int length = (int) (today.toEpochDay() - begin.toEpochDay());
-            if (length > record.getRepaymentDuration()) {// 逾期
+            if (length > record.getDuration()) {// 逾期
                 return UserType.OVERDUE;
             }
             if (!haveLoan && record.getRemainingAmount() > 0) {   // 存在待还款

@@ -1,6 +1,7 @@
 package nju.trust.entity.record;
 
 import nju.trust.entity.target.BaseTarget;
+import nju.trust.entity.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -31,6 +32,17 @@ public class RepaymentRecord extends BaseRecord {
     public RepaymentRecord(Double money, Long targetId) {
         super();
         payOff = false;
+    }
+
+    public RepaymentRecord(User user, BaseTarget target, Double sum, Double principal,
+                           Double interest, Double remainingPrincipal, LocalDate returnDate) {
+        this.target = target;
+        this.sum = sum;
+        this.principal = principal;
+        this.interest = interest;
+        this.remainingPrincipal = remainingPrincipal;
+        this.payOff = false;
+        this.returnDate = returnDate;
     }
 
     public boolean isPayOff() {
