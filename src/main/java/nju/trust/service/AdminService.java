@@ -68,8 +68,7 @@ public interface AdminService {
      * @param id 项目编号
      * @return 项目的详细信息
      */
-    // TODO 还款方案
-    TargetInfo seeTarget(Long id);
+    TargetAdminDetailInfo seeTarget(Long id);
 
     // 数据统计（针对平台）
     /**
@@ -91,7 +90,6 @@ public interface AdminService {
 
     // 管理审核
     // TODO 用户审核
-
     /**
      * 用户审核时得到待审核用户及其状态的列表
      * 优先级：UPDATE > SUBMIT 时间早 > 时间晚
@@ -102,9 +100,18 @@ public interface AdminService {
     /**
      * 返回用户的待审核条目
      * @param username 用户名
-     * @return 待审核条目信息
+     * @return 待审核条目信息及审核通过的
      */
-    List<UserCheckItem> getUserCheckItems(String username);
+    UserCheckResponse getUserCheckItems(String username);
+
+    /**
+     * 审批用户条目
+     * @param username 用户名
+     * @param id 条目编号
+     * @param result 审批结果
+     * @return
+     */
+    ApiResponse approveItem(String username, Long id, ApproveResult result);
 
     // 标的发布审核
     /**
