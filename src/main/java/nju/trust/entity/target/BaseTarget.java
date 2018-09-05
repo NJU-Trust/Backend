@@ -79,6 +79,23 @@ public abstract class BaseTarget {
         collectedMoney = 0.;
     }
 
+    public boolean inThePayment() {
+        return targetState == TargetState.IN_THE_PAYMENT;
+    }
+
+    public boolean tryToSetToInThePayment() {
+        if (collectedMoney.equals(money)) {
+            targetState = TargetState.IN_THE_PAYMENT;
+            return true;
+        }
+
+        return false;
+    }
+
+    public void setRepaymentStartDate(LocalDate date) {
+        repayment.setStartDate(date);
+    }
+
     public Repayment getRepayment() {
         return repayment;
     }

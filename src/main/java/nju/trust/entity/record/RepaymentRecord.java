@@ -29,11 +29,6 @@ public class RepaymentRecord extends BaseRecord {
 
     private LocalDate returnDate;
 
-    public RepaymentRecord(Double money, Long targetId) {
-        super();
-        payOff = false;
-    }
-
     public RepaymentRecord(User user, BaseTarget target, Double sum, Double principal,
                            Double interest, Double remainingPrincipal, LocalDate returnDate) {
         this.target = target;

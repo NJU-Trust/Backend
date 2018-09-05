@@ -1,6 +1,7 @@
 package nju.trust.dao.record;
 
 import nju.trust.entity.record.BaseRecord;
+import nju.trust.entity.record.LoanRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -16,13 +17,16 @@ public class RecordDao {
 
     private EntityManager entityManager;
 
+
     public void save(BaseRecord record) {
         entityManager.persist(record);
         entityManager.flush();
     }
 
+
     @Autowired
-    public void setEntityManager(EntityManager entityManager) {
+    private void setEntityManager(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
+
 }

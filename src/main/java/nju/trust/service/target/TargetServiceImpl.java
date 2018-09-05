@@ -2,6 +2,7 @@ package nju.trust.service.target;
 
 import nju.trust.dao.admin.RepaymentRepository;
 import nju.trust.dao.record.InvestmentRecordRepository;
+import nju.trust.dao.record.LoanRecordRepository;
 import nju.trust.dao.record.RecordDao;
 import nju.trust.dao.record.RepaymentRecordRepository;
 import nju.trust.dao.target.*;
@@ -20,6 +21,7 @@ import nju.trust.payloads.ApiResponse;
 import nju.trust.payloads.Range;
 import nju.trust.payloads.investment.InvestmentStrategy;
 import nju.trust.payloads.target.*;
+import nju.trust.service.TransferHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +34,9 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.Predicate;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 /**
@@ -61,31 +63,39 @@ public class TargetServiceImpl implements TargetService {
 
     private UserMonthlyStatisticsRepository monthlyStatisticsRepository;
 
-    private InvestmentRecordRepository recordRepository;
+    private InvestmentRecordRepository investmentRecordRepository;
 
     private RepaymentRepository repaymentRepository;
 
+    private LoanRecordRepository loanRecordRepository;
+
     private RepaymentRecordRepository repaymentRecordRepository;
+
+    private TransferHelper transferHelper;
 
     @Autowired
     public TargetServiceImpl(TargetRepository targetRepository,
                              SmallTargetRepository smallTargetRepository,
                              LargeTargetRepository largeTargetRepository,
                              UserRepository userRepository,
+                             LoanRecordRepository loanRecordRepository,
                              UserMonthlyStatisticsRepository monthlyStatisticsRepository,
-                             InvestmentRecordRepository recordRepository,
+                             InvestmentRecordRepository investmentRecordRepository,
                              RecordDao recordDao,
                              RepaymentRepository repaymentRepository,
+                             TransferHelper transferHelper,
                              RepaymentRecordRepository repaymentRecordRepository) {
         this.targetRepository = targetRepository;
         this.smallTargetRepository = smallTargetRepository;
         this.largeTargetRepository = largeTargetRepository;
         this.userRepository = userRepository;
         this.monthlyStatisticsRepository = monthlyStatisticsRepository;
-        this.recordRepository = recordRepository;
+        this.investmentRecordRepository = investmentRecordRepository;
         this.repaymentRepository = repaymentRepository;
         this.repaymentRecordRepository = repaymentRecordRepository;
+        this.transferHelper = transferHelper;
         this.recordDao = recordDao;
+        this.loanRecordRepository = loanRecordRepository;
     }
 
     @Override
@@ -102,9 +112,7 @@ public class TargetServiceImpl implements TargetService {
                 request.getMoney(), request.getCompletionRate(), request.getProjectDescription(),
                 request.getClassification(), request.getIdentityOption(), user);
 
-        setTargetRepayment(smallTarget, request);
-        setTargetRating(smallTarget);
-
+        settingTarget(smallTarget, request);
         smallTarget = targetRepository.save(smallTarget);
         recordDao.save(new LoanRecord(user, smallTarget));
         return ApiResponse.successResponse();
@@ -118,8 +126,8 @@ public class TargetServiceImpl implements TargetService {
         LargeTarget largeTarget = new LargeTarget(LocalDate.now(), request.getName(),
                 request.getMoney(), request.getCompletionRate(), request.getProjectDescription(),
                 request.getClassification(), user);
-        setTargetRepayment(largeTarget, request);
-        setTargetRating(largeTarget);
+
+        settingTarget(largeTarget, request);
 
         largeTarget = targetRepository.save(largeTarget);
         recordDao.save(new LoanRecord(user, largeTarget));
@@ -130,22 +138,34 @@ public class TargetServiceImpl implements TargetService {
     @Override
     public ApiResponse investTarget(Long targetId, String username, Double money) {
         BaseTarget baseTarget = targetRepository.findById(targetId)
-                .orElseThrow(NoSuchElementException::new);
+                .orElseThrow(() -> new ResourceNotFoundException("Target not found"));
 
         double amountAfter = baseTarget.getCollectedMoney() + money;
 
         if (amountAfter > baseTarget.getMoney()) {
-            return new ApiResponse(false, "This project has already completed");
-        } else if (amountAfter == baseTarget.getMoney()) {
-            baseTarget.setTargetState(TargetState.IN_THE_PAYMENT);
+            return new ApiResponse(false, "Money too much");
         }
 
-
         baseTarget.setCollectedMoney(amountAfter);
-        targetRepository.save(baseTarget);
+        if (baseTarget.tryToSetToInThePayment()) {
+            // Transfer money to target owner's account and record
+            transferHelper.transferMoneyToUser(username, baseTarget.getMoney());
+            loanRecordRepository.makeLoanRecordSucceed(targetId);
 
-        // Add record
-        recordDao.save(new InvestmentRecord(targetId, money));
+            // Update all the repaymentRecord
+            List<RepaymentRecord> records = repaymentRecordRepository.findAllByTargetId(targetId);
+            LocalDate now = LocalDate.now();
+            long delta = now.until(baseTarget.getRepayment().getStartDate(), ChronoUnit.DAYS);
+            records.forEach(r -> r.setReturnDate(r.getReturnDate().minusDays(delta)));
+            repaymentRecordRepository.saveAll(records);
+
+            // Update repayment startTime
+            baseTarget.setRepaymentStartDate(now);
+        }
+
+        targetRepository.save(baseTarget);
+        investmentRecordRepository.save(new InvestmentRecord(baseTarget, money));
+
         return ApiResponse.successResponse();
     }
 
@@ -333,5 +353,10 @@ public class TargetServiceImpl implements TargetService {
                     monthInfo.getRemainingPrincipal(), startRepayingTime.plusMonths(i + 1));
             repaymentRecordRepository.save(record);
         }
+    }
+
+    private void settingTarget(BaseTarget target, BasicTargetRequest request) {
+        setTargetRepayment(target, request);
+        setTargetRating(target);
     }
 }

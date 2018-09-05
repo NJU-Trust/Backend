@@ -1,8 +1,8 @@
 package nju.trust.entity.record;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import nju.trust.entity.target.BaseTarget;
+
+import javax.persistence.*;
 
 @Entity
 public class InvestmentRecord extends BaseRecord {
@@ -11,13 +11,15 @@ public class InvestmentRecord extends BaseRecord {
     @GeneratedValue
     private Long id;
 
-    private Long targetId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "target_id")
+    private BaseTarget target;
 
     private Double investedMoney;
 
-    public InvestmentRecord(Long targetId, Double investedMoney) {
+    public InvestmentRecord(BaseTarget target, Double investedMoney) {
         super();
-        this.targetId = targetId;
+        this.target = target;
         this.investedMoney = investedMoney;
     }
 
@@ -25,9 +27,12 @@ public class InvestmentRecord extends BaseRecord {
     public String toString() {
         return "InvestmentRecord{" +
                 "id=" + id +
-                ", targetId=" + targetId +
                 ", investedMoney=" + investedMoney +
                 '}';
+    }
+
+    public BaseTarget getTarget() {
+        return target;
     }
 
     public Double getInvestedMoney() {
@@ -46,11 +51,4 @@ public class InvestmentRecord extends BaseRecord {
         this.id = id;
     }
 
-    public Long getTargetId() {
-        return targetId;
-    }
-
-    public void setTargetId(Long targetId) {
-        this.targetId = targetId;
-    }
 }

@@ -14,4 +14,6 @@ import java.util.List;
 public interface RepaymentRecordRepository extends JpaRepository<RepaymentRecord, Long> {
 
     List<RepaymentRecord> findAllByTargetId(Long targetId, Sort sort);
+
+    List<RepaymentRecord> findAllByTargetId(Long targetId);
 }

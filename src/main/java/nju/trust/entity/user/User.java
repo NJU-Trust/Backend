@@ -89,6 +89,11 @@ public class User {
     @Min(0)
     private Integer failedSubjects;
 
+    /**
+     * 账户
+     */
+    private Double account;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -101,6 +106,10 @@ public class User {
     public int hashCode() {
 
         return Objects.hash(username);
+    }
+
+    public void addAccount(Double add) {
+        account += add;
     }
 
     public Double getCreditScore() {
