@@ -6,14 +6,15 @@ import nju.trust.payloads.Range;
 import nju.trust.payloads.investment.InterestRateInterval;
 import nju.trust.payloads.investment.InvestmentStrategy;
 import nju.trust.payloads.target.*;
-import nju.trust.service.target.TargetService;
 import nju.trust.service.UserService;
+import nju.trust.service.target.TargetService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.security.Principal;
 import java.util.List;
 
@@ -116,4 +117,8 @@ public class TargetController {
         return targetService.getConsumptionCorrection(principal.getName(), targetId);
     }
 
+    @RequestMapping("/repay")
+    public ApiResponse repay(Principal principal, @Valid @NotNull Long targetId, @Valid @NotNull Integer period) {
+        return null;
+    }
 }

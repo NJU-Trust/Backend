@@ -105,8 +105,7 @@ public class TargetServiceImpl implements TargetService {
 
     @Override
     public ApiResponse applySmallTarget(SmallTargetRequest request, String username) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User user = getUser(username);
 
         SmallTarget smallTarget = new SmallTarget(LocalDate.now(), request.getName(),
                 request.getMoney(), request.getCompletionRate(), request.getProjectDescription(),
@@ -120,8 +119,7 @@ public class TargetServiceImpl implements TargetService {
 
     @Override
     public ApiResponse applyLargeTarget(LargeTargetRequest request, String username) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User user = getUser(username);
 
         LargeTarget largeTarget = new LargeTarget(LocalDate.now(), request.getName(),
                 request.getMoney(), request.getCompletionRate(), request.getProjectDescription(),
@@ -139,6 +137,7 @@ public class TargetServiceImpl implements TargetService {
     public ApiResponse investTarget(Long targetId, String username, Double money) {
         BaseTarget baseTarget = targetRepository.findById(targetId)
                 .orElseThrow(() -> new ResourceNotFoundException("Target not found"));
+        User user = getUser(username);
 
         double amountAfter = baseTarget.getCollectedMoney() + money;
 
@@ -149,7 +148,7 @@ public class TargetServiceImpl implements TargetService {
         baseTarget.setCollectedMoney(amountAfter);
         if (baseTarget.tryToSetToInThePayment()) {
             // Transfer money to target owner's account and record
-            transferHelper.transferMoneyToUser(username, baseTarget.getMoney());
+            transferHelper.transferLoanToUserAccount(user, baseTarget.getMoney());
             loanRecordRepository.makeLoanRecordSucceed(targetId);
 
             // Update all the repaymentRecord
@@ -164,7 +163,7 @@ public class TargetServiceImpl implements TargetService {
         }
 
         targetRepository.save(baseTarget);
-        investmentRecordRepository.save(new InvestmentRecord(baseTarget, money));
+        investmentRecordRepository.save(new InvestmentRecord(user, baseTarget, money));
 
         return ApiResponse.successResponse();
     }
@@ -232,12 +231,16 @@ public class TargetServiceImpl implements TargetService {
 
     @Override
     public Double getRemainingAmount(String username) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User user = getUser(username);
 
         List<Repayment> repayments = repaymentRepository.findAllByUserUsername(username);
         return user.getCreditRating().getBorrowingAmount() -
                 repayments.stream().mapToDouble(Repayment::getRemainingAmount).sum();
+    }
+
+    private User getUser(String username) {
+        return userRepository.findByUsername(username)
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 
     @Override
@@ -271,6 +274,44 @@ public class TargetServiceImpl implements TargetService {
                 target, monthlyRepayment);
 
         return evaluator.evaluate();
+    }
+
+    @Override
+    public ApiResponse repay(String username, Long targetId, Integer period) {
+        RepaymentRecord record = repaymentRecordRepository.findByTargetIdAndPeriod(targetId, period)
+                .orElseThrow(() -> new ResourceNotFoundException("Repayment record not found"));
+
+        double money = 0.;
+        if (record.isPayOff())
+            return new ApiResponse(false, "This period has been repaid");
+        else if (record.isOverdue()) {
+            double principalInterestSum = record.getSum();
+            long overdueDays = record.getOverdueDays();
+            money = principalInterestSum + FineCalculator.getOverdueFine(principalInterestSum, overdueDays);
+        } else if (record.isBeforeSettlementDay()) {
+            List<RepaymentRecord> records = repaymentRecordRepository.findAllByTargetId(targetId);
+            double prepaymentFine = FineCalculator.getPrepaymentFine(records, period);
+            money = record.getSum() + prepaymentFine;
+        }
+
+        User borrower = getUser(username);
+        if (transferHelper.getRepaymentFromUserAccount(borrower, money)) {
+            record.makeRepaid();
+            repaymentRecordRepository.save(record);
+            // Calculate investors quota and transfer it to them
+            List<InvestmentRecord> investmentRecords = investmentRecordRepository.findAllByTargetId(targetId);
+            BaseTarget target = targetRepository.findById(targetId)
+                    .orElseThrow(() -> new ResourceNotFoundException("target not found"));
+            double collectedMoney = target.getCollectedMoney();
+            for (InvestmentRecord i : investmentRecords) {
+                double quota = i.getInvestedMoney() / collectedMoney * money;
+                transferHelper.repaidToInvestor(borrower, i.getUser(), quota);
+            }
+        } else {
+            return new ApiResponse(false, "User money is not enough");
+        }
+
+        return ApiResponse.successResponse();
     }
 
     private RepaymentNote getRepaymentNote(String username, List<Double> monthlyRepayment, double duration, double totalRepayment) {
@@ -349,7 +390,7 @@ public class TargetServiceImpl implements TargetService {
         for (int i = 0; i < repayment.getDuration(); i++) {
             RepaymentMonthInfo monthInfo = calculator.monthlyRepayment.get(i);
             RepaymentRecord record = new RepaymentRecord(target.getUser(), target,
-                    monthInfo.getSum(), monthInfo.getPrincipal(), monthInfo.getInterest(),
+                    monthInfo.getSum(), monthInfo.getPrincipal(), i + 1, monthInfo.getInterest(),
                     monthInfo.getRemainingPrincipal(), startRepayingTime.plusMonths(i + 1));
             repaymentRecordRepository.save(record);
         }
@@ -359,4 +400,5 @@ public class TargetServiceImpl implements TargetService {
         setTargetRepayment(target, request);
         setTargetRating(target);
     }
+
 }

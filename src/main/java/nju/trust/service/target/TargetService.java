@@ -41,4 +41,6 @@ public interface TargetService {
     ApiResponse investTarget(Long targetId, String username, Double money);
 
     ApiResponse schoolFellowInvestTarget(Long targetId, String username, String interestPlan);
+
+    ApiResponse repay(String username, Long targetId, Integer period);
 }

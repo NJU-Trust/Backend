@@ -1,6 +1,7 @@
 package nju.trust.entity.record;
 
 import nju.trust.entity.target.BaseTarget;
+import nju.trust.entity.user.User;
 
 import javax.persistence.*;
 
@@ -17,8 +18,8 @@ public class InvestmentRecord extends BaseRecord {
 
     private Double investedMoney;
 
-    public InvestmentRecord(BaseTarget target, Double investedMoney) {
-        super();
+    public InvestmentRecord(User user, BaseTarget target, Double investedMoney) {
+        super(user);
         this.target = target;
         this.investedMoney = investedMoney;
     }

@@ -5,6 +5,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Author: J.D. Liao
@@ -14,6 +15,8 @@ import java.util.List;
 public interface RepaymentRecordRepository extends JpaRepository<RepaymentRecord, Long> {
 
     List<RepaymentRecord> findAllByTargetId(Long targetId, Sort sort);
+
+    Optional<RepaymentRecord> findByTargetIdAndPeriod(Long targetId, Integer period);
 
     List<RepaymentRecord> findAllByTargetId(Long targetId);
 }

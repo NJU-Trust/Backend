@@ -21,10 +21,22 @@ public class TransferHelper {
         this.userRepository = userRepository;
     }
 
-    public void transferMoneyToUser(String username, Double money) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    public void transferLoanToUserAccount(User user, Double money) {
         user.addAccount(money);
         userRepository.save(user);
+    }
+
+    public boolean getRepaymentFromUserAccount(User user, Double money) {
+        if (user.hasEnoughMoney(money)) {
+            user.minusAccount(money);
+            //todo Add money to company account
+            userRepository.save(user);
+            return true;
+        } else
+            return false;
+    }
+
+    public void repaidToInvestor(User borrower, User investor, Double money) {
+        // todo use citi-api to do transfering work and add a record
     }
 }

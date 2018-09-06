@@ -4,7 +4,9 @@ import nju.trust.entity.target.BaseTarget;
 import nju.trust.entity.user.User;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 @Entity
 public class RepaymentRecord extends BaseRecord {
@@ -27,17 +29,54 @@ public class RepaymentRecord extends BaseRecord {
 
     private boolean payOff;
 
+    @NotNull
     private LocalDate returnDate;
 
-    public RepaymentRecord(User user, BaseTarget target, Double sum, Double principal,
+    private LocalDate actualRepayDate;
+
+    private Integer period;
+
+    public RepaymentRecord(User user, BaseTarget target, Double sum, Double principal, Integer period,
                            Double interest, Double remainingPrincipal, LocalDate returnDate) {
+        super(user);
         this.target = target;
         this.sum = sum;
         this.principal = principal;
+        this.period = period;
         this.interest = interest;
         this.remainingPrincipal = remainingPrincipal;
         this.payOff = false;
         this.returnDate = returnDate;
+    }
+
+    public boolean isOverdue() {
+        return overdueAndNotRepaid() || overdueButRepaid();
+    }
+
+    public boolean isBeforeSettlementDay() {
+        return LocalDate.now().isBefore(returnDate);
+    }
+
+    public boolean isAtSettlementDay() {
+        return LocalDate.now().isEqual(returnDate);
+    }
+
+    public long getOverdueDays() {
+        if (overdueAndNotRepaid())
+            return returnDate.until(LocalDate.now(), ChronoUnit.DAYS);
+        else if (overdueButRepaid())
+            return returnDate.until(actualRepayDate, ChronoUnit.DAYS);
+        else
+            return 0L;
+    }
+
+    public void makeRepaid() {
+        payOff = true;
+        actualRepayDate = LocalDate.now();
+    }
+
+    public Integer getPeriod() {
+        return period;
     }
 
     public boolean isPayOff() {
@@ -102,5 +141,13 @@ public class RepaymentRecord extends BaseRecord {
 
     public void setRemainingPrincipal(Double remainingPrincipal) {
         this.remainingPrincipal = remainingPrincipal;
+    }
+
+    private boolean overdueAndNotRepaid() {
+        return !payOff && LocalDate.now().isAfter(returnDate);
+    }
+
+    private boolean overdueButRepaid() {
+        return actualRepayDate.isAfter(returnDate);
     }
 }

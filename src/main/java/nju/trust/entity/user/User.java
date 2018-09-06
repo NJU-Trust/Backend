@@ -112,6 +112,14 @@ public class User {
         account += add;
     }
 
+    public boolean hasEnoughMoney(Double minus) {
+        return (account - minus) > 0;
+    }
+
+    public void minusAccount(Double minus) {
+        account -= minus;
+    }
+
     public Double getCreditScore() {
         return creditScore;
     }

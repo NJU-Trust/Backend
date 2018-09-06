@@ -1,5 +1,7 @@
 package nju.trust.entity.record;
 
+import nju.trust.entity.user.User;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -17,8 +19,8 @@ public class AssetChangeRecord extends BaseRecord {
 
     private Double balance;
 
-    public AssetChangeRecord(String reason, Double changeMoney, Double balance) {
-        super();
+    public AssetChangeRecord(User user, String reason, Double changeMoney, Double balance) {
+        super(user);
         this.reason = reason;
         this.changeMoney = changeMoney;
         this.balance = balance;

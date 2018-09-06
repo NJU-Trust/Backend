@@ -6,23 +6,18 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @MappedSuperclass
 public class BaseRecord {
 
-    LocalDateTime time;
+    private LocalDateTime time;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "username")
     private User user;
 
-    BaseRecord() {
-        time = LocalDateTime.now();
-    }
-
-    public BaseRecord(User user) {
+    BaseRecord(User user) {
         time = LocalDateTime.now();
         this.user = user;
     }
