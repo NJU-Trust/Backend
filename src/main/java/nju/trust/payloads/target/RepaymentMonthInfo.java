@@ -22,6 +22,20 @@ public class RepaymentMonthInfo {
         this.remainingPrincipal = remainingPrincipal;
     }
 
+    @Override
+    public String toString() {
+        return "RepaymentMonthInfo{" +
+                "sum=" + keep2dot(sum) +
+                ", principal=" + keep2dot(principal) +
+                ", interest=" + keep2dot(interest) +
+                ", remainingPrincipal=" + keep2dot(remainingPrincipal) +
+                '}';
+    }
+
+    private double keep2dot(double d) {
+        return (double) Math.round(d * 100) / 100;
+    }
+
     public double getSum() {
         return sum;
     }

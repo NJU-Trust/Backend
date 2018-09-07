@@ -19,7 +19,7 @@ public class EIPIRepaymentCalculator extends RepaymentCalculator {
         for (int i = 0; i < duration; i++) {
             double sum = (principal * interestRate * Math.pow(1 + interestRate, duration))
                     / (Math.pow(1 + interestRate, duration) - 1);
-            double principalPortion = (principal * interestRate * Math.pow(1 + interestRate, duration - 1))
+            double principalPortion = (principal * interestRate * Math.pow(1 + interestRate, i))
                     / (Math.pow(1 + interestRate, duration) - 1);
             remainingPrincipal -= principalPortion;
             double interestPortion = sum - principalPortion;

@@ -50,7 +50,7 @@ abstract class RepaymentCalculator {
     RepaymentCalculator(double principal, double duration, double interestRate) {
         this.principal = principal;
         this.duration = duration;
-        this.interestRate = interestRate / 100;
+        this.interestRate = interestRate / 100 / 12;
         init();
     }
 

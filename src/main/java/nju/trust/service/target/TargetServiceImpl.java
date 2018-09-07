@@ -246,7 +246,7 @@ public class TargetServiceImpl implements TargetService {
     public RepaymentTotalInfo getRepaymentInfo(String username, RepaymentType type, double principal,
                                                double duration, double interestRate) {
 
-        RepaymentCalculator calculator = RepaymentCalculator.getCalculator(type, principal, duration, interestRate);
+        RepaymentCalculator calculator = RepaymentCalculator.   getCalculator(type, principal, duration, interestRate);
 
         double totalRepayment = calculator.getTotalRepayment();
         double totalInterest = calculator.getTotalInterest();
