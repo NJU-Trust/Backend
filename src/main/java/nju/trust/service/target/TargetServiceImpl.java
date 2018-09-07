@@ -135,8 +135,7 @@ public class TargetServiceImpl implements TargetService {
 
     @Override
     public ApiResponse investTarget(Long targetId, String username, Double money) {
-        BaseTarget baseTarget = targetRepository.findById(targetId)
-                .orElseThrow(() -> new ResourceNotFoundException("Target not found"));
+        BaseTarget baseTarget = getTarget(targetId);
         User user = getUser(username);
 
         double amountAfter = baseTarget.getCollectedMoney() + money;
@@ -259,8 +258,7 @@ public class TargetServiceImpl implements TargetService {
 
     @Override
     public ConsumptionCorrection getConsumptionCorrection(String username, Long targetId) {
-        BaseTarget target = targetRepository.findById(targetId)
-                .orElseThrow(() -> new ResourceNotFoundException("Target not found"));
+        BaseTarget target = getTarget(targetId);
 
         // Get monthly repayment information
         List<RepaymentRecord> records = repaymentRecordRepository
@@ -276,18 +274,25 @@ public class TargetServiceImpl implements TargetService {
         return evaluator.evaluate();
     }
 
+    private BaseTarget getTarget(Long targetId) {
+        return targetRepository.findById(targetId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Target not found"));
+    }
+
     @Override
     public ApiResponse repay(String username, Long targetId, Integer period) {
         RepaymentRecord record = repaymentRecordRepository.findByTargetIdAndPeriod(targetId, period)
                 .orElseThrow(() -> new ResourceNotFoundException("Repayment record not found"));
 
         double money = 0.;
+        double serviceCharge = 0.;
         if (record.isPayOff())
             return new ApiResponse(false, "This period has been repaid");
         else if (record.isOverdue()) {
             double principalInterestSum = record.getSum();
             long overdueDays = record.getOverdueDays();
             money = principalInterestSum + FineCalculator.getOverdueFine(principalInterestSum, overdueDays);
+            serviceCharge = FineCalculator.getOverdueServiceCharge(principalInterestSum, overdueDays);
         } else if (record.isBeforeSettlementDay()) {
             List<RepaymentRecord> records = repaymentRecordRepository.findAllByTargetId(targetId);
             double prepaymentFine = FineCalculator.getPrepaymentFine(records, period);
@@ -295,7 +300,8 @@ public class TargetServiceImpl implements TargetService {
         }
 
         User borrower = getUser(username);
-        if (transferHelper.getRepaymentFromUserAccount(borrower, money)) {
+        if (transferHelper.getRepaymentFromUserAccount(borrower, money)
+                && transferHelper.getRepaymentFromUserAccount(borrower, serviceCharge)) {
             record.makeRepaid();
             repaymentRecordRepository.save(record);
             // Calculate investors quota and transfer it to them

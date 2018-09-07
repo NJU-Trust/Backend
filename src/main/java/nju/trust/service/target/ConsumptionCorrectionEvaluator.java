@@ -40,7 +40,7 @@ class ConsumptionCorrectionEvaluator {
     ConsumptionCorrection evaluate() {
 
         Repayment repayment = target.getRepayment();
-        int duration = repayment.getDuration();
+        int duration = target.getRepaymentDuration();
 
         double remainingS = remainingSurplus + surplusPerMonth - debt;
         double remainingD = remainingDisc + discPerMonth;

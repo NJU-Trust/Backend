@@ -100,6 +100,10 @@ public abstract class BaseTarget {
         return repayment;
     }
 
+    public int getRepaymentDuration() {
+        return repayment.getDuration();
+    }
+
     public void setRepayment(Repayment repayment) {
         this.repayment = repayment;
     }

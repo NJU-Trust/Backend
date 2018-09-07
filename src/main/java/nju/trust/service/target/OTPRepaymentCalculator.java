@@ -15,9 +15,6 @@ public class OTPRepaymentCalculator extends RepaymentCalculator {
 
     @Override
     void init() {
-        for (int i = 0; i < duration - 1; i++) {
-            monthlyRepayment.add(new RepaymentMonthInfo(0., 0., 0., principal));
-        }
         double interestPortion = principal * interestRate * duration;
         monthlyRepayment.add(new RepaymentMonthInfo(interestPortion + principal, principal,
                 interestPortion, 0.));

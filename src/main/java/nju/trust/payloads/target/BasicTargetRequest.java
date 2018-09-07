@@ -2,6 +2,7 @@ package nju.trust.payloads.target;
 
 import nju.trust.entity.user.RepaymentType;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 /**
@@ -25,6 +26,7 @@ public class BasicTargetRequest {
 
     private Double interestRate;
 
+    @NotNull
     private Integer duration;
 
 
