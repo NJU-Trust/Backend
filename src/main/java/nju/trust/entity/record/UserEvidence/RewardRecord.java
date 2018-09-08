@@ -11,25 +11,24 @@ import java.time.LocalDateTime;
 
 /**
  * @Author: 许杨
- * @Description: 学生工作
+ * @Description: 奖励
  * @Date: 2018/9/8
  */
 @Entity
-@DiscriminatorValue("STUDENTWORK")
-public class StudentWorkEvidence extends BaseUserEvidence{
+@DiscriminatorValue("REWARD")
+public class RewardRecord extends BaseUserEvidence {
     @Enumerated(value = EnumType.STRING)
-    private StudentWorkType type;
+    private RewardType type;
 
-
-    public StudentWorkEvidence(UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence) {
+    public RewardRecord(UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence) {
         super(item, time, state, evidence);
     }
 
-    public StudentWorkType getType() {
+    public RewardType getType() {
         return type;
     }
 
-    public void setType(StudentWorkType type) {
+    public void setType(RewardType type) {
         this.type = type;
     }
 }
