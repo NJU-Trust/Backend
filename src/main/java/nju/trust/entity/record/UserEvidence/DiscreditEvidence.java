@@ -2,6 +2,7 @@ package nju.trust.entity.record.UserEvidence;
 
 import nju.trust.entity.CheckState;
 import nju.trust.entity.record.UserInfoCheckRecord;
+import nju.trust.entity.user.User;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -17,8 +18,8 @@ import java.time.LocalDateTime;
 public class DiscreditEvidence extends BaseUserEvidence{
     private int num;    // 次数
 
-    public DiscreditEvidence(UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence) {
-        super(item, time, state, evidence);
+    public DiscreditEvidence(User user, UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence) {
+        super(user, item, time, state, evidence);
     }
 
     public int getNum() {

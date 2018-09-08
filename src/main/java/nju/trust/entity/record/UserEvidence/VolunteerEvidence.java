@@ -3,6 +3,7 @@ package nju.trust.entity.record.UserEvidence;
 import nju.trust.entity.CheckItem;
 import nju.trust.entity.CheckState;
 import nju.trust.entity.record.UserInfoCheckRecord;
+import nju.trust.entity.user.User;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -18,8 +19,8 @@ import java.time.LocalDateTime;
 public class VolunteerEvidence extends BaseUserEvidence{
     private double length;    // 年平均志愿活动时长
 
-    public VolunteerEvidence(UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence) {
-        super(item, time, state, evidence);
+    public VolunteerEvidence(User user, UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence) {
+        super(user, item, time, state, evidence);
     }
 
     public double getLength() {

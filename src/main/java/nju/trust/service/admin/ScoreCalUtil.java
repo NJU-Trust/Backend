@@ -1,5 +1,6 @@
 package nju.trust.service.admin;
 
+import nju.trust.dao.admin.UnstructuredDataRepository;
 import nju.trust.dao.admin.UserEvidenceDao.UserEvidenceRepository;
 import nju.trust.entity.CheckItem;
 import nju.trust.entity.record.UserInfoCheckRecord;
@@ -14,6 +15,8 @@ public class ScoreCalUtil {
 
     @Autowired
     private UserEvidenceRepository userEvidenceRepository;
+    @Autowired
+    private UnstructuredDataRepository unstructuredDataRepository;
 
     private UserInfoCheckRecord checkRecord;
 

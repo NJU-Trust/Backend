@@ -2,6 +2,7 @@ package nju.trust.entity.record.UserEvidence;
 
 import nju.trust.entity.CheckState;
 import nju.trust.entity.record.UserInfoCheckRecord;
+import nju.trust.entity.user.User;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -20,8 +21,8 @@ public class ScholarshipEvidence extends BaseUserEvidence{
     @Enumerated(value = EnumType.STRING)
     private BonusPunishmentType type;
 
-    public ScholarshipEvidence(UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence) {
-        super(item, time, state, evidence);
+    public ScholarshipEvidence(User user, UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence) {
+        super(user, item, time, state, evidence);
     }
 
     public BonusPunishmentType getType() {

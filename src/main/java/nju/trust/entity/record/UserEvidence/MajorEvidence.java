@@ -2,6 +2,7 @@ package nju.trust.entity.record.UserEvidence;
 
 import nju.trust.entity.CheckState;
 import nju.trust.entity.record.UserInfoCheckRecord;
+import nju.trust.entity.user.User;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -16,13 +17,14 @@ import java.time.LocalDateTime;
  */
 @Entity
 @DiscriminatorValue("MAJOR")
-public class MajorRecord extends BaseUserEvidence{
+public class MajorEvidence extends BaseUserEvidence{
     @Enumerated(value = EnumType.STRING)
     private MajorType majorType;
 
-    public MajorRecord(UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence) {
-        super(item, time, state, evidence);
+    public MajorEvidence(User user, UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence) {
+        super(user, item, time, state, evidence);
     }
+
 
     public MajorType getMajorType() {
         return majorType;

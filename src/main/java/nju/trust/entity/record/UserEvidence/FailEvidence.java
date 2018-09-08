@@ -2,6 +2,7 @@ package nju.trust.entity.record.UserEvidence;
 
 import nju.trust.entity.CheckState;
 import nju.trust.entity.record.UserInfoCheckRecord;
+import nju.trust.entity.user.User;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -14,11 +15,11 @@ import java.time.LocalDateTime;
  */
 @Entity
 @DiscriminatorValue("FAIL")
-public class FailRecord extends BaseUserEvidence{
+public class FailEvidence extends BaseUserEvidence{
     private int num;
 
-    public FailRecord(UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence) {
-        super(item, time, state, evidence);
+    public FailEvidence(User user, UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence) {
+        super(user, item, time, state, evidence);
     }
 
     public int getNum() {

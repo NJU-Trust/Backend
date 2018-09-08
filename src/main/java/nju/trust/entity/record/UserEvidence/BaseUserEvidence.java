@@ -88,7 +88,8 @@ public abstract class BaseUserEvidence {
         this.state = state;
     }
 
-    public BaseUserEvidence(UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence) {
+    public BaseUserEvidence(User user, UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence) {
+        this.user = user;
         this.item = item;
         this.time = time;
         this.state = state;
