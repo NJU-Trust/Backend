@@ -3,7 +3,7 @@ package nju.trust.web.admin;
 import nju.trust.entity.UserType;
 import nju.trust.payloads.admin.UserListRequest;
 import nju.trust.payloads.user.UserSimpleInfo;
-import nju.trust.service.AdminService;
+import nju.trust.service.admin.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;

@@ -4,7 +4,7 @@ import nju.trust.entity.CheckItem;
 
 /**
  * @Author: 许杨
- * @Description:
+ * @Description: 个人管理时
  * @Date: 2018/9/3
  */
 public class ScoreCalUtil {

@@ -1,4 +1,4 @@
-package nju.trust.service;
+package nju.trust.service.admin;
 
 import nju.trust.entity.*;
 import nju.trust.entity.record.ApproveResult;

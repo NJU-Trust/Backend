@@ -8,22 +8,22 @@ package nju.trust.entity;
  * @Date: 2018/8/29
  */
 public enum CheckItem {
-    VOLUNTEERTIME("每年平均志愿活动时长"),    // 对应于表2 志愿活动时长
-    STUDENTWORK("学生工作"),                // 对应于表2 学生工作
-    REWARD("奖励"),                         // 对应于表2 奖励信息
-    MATCH("科研竞赛获奖情况"),               // 对应于表2 科研竞赛获奖信息
-    SCHOLARSHIP("奖学金"),                  // 对应于表2 奖学金
-    SCHOOLTYPE("学校分类"),                 // 对应于表2 学校分类
-    MAJOR("所在专业情况"),                   // 对应于表2 所在专业情况
-    EDUCATION("受教育情况"),                 // 对应于表2 受教育情况
-    FAILNUM("挂科数"),                      // 对应于表2 挂科数
-    STUDY("学习成绩"),                      // 对应于表2 成绩排名
-    DISCREDIT("是否为失信人员"),             // 对应于表2 是否为失信人员
-    PUNISHMENT("违纪或治安处罚等不良信息"),   // 对应于表2 违纪或治安处罚等不良信息
-    TESTCHEAT("考试作弊"),                  // 对应于表2 考试作弊
-    PAYMENT("学费及住宿费的缴纳情况"),        // 对应于表2 学费及住宿费的缴纳情况
-    REPAYMENT("贷款偿还"),                  // 对应于表2 贷款等偿还信息
-    RETURNBOOKS("图书馆借阅还书情况"),       // 对应于表2 图书借还信息
+    VOLUNTEERTIME("每年平均志愿活动时长"),    // 对应于表2 志愿活动时长     double
+    STUDENTWORK("学生工作"),                // 对应于表2 学生工作         string(enum)
+    REWARD("奖励"),                         // 对应于表2 奖励信息         string(enum)
+    MATCH("科研竞赛获奖情况"),               // 对应于表2 科研竞赛获奖信息  string(enum)
+    SCHOLARSHIP("奖学金"),                  // 对应于表2 奖学金           string(enum)
+    SCHOOLTYPE("学校分类"),                 // 对应于表2 学校分类           string(enum)
+    MAJOR("所在专业情况"),                   // 对应于表2 所在专业情况      string(enum)
+    EDUCATION("受教育情况"),                 // 对应于表2 受教育情况       string(enum)
+    FAILNUM("挂科数"),                      // 对应于表2 挂科数           int
+    STUDY("学习成绩"),                      // 对应于表2 成绩排名           int
+    DISCREDIT("是否为失信人员"),             // 对应于表2 是否为失信人员      int
+    PUNISHMENT("违纪或治安处罚等不良信息"),   // 对应于表2 违纪或治安处罚等不良信息 int
+    TESTCHEAT("考试作弊"),                  // 对应于表2 考试作弊           int
+    PAYMENT("学费及住宿费的缴纳情况"),        // 对应于表2 学费及住宿费的缴纳情况 int
+    REPAYMENT("贷款偿还"),                  // 对应于表2 贷款等偿还信息       int
+    RETURNBOOKS("图书馆借阅还书情况"),       // 对应于表2 图书借还信息         int
     ;
 
     private String itemStr;

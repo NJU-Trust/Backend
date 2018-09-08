@@ -7,7 +7,7 @@ import nju.trust.dao.target.TargetRepository;
 import nju.trust.entity.CheckItem;
 import nju.trust.entity.CheckState;
 import nju.trust.entity.record.ApproveResult;
-import nju.trust.entity.record.UserEvidenceRecord;
+import nju.trust.entity.record.UserEvidence.BaseUserEvidence;
 import nju.trust.entity.record.UserInfoCheckRecord;
 import nju.trust.entity.target.*;
 import nju.trust.entity.UserType;
@@ -19,7 +19,6 @@ import nju.trust.payloads.target.LargeTargetInfo;
 import nju.trust.payloads.target.SmallTargetInfo;
 import nju.trust.payloads.target.TargetInfo;
 import nju.trust.payloads.user.UserSimpleInfo;
-import nju.trust.service.AdminService;
 import nju.trust.service.target.TargetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -114,7 +113,6 @@ public class AdminServiceImpl implements AdminService {
 
         Page<UserSimpleInfo> pages = null;
         infoList = pages.stream().map(UserSimpleInfo::new).collect(Collectors.toList());
-
         return infoList;
     }
     // TODO test 查找用户是否欠款，返回未欠款/欠款用户的UserSimpleInfo
@@ -253,7 +251,6 @@ public class AdminServiceImpl implements AdminService {
         }else {
             return new TargetAdminDetailInfo();
         }
-        //return targetService.getTargetInfo(id);
     }
 
     /**
@@ -343,8 +340,8 @@ public class AdminServiceImpl implements AdminService {
         checkRecord.setMessage(message);
         userInfoCheckRecordRepository.save(checkRecord);
 
-        List<UserEvidenceRecord> userEvidenceRecords = userEvidenceRecordRepository.findByItem(checkRecord);
-        for(UserEvidenceRecord record : userEvidenceRecords) {
+        List<BaseUserEvidence> baseUserEvidences = userEvidenceRecordRepository.findByItem(checkRecord);
+        for(BaseUserEvidence record : baseUserEvidences) {
             record.setState(state);
             userEvidenceRecordRepository.save(record);
         }
@@ -356,8 +353,6 @@ public class AdminServiceImpl implements AdminService {
 
         return ApiResponse.successResponse();
     }
-
-
     // 将UserInfoCheckRecord列表转为UserStateList列表
     private List<UserStateList> getList(List<UserInfoCheckRecord> records) {
         List<UserStateList> list = new ArrayList<>();

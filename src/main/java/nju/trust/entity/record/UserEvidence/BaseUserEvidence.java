@@ -1,6 +1,8 @@
-package nju.trust.entity.record;
+package nju.trust.entity.record.UserEvidence;
+
 
 import nju.trust.entity.CheckState;
+import nju.trust.entity.record.UserInfoCheckRecord;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -11,7 +13,9 @@ import java.time.LocalDateTime;
  * @Date: 2018/9/1
  */
 @Entity
-public class UserEvidenceRecord {
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "dataType", discriminatorType = DiscriminatorType.STRING)
+public abstract class BaseUserEvidence {
     @Id
     @GeneratedValue
     private Long id;    // 编号
@@ -22,6 +26,7 @@ public class UserEvidenceRecord {
 
     private LocalDateTime time; // 申请时间
 
+    @Enumerated(value = EnumType.STRING)
     private CheckState state;   // 审核结果
 
     /**
@@ -68,5 +73,12 @@ public class UserEvidenceRecord {
 
     public void setState(CheckState state) {
         this.state = state;
+    }
+
+    public BaseUserEvidence(UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence) {
+        this.item = item;
+        this.time = time;
+        this.state = state;
+        this.evidence = evidence;
     }
 }
