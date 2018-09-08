@@ -14,10 +14,10 @@ import java.time.LocalDateTime;
  */
 @Entity
 @DiscriminatorValue("STUDY")
-public class StudyRecord extends BaseUserEvidence{
+public class StudyEvidence extends BaseUserEvidence{
     private double ranking;
 
-    public StudyRecord(UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence) {
+    public StudyEvidence(UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence) {
         super(item, time, state, evidence);
     }
 

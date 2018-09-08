@@ -1,6 +1,6 @@
 package nju.trust.dao.admin.UserEvidenceDao;
 
-import nju.trust.entity.record.UserEvidence.SchoolRecord;
+import nju.trust.entity.record.UserEvidence.SchoolEvidence;
 import org.springframework.data.repository.CrudRepository;
 
 /**
@@ -8,5 +8,5 @@ import org.springframework.data.repository.CrudRepository;
  * @Description:
  * @Date: 2018/9/8
  */
-public interface SchoolEvidenceRepository extends CrudRepository<SchoolRecord, Long> {
+public interface SchoolEvidenceRepository extends CrudRepository<SchoolEvidence, Long> {
 }

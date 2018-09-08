@@ -1,6 +1,6 @@
 package nju.trust.dao.admin.UserEvidenceDao;
 
-import nju.trust.entity.record.UserEvidence.MatchRecord;
+import nju.trust.entity.record.UserEvidence.FailRecord;
 import org.springframework.data.repository.CrudRepository;
 
 /**
@@ -8,5 +8,5 @@ import org.springframework.data.repository.CrudRepository;
  * @Description:
  * @Date: 2018/9/8
  */
-public interface MatchRecordRepository extends CrudRepository<MatchRecord, Long> {
+public interface FailEvidenceRepository extends CrudRepository<FailRecord, Long> {
 }

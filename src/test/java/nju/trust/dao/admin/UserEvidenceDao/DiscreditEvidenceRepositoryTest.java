@@ -1,7 +1,6 @@
 package nju.trust.dao.admin.UserEvidenceDao;
 
-import nju.trust.entity.record.UserEvidence.BaseUserEvidence;
-import nju.trust.entity.record.UserEvidence.DiscreditRecord;
+import nju.trust.entity.record.UserEvidence.DiscreditEvidence;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +10,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
-
 /**
  * @Author: 许杨
  * @Description:
@@ -21,13 +18,13 @@ import static org.junit.Assert.*;
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
-public class DiscreditRecordRepositoryTest {
+public class DiscreditEvidenceRepositoryTest {
     @Autowired
-    private DiscreditRecordRepository test;
+    private DiscreditEvidenceRepository test;
 
     @Test
     public void findAll() {
-        List<DiscreditRecord> list = (List<DiscreditRecord>)test.findAll();
+        List<DiscreditEvidence> list = (List<DiscreditEvidence>)test.findAll();
         if(list == null) {
             System.out.println("list == null");
         }else if(list.size() == 0) {

@@ -9,15 +9,15 @@ import java.time.LocalDateTime;
 
 /**
  * @Author: 许杨
- * @Description: 学费及住宿费的缴纳情况
+ * @Description: 图书馆借阅还书情况
  * @Date: 2018/9/8
  */
 @Entity
-@DiscriminatorValue("PAYMENT")
-public class PaymentRecord extends BaseUserEvidence {
+@DiscriminatorValue("RETURNBOOKS")
+public class ReturnBooksEvidence extends BaseUserEvidence{
     private int num;
 
-    public PaymentRecord(UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence) {
+    public ReturnBooksEvidence(UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence) {
         super(item, time, state, evidence);
     }
 

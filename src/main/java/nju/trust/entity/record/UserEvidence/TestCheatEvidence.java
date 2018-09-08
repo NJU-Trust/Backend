@@ -9,15 +9,15 @@ import java.time.LocalDateTime;
 
 /**
  * @Author: 许杨
- * @Description: 图书馆借阅还书情况
+ * @Description: 考试作弊
  * @Date: 2018/9/8
  */
 @Entity
-@DiscriminatorValue("RETURNBOOKS")
-public class ReturnBooksRecord extends BaseUserEvidence{
+@DiscriminatorValue("TESTCHEAT")
+public class TestCheatEvidence extends BaseUserEvidence {
     private int num;
 
-    public ReturnBooksRecord(UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence) {
+    public TestCheatEvidence(UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence) {
         super(item, time, state, evidence);
     }
 

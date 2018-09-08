@@ -1,6 +1,6 @@
 package nju.trust.dao.admin.UserEvidenceDao;
 
-import nju.trust.entity.record.UserEvidence.RewardRecord;
+import nju.trust.entity.record.UserEvidence.RewardEvidence;
 import org.springframework.data.repository.CrudRepository;
 
 /**
@@ -8,5 +8,5 @@ import org.springframework.data.repository.CrudRepository;
  * @Description:
  * @Date: 2018/9/8
  */
-public interface RewardEvidenceRepository extends CrudRepository<RewardRecord, Long> {
+public interface RewardEvidenceRepository extends CrudRepository<RewardEvidence, Long> {
 }

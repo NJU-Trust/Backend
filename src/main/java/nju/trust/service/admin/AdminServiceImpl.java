@@ -1,6 +1,7 @@
 package nju.trust.service.admin;
 
 import nju.trust.dao.admin.*;
+import nju.trust.dao.admin.UserEvidenceDao.UserEvidenceRepository;
 import nju.trust.dao.target.LargeTargetRepository;
 import nju.trust.dao.target.SmallTargetRepository;
 import nju.trust.dao.target.TargetRepository;
@@ -46,7 +47,7 @@ public class AdminServiceImpl implements AdminService {
     private TargetRepository targetRepository;
     private UserInfoCheckRecordRepository userInfoCheckRecordRepository;
     private RepaymentRepository repaymentRepository;
-    private UserEvidenceRecordRepository userEvidenceRecordRepository;
+    private UserEvidenceRepository userEvidenceRecordRepository;
     @Autowired
     public AdminServiceImpl(TargetService targetService,
                             AdminUserRepository adminUserRepository,
@@ -57,7 +58,7 @@ public class AdminServiceImpl implements AdminService {
                             TargetRepository targetRepository,
                             UserInfoCheckRecordRepository userInfoCheckRecordRepository,
                             RepaymentRepository repaymentRepository,
-                            UserEvidenceRecordRepository userEvidenceRecordRepository) {
+                            UserEvidenceRepository userEvidenceRecordRepository) {
         this.targetService = targetService;
         this.adminUserRepository = adminUserRepository;
         this.baseTargetRepository = baseTargetRepository;
@@ -347,8 +348,7 @@ public class AdminServiceImpl implements AdminService {
         }
 
         // TODO 计算得分
-        CheckItem checkItem = checkRecord.getCheckItem();
-        ScoreCalUtil scoreCalUtil = new ScoreCalUtil(checkItem);
+        ScoreCalUtil scoreCalUtil = new ScoreCalUtil(checkRecord);
         scoreCalUtil.calScore();
 
         return ApiResponse.successResponse();

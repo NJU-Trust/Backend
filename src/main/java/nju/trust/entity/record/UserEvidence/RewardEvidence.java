@@ -11,24 +11,24 @@ import java.time.LocalDateTime;
 
 /**
  * @Author: 许杨
- * @Description: 科研竞赛获奖情况
+ * @Description: 奖励
  * @Date: 2018/9/8
  */
 @Entity
-@DiscriminatorValue("MATCH")
-public class MatchRecord extends BaseUserEvidence {
+@DiscriminatorValue("REWARD")
+public class RewardEvidence extends BaseUserEvidence {
     @Enumerated(value = EnumType.STRING)
-    private BonusPunishmentType type;
+    private RewardType type;
 
-    public MatchRecord(UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence) {
+    public RewardEvidence(UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence) {
         super(item, time, state, evidence);
     }
 
-    public BonusPunishmentType getType() {
+    public RewardType getType() {
         return type;
     }
 
-    public void setType(BonusPunishmentType type) {
+    public void setType(RewardType type) {
         this.type = type;
     }
 }

@@ -16,11 +16,11 @@ import java.time.LocalDateTime;
  */
 @Entity
 @DiscriminatorValue("SCHOLARSHIP")
-public class ScholarshipRecord extends BaseUserEvidence{
+public class ScholarshipEvidence extends BaseUserEvidence{
     @Enumerated(value = EnumType.STRING)
     private BonusPunishmentType type;
 
-    public ScholarshipRecord(UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence) {
+    public ScholarshipEvidence(UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence) {
         super(item, time, state, evidence);
     }
 

@@ -3,6 +3,7 @@ package nju.trust.entity.record.UserEvidence;
 
 import nju.trust.entity.CheckState;
 import nju.trust.entity.record.UserInfoCheckRecord;
+import nju.trust.entity.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -19,6 +20,10 @@ public abstract class BaseUserEvidence {
     @Id
     @GeneratedValue
     private Long id;    // 编号
+
+    @ManyToOne(targetEntity = User.class)
+    @JoinColumn(name = "username", nullable = false)
+    private User user;  // 用户
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item")
@@ -41,6 +46,14 @@ public abstract class BaseUserEvidence {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public UserInfoCheckRecord getItem() {

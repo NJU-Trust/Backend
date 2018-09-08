@@ -1,6 +1,6 @@
 package nju.trust.dao.admin.UserEvidenceDao;
 
-import nju.trust.entity.record.UserEvidence.VolunteerRecord;
+import nju.trust.entity.record.UserEvidence.ScholarshipEvidence;
 import org.springframework.data.repository.CrudRepository;
 
 /**
@@ -8,5 +8,5 @@ import org.springframework.data.repository.CrudRepository;
  * @Description:
  * @Date: 2018/9/8
  */
-public interface VolunteerRecordRepository extends CrudRepository<VolunteerRecord, Long> {
+public interface ScholarshipEvidenceRepository extends CrudRepository<ScholarshipEvidence, Long> {
 }
