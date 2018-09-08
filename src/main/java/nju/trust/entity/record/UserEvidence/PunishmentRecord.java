@@ -3,6 +3,8 @@ package nju.trust.entity.record.UserEvidence;
 import nju.trust.entity.CheckState;
 import nju.trust.entity.record.UserInfoCheckRecord;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import java.time.LocalDateTime;
@@ -12,6 +14,8 @@ import java.time.LocalDateTime;
  * @Description: 违纪或治安处罚等不良信息
  * @Date: 2018/9/8
  */
+@Entity
+@DiscriminatorValue("PUNISHMENT")
 public class PunishmentRecord extends BaseUserEvidence{
     @Enumerated(value = EnumType.STRING)
     private BonusPunishmentType type;

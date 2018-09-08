@@ -3,6 +3,8 @@ package nju.trust.entity.record.UserEvidence;
 import nju.trust.entity.CheckState;
 import nju.trust.entity.record.UserInfoCheckRecord;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 import java.time.LocalDateTime;
 
 /**
@@ -10,6 +12,8 @@ import java.time.LocalDateTime;
  * @Description: 是否为失信人员
  * @Date: 2018/9/8
  */
+@Entity
+@DiscriminatorValue("DISCREDIT")
 public class DiscreditRecord extends BaseUserEvidence{
     private int num;    // 次数
 

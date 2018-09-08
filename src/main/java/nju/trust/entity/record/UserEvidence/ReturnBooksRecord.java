@@ -3,6 +3,8 @@ package nju.trust.entity.record.UserEvidence;
 import nju.trust.entity.CheckState;
 import nju.trust.entity.record.UserInfoCheckRecord;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 import java.time.LocalDateTime;
 
 /**
@@ -10,6 +12,8 @@ import java.time.LocalDateTime;
  * @Description: 图书馆借阅还书情况
  * @Date: 2018/9/8
  */
+@Entity
+@DiscriminatorValue("RETURNBOOKS")
 public class ReturnBooksRecord extends BaseUserEvidence{
     private int num;
 

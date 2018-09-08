@@ -3,6 +3,8 @@ package nju.trust.entity.record.UserEvidence;
 import nju.trust.entity.CheckState;
 import nju.trust.entity.record.UserInfoCheckRecord;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 import java.time.LocalDateTime;
 
 /**
@@ -10,6 +12,8 @@ import java.time.LocalDateTime;
  * @Description: 贷款偿还
  * @Date: 2018/9/8
  */
+@Entity
+@DiscriminatorValue("REPAYMENT")
 public class RepaymentRecord extends BaseUserEvidence{
     private int num;
 
