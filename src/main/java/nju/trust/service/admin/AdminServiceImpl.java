@@ -48,6 +48,7 @@ public class AdminServiceImpl implements AdminService {
     private UserInfoCheckRecordRepository userInfoCheckRecordRepository;
     private RepaymentRepository repaymentRepository;
     private UserEvidenceRepository userEvidenceRecordRepository;
+    private ScoreCalUtil scoreCalUtil;
     @Autowired
     public AdminServiceImpl(TargetService targetService,
                             AdminUserRepository adminUserRepository,
@@ -58,7 +59,8 @@ public class AdminServiceImpl implements AdminService {
                             TargetRepository targetRepository,
                             UserInfoCheckRecordRepository userInfoCheckRecordRepository,
                             RepaymentRepository repaymentRepository,
-                            UserEvidenceRepository userEvidenceRecordRepository) {
+                            UserEvidenceRepository userEvidenceRecordRepository,
+                            ScoreCalUtil scoreCalUtil) {
         this.targetService = targetService;
         this.adminUserRepository = adminUserRepository;
         this.baseTargetRepository = baseTargetRepository;
@@ -69,6 +71,7 @@ public class AdminServiceImpl implements AdminService {
         this.userInfoCheckRecordRepository = userInfoCheckRecordRepository;
         this.repaymentRepository = repaymentRepository;
         this.userEvidenceRecordRepository = userEvidenceRecordRepository;
+        this.scoreCalUtil = scoreCalUtil;
     }
 
     /**
@@ -348,8 +351,7 @@ public class AdminServiceImpl implements AdminService {
         }
 
         // TODO 计算得分
-        ScoreCalUtil scoreCalUtil = new ScoreCalUtil(checkRecord);
-        scoreCalUtil.calScore();
+        scoreCalUtil.calScore(checkRecord);
 
         return ApiResponse.successResponse();
     }

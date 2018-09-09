@@ -16,10 +16,13 @@ import java.time.LocalDateTime;
 @Entity
 @DiscriminatorValue("RETURNBOOKS")
 public class ReturnBooksEvidence extends BaseUserEvidence{
-    private int num;
+    private Integer num;
 
     public ReturnBooksEvidence(User user, UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence) {
         super(user, item, time, state, evidence);
+    }
+
+    public ReturnBooksEvidence() {
     }
 
     public int getNum() {

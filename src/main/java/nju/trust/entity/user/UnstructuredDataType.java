@@ -6,25 +6,25 @@ package nju.trust.entity.user;
  * Description:
  */
 public enum UnstructuredDataType {
-    SCHOOL,
+    SCHOOL,             // 学校
 
     MAJOR,
 
-    EDUCATION,
+    EDUCATION,          // 学历
 
     ECONOMIC,
 
-    GRADE,
+    GRADE,              // 成绩
 
-    FAILED_SUBJECTS,
+    FAILED_SUBJECTS,    // 挂科
 
     SCHOLARSHIP,
 
-    AWARD,
+    AWARD,              // 获奖情况
 
     COMPETITION_AND_RESEARCH,
 
-    VIOLATION,
+    VIOLATION,          // 违约情况
 
     TUITION,
 
@@ -38,5 +38,7 @@ public enum UnstructuredDataType {
 
     STUDENT_WORK,
 
-    VOLENTEER_TIME
+    VOLENTEER_TIME,
+
+    SOCIALITY           // 社交情况
 }

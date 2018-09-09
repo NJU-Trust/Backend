@@ -16,10 +16,21 @@ import java.time.LocalDateTime;
 @Entity
 @DiscriminatorValue("DISCREDIT")
 public class DiscreditEvidence extends BaseUserEvidence{
-    private int num;    // 次数
+    private Integer num;    // 次数
+
+    /*public DiscreditEvidence(User user, UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence) {
+        super(user, item, time, state, evidence);
+    }*/
+
+    public DiscreditEvidence(){}
 
     public DiscreditEvidence(User user, UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence) {
         super(user, item, time, state, evidence);
+    }
+
+    public DiscreditEvidence(User user, UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence, int num) {
+        super(user, item, time, state, evidence);
+        this.num = num;
     }
 
     public int getNum() {

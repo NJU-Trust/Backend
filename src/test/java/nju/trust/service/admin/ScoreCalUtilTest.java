@@ -1,7 +1,10 @@
-package nju.trust.dao.admin;
+package nju.trust.service.admin;
 
+import nju.trust.dao.admin.UserInfoCheckRecordRepository;
 import nju.trust.dao.user.UserRepository;
+import nju.trust.entity.record.UserInfoCheckRecord;
 import nju.trust.entity.user.User;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,20 +17,21 @@ import static org.junit.Assert.*;
 /**
  * @Author: 许杨
  * @Description:
- * @Date: 2018/9/8
+ * @Date: 2018/9/9
  */
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
-public class UnstructuredDataRepositoryTest {
+public class ScoreCalUtilTest {
     @Autowired
-    private UnstructuredDataRepository unstructuredDataRepository;
+    private UserInfoCheckRecordRepository userInfoCheckRecordRepository;
     @Autowired
-    private UserRepository userRepository;
+    private ScoreCalUtil test;
 
     @Test
-    public void findFirstByUserUsernameAndDataTypeTest() {
-        User user = userRepository.findByUsername("weiwei").get();
-        System.out.println("user:"+user.getUsername());
+    // 志愿时长
+    public void calScore1() {
+        UserInfoCheckRecord record = userInfoCheckRecordRepository.findById((long)4).get();
+        test.calScore(record);
     }
 }

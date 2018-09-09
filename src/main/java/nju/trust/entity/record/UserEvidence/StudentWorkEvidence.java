@@ -25,6 +25,9 @@ public class StudentWorkEvidence extends BaseUserEvidence{
         super(user, item, time, state, evidence);
     }
 
+    public StudentWorkEvidence() {
+    }
+
 
     public StudentWorkType getType() {
         return type;

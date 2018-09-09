@@ -25,6 +25,9 @@ public class MatchEvidence extends BaseUserEvidence {
         super(user, item, time, state, evidence);
     }
 
+    public MatchEvidence() {
+    }
+
     public BonusPunishmentType getType() {
         return type;
     }

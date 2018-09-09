@@ -25,6 +25,9 @@ public class PunishmentEvidence extends BaseUserEvidence{
         super(user, item, time, state, evidence);
     }
 
+    public PunishmentEvidence() {
+    }
+
     public BonusPunishmentType getType() {
         return type;
     }

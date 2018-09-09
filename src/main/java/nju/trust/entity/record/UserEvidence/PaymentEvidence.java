@@ -16,8 +16,8 @@ import java.time.LocalDateTime;
 @Entity
 @DiscriminatorValue("PAYMENT")
 public class PaymentEvidence extends BaseUserEvidence {
-    private int num;
-
+    private Integer num;
+    public PaymentEvidence(){}
     public PaymentEvidence(User user, UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence) {
         super(user, item, time, state, evidence);
     }

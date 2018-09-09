@@ -24,6 +24,12 @@ public class BaseUserEvidenceRepositoryTest {
 
     @Test
     public void findAll() {
+        if(test == null) {
+            System.out.println("test == null");
+        }else {
+            System.out.println("test != null");
+        }
+
         List<BaseUserEvidence> list = (List<BaseUserEvidence>)test.findAll();
         if(list == null) {
             System.out.println("list == null");

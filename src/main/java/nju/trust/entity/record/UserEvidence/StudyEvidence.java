@@ -16,10 +16,13 @@ import java.time.LocalDateTime;
 @Entity
 @DiscriminatorValue("STUDY")
 public class StudyEvidence extends BaseUserEvidence{
-    private double ranking;
+    private Double ranking;
 
     public StudyEvidence(User user, UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence) {
         super(user, item, time, state, evidence);
+    }
+
+    public StudyEvidence() {
     }
 
     public double getRanking() {

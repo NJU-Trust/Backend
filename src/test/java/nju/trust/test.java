@@ -2,11 +2,13 @@ package nju.trust;
 
 import nju.trust.dao.admin.UnstructuredDataRepository;
 import nju.trust.dao.admin.UserEvidenceDao.DiscreditEvidenceRepository;
+import nju.trust.dao.admin.UserEvidenceDao.UserEvidenceRepository;
 import nju.trust.dao.admin.UserInfoCheckRecordRepository;
 import nju.trust.dao.user.UserRepository;
 import nju.trust.entity.CheckItem;
 import nju.trust.entity.CheckState;
 import nju.trust.entity.record.UserEvidence.DiscreditEvidence;
+import nju.trust.entity.record.UserEvidence.VolunteerEvidence;
 import nju.trust.entity.record.UserInfoCheckRecord;
 import nju.trust.entity.user.UnstructuredData;
 import nju.trust.entity.user.UnstructuredDataType;
@@ -37,6 +39,8 @@ public class test {
     private UserInfoCheckRecordRepository userInfoCheckRecordRepository;
     @Autowired
     private DiscreditEvidenceRepository discreditEvidenceRepository;
+    @Autowired
+    private UserEvidenceRepository userEvidenceRepository;
 
 /*    @Test
     // 建立UnstructuredData的VIOLATION类型数据
@@ -53,12 +57,27 @@ public class test {
 
         unstructuredDataRepository.save(unstructuredData);
     }*/
+/*    @Test
+    // 建立UnstructuredData的VIOLATION类型数据
+    public void createUnstructureViolation() {
+        User user = userRepository.findByUsername("weiwei").get();
+        System.out.println("user:"+user.getUsername());
 
-   /* @Test
+        UnstructuredData unstructuredData = new UnstructuredData();
+        unstructuredData.setEvidence("evidence");
+        unstructuredData.setScore(0.0);
+        unstructuredData.setDescription("description");
+        unstructuredData.setUser(user);
+        unstructuredData.setDataType(UnstructuredDataType.VIOLATION);
+
+        unstructuredDataRepository.save(unstructuredData);
+    }*/
+
+/*    @Test
     // 建立UserInfoCheckRecord
     public void createUserInfoCheckRecord() {
         UserInfoCheckRecord record = new UserInfoCheckRecord();
-        record.setCheckItem(CheckItem.DISCREDIT);
+        record.setCheckItem(CheckItem.VOLUNTEERTIME);
         User user = userRepository.findByUsername("weiwei").get();
         record.setUser(user);
         record.setCheckState(CheckState.ONGING);
@@ -66,7 +85,7 @@ public class test {
 
         userInfoCheckRecordRepository.save(record);
     }*/
-
+/*
     @Test
     public void createDiscreditEvidence() {
         User user = userRepository.findByUsername("weiwei").get();
@@ -83,6 +102,25 @@ public class test {
 
         DiscreditEvidence discreditEvidence = new DiscreditEvidence(user, item, time, state, evidence);
         discreditEvidenceRepository.save(discreditEvidence);
-    }
+    }*/
+/*
+    @Test
+    public void createVolunteerEvidence() {
+        User user = userRepository.findByUsername("weiwei").get();
 
+        UserInfoCheckRecord item = userInfoCheckRecordRepository.findById((long)4).get();
+        System.out.println("item id:"+item.getId());
+
+        LocalDateTime time = LocalDateTime.now();
+        System.out.println("time:"+time);
+
+        CheckState state = CheckState.ONGING;
+
+        String evidence = "evidence";
+
+        double length = 20.0;
+
+        VolunteerEvidence volunteerEvidence = new VolunteerEvidence(user, item, time, state, evidence, length);
+        userEvidenceRepository.save(volunteerEvidence);
+    }*/
 }

@@ -95,4 +95,6 @@ public abstract class BaseUserEvidence {
         this.state = state;
         this.evidence = evidence;
     }
+
+    public BaseUserEvidence(){}
 }

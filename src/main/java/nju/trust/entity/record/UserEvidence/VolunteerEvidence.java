@@ -17,10 +17,15 @@ import java.time.LocalDateTime;
 @Entity
 @DiscriminatorValue("VOLUNTEERTIME")
 public class VolunteerEvidence extends BaseUserEvidence{
-    private double length;    // 年平均志愿活动时长
+    private Double length;    // 年平均志愿活动时长
 
-    public VolunteerEvidence(User user, UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence) {
+    /*public VolunteerEvidence(User user, UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence) {
         super(user, item, time, state, evidence);
+    }*/
+    public VolunteerEvidence(){}
+    public VolunteerEvidence(User user, UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence, double length) {
+        super(user, item, time, state, evidence);
+        this.length = length;
     }
 
     public double getLength() {

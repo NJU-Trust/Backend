@@ -25,6 +25,9 @@ public class MajorEvidence extends BaseUserEvidence{
         super(user, item, time, state, evidence);
     }
 
+    public MajorEvidence() {
+    }
+
 
     public MajorType getMajorType() {
         return majorType;

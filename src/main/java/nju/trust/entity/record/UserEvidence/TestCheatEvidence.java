@@ -16,10 +16,13 @@ import java.time.LocalDateTime;
 @Entity
 @DiscriminatorValue("TESTCHEAT")
 public class TestCheatEvidence extends BaseUserEvidence {
-    private int num;
+    private Integer num;
 
     public TestCheatEvidence(User user, UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence) {
         super(user, item, time, state, evidence);
+    }
+
+    public TestCheatEvidence() {
     }
 
     public int getNum() {

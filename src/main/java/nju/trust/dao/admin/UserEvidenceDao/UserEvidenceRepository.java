@@ -1,6 +1,7 @@
 package nju.trust.dao.admin.UserEvidenceDao;
 
 import nju.trust.entity.record.UserEvidence.BaseUserEvidence;
+import nju.trust.entity.record.UserEvidence.VolunteerEvidence;
 import nju.trust.entity.record.UserInfoCheckRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -65,6 +66,13 @@ public class UserEvidenceRepository {
     }
 
     public double getVolunteerTime(Long id) {
-        return volunteerEvidenceRepository.findLengthById(id);
+    	
+    	// TODO 
+    	id = (long)7;
+        return volunteerEvidenceRepository.findById(id).get().getLength();
+    }
+
+    public void save(VolunteerEvidence evidence) {
+        volunteerEvidenceRepository.save(evidence);
     }
 }

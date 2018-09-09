@@ -21,6 +21,7 @@ public class EducationEvidence extends BaseUserEvidence{
     @Enumerated(value = EnumType.STRING)
     private EducationType educationType;
 
+    public EducationEvidence(){}
     public EducationEvidence(User user, UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence) {
         super(user, item, time, state, evidence);
     }

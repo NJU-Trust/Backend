@@ -25,6 +25,9 @@ public class RewardEvidence extends BaseUserEvidence {
         super(user, item, time, state, evidence);
     }
 
+    public RewardEvidence() {
+    }
+
     public RewardType getType() {
         return type;
     }

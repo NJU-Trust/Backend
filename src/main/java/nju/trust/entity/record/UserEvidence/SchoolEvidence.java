@@ -25,6 +25,9 @@ public class SchoolEvidence extends BaseUserEvidence {
         super(user, item, time, state, evidence);
     }
 
+    public SchoolEvidence() {
+    }
+
     public SchoolType getSchoolType() {
         return schoolType;
     }

@@ -16,10 +16,13 @@ import java.time.LocalDateTime;
 @Entity
 @DiscriminatorValue("REPAYMENT")
 public class RepaymentEvidence extends BaseUserEvidence{
-    private int num;
+    private Integer num;
 
     public RepaymentEvidence(User user, UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence) {
         super(user, item, time, state, evidence);
+    }
+
+    public RepaymentEvidence() {
     }
 
     public int getNum() {

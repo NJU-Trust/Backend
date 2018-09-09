@@ -16,7 +16,10 @@ import java.time.LocalDateTime;
 @Entity
 @DiscriminatorValue("FAIL")
 public class FailEvidence extends BaseUserEvidence{
-    private int num;
+    private Integer num;
+
+    public FailEvidence() {
+    }
 
     public FailEvidence(User user, UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence) {
         super(user, item, time, state, evidence);
