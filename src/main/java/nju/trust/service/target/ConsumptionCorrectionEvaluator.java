@@ -87,7 +87,7 @@ class ConsumptionCorrectionEvaluator {
     }
 
     private void check() {
-        if (target.getRepayment().getDuration() != monthlyRepayment.size())
+        if (target.getRepaymentDuration() != monthlyRepayment.size())
             throw new ResourceNotFoundException("Monthly repayment information not found");
     }
 }
