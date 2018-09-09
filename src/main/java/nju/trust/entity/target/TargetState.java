@@ -24,9 +24,9 @@ public enum TargetState {
     /**
      * 信息缺失，审批不通过
      */
-    LACKINFO,
+    LACK_INFO,
     /**
      * 信息不规范，审批不通过
      */
-    INFROMAL
+    INFORMAL
 }

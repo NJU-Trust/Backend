@@ -12,8 +12,8 @@ public enum ApproveResult {
     ONGOING("等待审批", TargetState.PENDING, CheckState.ONGING),
     PASS("审批通过", TargetState.ON_GOING, CheckState.PASS),
     HARMFULINFORMATION("含有恶意信息，审批不通过", TargetState.HARMFUL, CheckState.REJECT),
-    LACKINFO("信息缺失，审批不通过", TargetState.LACKINFO, CheckState.REJECT),
-    INFORMAL("信息不规范，审批不通过", TargetState.INFROMAL, CheckState.REJECT);
+    LACKINFO("信息缺失，审批不通过", TargetState.LACK_INFO, CheckState.REJECT),
+    INFORMAL("信息不规范，审批不通过", TargetState.INFORMAL, CheckState.REJECT);
 
     private String str;
 
