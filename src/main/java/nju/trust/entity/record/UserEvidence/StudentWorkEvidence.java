@@ -21,8 +21,9 @@ public class StudentWorkEvidence extends BaseUserEvidence{
     @Enumerated(value = EnumType.STRING)
     private StudentWorkType type;
 
-    public StudentWorkEvidence(User user, UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence) {
+    public StudentWorkEvidence(User user, UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence, StudentWorkType type) {
         super(user, item, time, state, evidence);
+        this.type = type;
     }
 
     public StudentWorkEvidence() {

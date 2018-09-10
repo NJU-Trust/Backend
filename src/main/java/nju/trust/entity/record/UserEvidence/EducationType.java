@@ -6,6 +6,22 @@ package nju.trust.entity.record.UserEvidence;
  * @Date: 2018/9/8
  */
 public enum EducationType {
-    UNDERGADUATE,   // 本科
+    FRESHMAN(85),               // 大一
+    SOPHOMORE(85),              // 大二
+    JUNIOR(90),                 // 大三
+    SEMIOR(95),                 // 大四及大五
+    UNDERGRADUATIONDELAY(75),   // 本科延迟毕业
+    POSTGRADUATE(100),          // 研究生
+    POSTGRADUATEDELAY(80),      // 研究生延迟毕业
+    DOCTOR(100);                // 博士生
 
+    private double score;
+
+    EducationType(double score) {
+        this.score = score;
+    }
+
+    public double getScore() {
+        return score;
+    }
 }

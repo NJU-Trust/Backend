@@ -6,10 +6,20 @@ package nju.trust.entity.record.UserEvidence;
  * @Date: 2018/9/8
  */
 public enum RewardType {
-    NATION,     // 国家
-    PROVINCE,   // 省
-    CITY,       // 市
-    SCHOOL,     // 学校
-    INSTITUTE,  // 学院
-    CERTIFICATE // 执业证书
+    NATION(40),         // 国家
+    PROVINCE(30),       // 省
+    CITY(20),           // 市
+    SCHOOL(10),         // 学校
+    INSTITUTE(5),       // 学院
+    CERTIFICATE(15);    // 执业证书
+
+    private int score;
+
+    RewardType(int score) {
+        this.score = score;
+    }
+
+    public int getScore() {
+        return score;
+    }
 }

@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @DiscriminatorValue("MATCH")
 public class MatchEvidence extends BaseUserEvidence {
     @Enumerated(value = EnumType.STRING)
-    private BonusPunishmentType type;
+    private BonusType type;
 
     public MatchEvidence(User user, UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence) {
         super(user, item, time, state, evidence);
@@ -28,11 +28,11 @@ public class MatchEvidence extends BaseUserEvidence {
     public MatchEvidence() {
     }
 
-    public BonusPunishmentType getType() {
+    public BonusType getType() {
         return type;
     }
 
-    public void setType(BonusPunishmentType type) {
+    public void setType(BonusType type) {
         this.type = type;
     }
 }

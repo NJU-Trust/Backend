@@ -6,6 +6,16 @@ package nju.trust.entity.record.UserEvidence;
  * @Date: 2018/9/8
  */
 public enum StudentWorkType {
-    MANAGER,    // 管理层
-    WORKER      // 干事
+    MANAGER(50),    // 管理层
+    WORKER(20);     // 干事
+
+    private int score;
+
+    public int getScore() {
+        return score;
+    }
+
+    StudentWorkType(int score) {
+        this.score = score;
+    }
 }
