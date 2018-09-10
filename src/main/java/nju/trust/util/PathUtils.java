@@ -17,7 +17,9 @@ public class PathUtils {
 
     private static final Logger log = LoggerFactory.getLogger("PathUtils");
 
-    public static String getImagePath() {
+    public static final String IMAGE_FOLDER_PATH;
+
+    static {
         try {
             File path = new File(ResourceUtils.getURL("classpath:").getPath());
             if (!path.exists()) path = new File("");
@@ -25,7 +27,7 @@ public class PathUtils {
             File upload = new File(path.getAbsolutePath(), "static/images/upload/");
             if (!upload.exists() && !upload.mkdirs())
                 log.error("Create image directory failed");
-            return upload.getAbsolutePath();
+            IMAGE_FOLDER_PATH = upload.getAbsolutePath();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             throw new ResourceNotFoundException("Upload file not found");

@@ -25,7 +25,7 @@ public class FileUploadController {
 
     @RequestMapping("/image")
     public String uploadImage(MultipartFile image) {
-        String path = PathUtils.getImagePath();
+        String path = PathUtils.IMAGE_FOLDER_PATH;
         String filename = StringUtils.cleanPath(image.getOriginalFilename());
         if (image.isEmpty())
             throw new BadRequestException("Image is empty");

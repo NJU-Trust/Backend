@@ -66,14 +66,26 @@ public abstract class BaseTarget {
 
     IdentityOption identityOption;
 
-    public BaseTarget(LocalDate startTime, String name, Double money,
-                      Double completionRate, String projectDescription, User user) {
+    /**
+     * 资金用途
+     */
+    private String useOfFunds;
+
+    /**
+     * 凭证
+     */
+    private String proof;
+
+    public BaseTarget(LocalDate startTime, String name, Double money, String useOfFunds,
+                      Double completionRate, String projectDescription, User user, String proof) {
         this.startTime = startTime;
         this.name = name;
         this.money = money;
         this.completionRate = completionRate;
         this.projectDescription = projectDescription;
         this.user = user;
+        this.useOfFunds = useOfFunds;
+        this.proof = proof;
 
         targetState = TargetState.PENDING;
         collectedMoney = 0.;
@@ -98,6 +110,10 @@ public abstract class BaseTarget {
 
     public Repayment getRepayment() {
         return repayment;
+    }
+
+    public String getUseOfFunds() {
+        return useOfFunds;
     }
 
     public int getRepaymentDuration() {
@@ -212,4 +228,7 @@ public abstract class BaseTarget {
         this.targetType = targetType;
     }
 
+    public String getProof() {
+        return proof;
+    }
 }

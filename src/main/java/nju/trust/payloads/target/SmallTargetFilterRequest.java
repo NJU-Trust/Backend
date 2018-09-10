@@ -5,6 +5,8 @@ import nju.trust.entity.target.SmallProjectClassification;
 
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Author: J.D. Liao
@@ -19,7 +21,7 @@ public class SmallTargetFilterRequest {
         filter.setMoney(new Double[]{0., 0.});
         filter.setRepaymentDuration(new Integer[]{0, 0});
         filter.setTime(new LocalDateTime[]{LocalDateTime.now(), LocalDateTime.now()});
-        filter.setClassifications(new SmallProjectClassification[]{});
+        filter.setUseOfFunds(new ArrayList<>());
         filter.setUserCreditRating(new CreditRating[]{});
 
         return filter;
@@ -39,7 +41,15 @@ public class SmallTargetFilterRequest {
 
     private CreditRating[] userCreditRating;
 
-    private SmallProjectClassification[] classifications;
+    private List<String> useOfFunds;
+
+    public List<String> getUseOfFunds() {
+        return useOfFunds;
+    }
+
+    public void setUseOfFunds(List<String> useOfFunds) {
+        this.useOfFunds = useOfFunds;
+    }
 
     public Double[] getMoney() {
         return money;
@@ -81,11 +91,4 @@ public class SmallTargetFilterRequest {
         this.userCreditRating = userCreditRating;
     }
 
-    public SmallProjectClassification[] getClassifications() {
-        return classifications;
-    }
-
-    public void setClassifications(SmallProjectClassification[] classifications) {
-        this.classifications = classifications;
-    }
 }

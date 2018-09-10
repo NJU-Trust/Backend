@@ -38,14 +38,14 @@ public class SmallTargetSpecification implements Specification<SmallTarget> {
                 .ifPresent(t -> builder.le(moneyExpression, t));
 
         // Interest rate
-        Expression<Double> interestRateExpression = root.get("repayment").get("yearInterestRate");
+        Expression<Double> interestRateExpression = root.get("repayment").get("interestRate");
         Optional.ofNullable(filter.getInterestRate()[0])
                 .ifPresent(t -> predicates.add(builder.ge(interestRateExpression, t)));
         Optional.ofNullable(filter.getInterestRate()[1])
                 .ifPresent(t -> predicates.add(builder.le(interestRateExpression, t)));
 
         // Repayment duration
-        Expression<Integer> durationExpression = root.get("repayment").get("repaymentDuration");
+        Expression<Integer> durationExpression = root.get("repayment").get("duration");
         Optional.ofNullable(filter.getRepaymentDuration()[0])
                 .ifPresent(t -> predicates.add(builder.ge(durationExpression, t)));
         Optional.ofNullable(filter.getRepaymentDuration()[1])
@@ -63,8 +63,10 @@ public class SmallTargetSpecification implements Specification<SmallTarget> {
 
         for (CreditRating creditRating : filter.getUserCreditRating())
             result = builder.or(result, builder.equal(root.get("user").get("creditRating"), creditRating));
-        for (SmallProjectClassification classification : filter.getClassifications())
-            result = builder.or(result, builder.equal(root.get("classification"), classification));
+//        for (SmallProjectClassification classification : filter.getClassifications())
+//            result = builder.or(result, builder.equal(root.get("classification"), classification));
+        for (String usage : filter.getUseOfFunds())
+            result = builder.or(result, builder.equal(root.get("useOfFunds"), usage));
 
         return result;
 

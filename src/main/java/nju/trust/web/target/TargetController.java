@@ -116,9 +116,4 @@ public class TargetController {
     public ConsumptionCorrection getConsumptionCorrection(Principal principal, Long targetId) {
         return targetService.getConsumptionCorrection(principal.getName(), targetId);
     }
-
-    @RequestMapping("/repay")
-    public ApiResponse repay(Principal principal, @Valid @NotNull Long targetId, @Valid @NotNull Integer period) {
-        return null;
-    }
 }

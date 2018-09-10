@@ -15,8 +15,8 @@ public class SmallTarget extends BaseTarget {
 
     public SmallTarget(LocalDate startTime, String name, Double money, Double completionRate,
                        String projectDescription, SmallProjectClassification classification,
-                       IdentityOption identityOption, User user) {
-        super(startTime, name, money, completionRate, projectDescription, user);
+                       IdentityOption identityOption, User user, String useOfFunds, String proof) {
+        super(startTime, name, money, useOfFunds,completionRate, projectDescription, user, proof);
 
         this.classification = classification;
         this.identityOption = identityOption;

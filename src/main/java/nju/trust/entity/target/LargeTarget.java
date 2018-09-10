@@ -15,10 +15,10 @@ public class LargeTarget extends BaseTarget {
      */
     private LargeProjectClassification classification;
 
-    public LargeTarget(LocalDate startTime, String name, Double money,
+    public LargeTarget(LocalDate startTime, String name, Double money, String useOfFunds,
                        Double completionRate, String projectDescription,
-                       LargeProjectClassification classification, User user) {
-        super(startTime, name, money, completionRate, projectDescription, user);
+                       LargeProjectClassification classification, User user, String proof) {
+        super(startTime, name, money,useOfFunds, completionRate, projectDescription, user, proof);
 
         this.classification = classification;
         identityOption = IdentityOption.ONE;

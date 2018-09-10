@@ -109,7 +109,8 @@ public class TargetServiceImpl implements TargetService {
 
         SmallTarget smallTarget = new SmallTarget(LocalDate.now(), request.getName(),
                 request.getMoney(), request.getCompletionRate(), request.getProjectDescription(),
-                request.getClassification(), request.getIdentityOption(), user);
+                request.getClassification(), request.getIdentityOption(), user,
+                request.getUseOfFunds(), request.getProof());
 
         settingTarget(smallTarget, request);
         smallTarget = targetRepository.save(smallTarget);
@@ -122,8 +123,8 @@ public class TargetServiceImpl implements TargetService {
         User user = getUser(username);
 
         LargeTarget largeTarget = new LargeTarget(LocalDate.now(), request.getName(),
-                request.getMoney(), request.getCompletionRate(), request.getProjectDescription(),
-                request.getClassification(), user);
+                request.getMoney(), request.getUseOfFunds(), request.getCompletionRate(),
+                request.getProjectDescription(), request.getClassification(), user, request.getProof());
 
         settingTarget(largeTarget, request);
 
@@ -239,14 +240,14 @@ public class TargetServiceImpl implements TargetService {
 
     private User getUser(String username) {
         return userRepository.findByUsername(username)
-                    .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 
     @Override
     public RepaymentTotalInfo getRepaymentInfo(String username, RepaymentType type, double principal,
                                                double duration, double interestRate) {
 
-        RepaymentCalculator calculator = RepaymentCalculator.   getCalculator(type, principal, duration, interestRate);
+        RepaymentCalculator calculator = RepaymentCalculator.getCalculator(type, principal, duration, interestRate);
 
         double totalRepayment = calculator.getTotalRepayment();
         double totalInterest = calculator.getTotalInterest();
@@ -276,7 +277,7 @@ public class TargetServiceImpl implements TargetService {
 
     private BaseTarget getTarget(Long targetId) {
         return targetRepository.findById(targetId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Target not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Target not found"));
     }
 
     @Override

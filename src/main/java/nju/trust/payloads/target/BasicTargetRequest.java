@@ -29,6 +29,10 @@ public class BasicTargetRequest {
     @NotNull
     private Integer duration;
 
+    private String useOfFunds;
+
+    private String proof;
+
 
     @Override
     public String toString() {
@@ -42,6 +46,22 @@ public class BasicTargetRequest {
                 ", interestRate=" + interestRate +
                 ", duration=" + duration +
                 '}';
+    }
+
+    public void setProof(String proof) {
+        this.proof = proof;
+    }
+
+    public String getProof() {
+        return proof;
+    }
+
+    public String getUseOfFunds() {
+        return useOfFunds;
+    }
+
+    public void setUseOfFunds(String useOfFunds) {
+        this.useOfFunds = useOfFunds;
     }
 
     public RepaymentType getRepaymentType() {

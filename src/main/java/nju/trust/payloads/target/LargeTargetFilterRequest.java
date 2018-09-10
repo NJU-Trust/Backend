@@ -5,6 +5,8 @@ import nju.trust.entity.target.LargeProjectClassification;
 
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Author: J.D. Liao
@@ -19,11 +21,10 @@ public class LargeTargetFilterRequest {
         filter.setMoney(new Double[]{0., 0.});
         filter.setRepaymentDuration(new Integer[]{0, 0});
         filter.setTime(new LocalDateTime[]{LocalDateTime.now(), LocalDateTime.now()});
-        filter.setClassifications(new LargeProjectClassification[]{
-                LargeProjectClassification.CERTIFICATE_TEST, LargeProjectClassification.GMAT});
         filter.setUserCreditRating(new CreditRating[]{});
         filter.setUserFailedSubject(new Integer[]{0, null});
         filter.setUserRankingRate(new Double[]{null, 50.});
+        filter.setUseOfFunds(new ArrayList<>());
 
         return filter;
     }
@@ -48,7 +49,15 @@ public class LargeTargetFilterRequest {
 
     private CreditRating[] userCreditRating;
 
-    private LargeProjectClassification[] classifications;
+    private List<String> useOfFunds;
+
+    public List<String> getUseOfFunds() {
+        return useOfFunds;
+    }
+
+    public void setUseOfFunds(List<String> useOfFunds) {
+        this.useOfFunds = useOfFunds;
+    }
 
     public Double[] getMoney() {
         return money;
@@ -106,11 +115,4 @@ public class LargeTargetFilterRequest {
         this.userCreditRating = userCreditRating;
     }
 
-    public LargeProjectClassification[] getClassifications() {
-        return classifications;
-    }
-
-    public void setClassifications(LargeProjectClassification[] classifications) {
-        this.classifications = classifications;
-    }
 }
