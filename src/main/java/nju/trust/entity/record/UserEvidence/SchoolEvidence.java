@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
  * @Date: 2018/9/8
  */
 @Entity
-@DiscriminatorValue("SCHOOL")
+@DiscriminatorValue("SCHOOLTYPE")
 public class SchoolEvidence extends BaseUserEvidence {
     @Enumerated(value = EnumType.STRING)
     private SchoolType schoolType;

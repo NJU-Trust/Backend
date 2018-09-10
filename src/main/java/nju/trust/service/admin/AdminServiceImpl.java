@@ -328,7 +328,6 @@ public class AdminServiceImpl implements AdminService {
 
     /**
      * 审批用户条目
-     * TODO
      * @param username 用户名
      * @param id       条目编号
      * @param result   审批结果
@@ -350,7 +349,7 @@ public class AdminServiceImpl implements AdminService {
             userEvidenceRecordRepository.save(record);
         }
 
-        // TODO 计算得分
+        // 计算得分
         scoreCalUtil.calScore(checkRecord);
 
         return ApiResponse.successResponse();

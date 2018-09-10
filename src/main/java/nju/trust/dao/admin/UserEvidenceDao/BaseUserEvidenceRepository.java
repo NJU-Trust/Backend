@@ -15,4 +15,6 @@ public interface BaseUserEvidenceRepository extends CrudRepository<BaseUserEvide
     List<String> findEvidencesByItem(UserInfoCheckRecord item);
 
     List<BaseUserEvidence> findByItem(UserInfoCheckRecord item);
+
+    List<BaseUserEvidence> findByItemId(Long itemId);
 }

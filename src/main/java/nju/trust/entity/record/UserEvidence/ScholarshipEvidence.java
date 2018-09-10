@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @DiscriminatorValue("SCHOLARSHIP")
 public class ScholarshipEvidence extends BaseUserEvidence{
     @Enumerated(value = EnumType.STRING)
-    private BonusPunishmentType type;
+    private BonusType type;
 
     public ScholarshipEvidence(User user, UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence) {
         super(user, item, time, state, evidence);
@@ -28,11 +28,11 @@ public class ScholarshipEvidence extends BaseUserEvidence{
     public ScholarshipEvidence() {
     }
 
-    public BonusPunishmentType getType() {
+    public BonusType getType() {
         return type;
     }
 
-    public void setType(BonusPunishmentType type) {
+    public void setType(BonusType type) {
         this.type = type;
     }
 }

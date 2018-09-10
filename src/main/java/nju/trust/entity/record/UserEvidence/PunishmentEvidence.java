@@ -1,3 +1,4 @@
+/*
 package nju.trust.entity.record.UserEvidence;
 
 import nju.trust.entity.CheckState;
@@ -10,16 +11,18 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import java.time.LocalDateTime;
 
+*/
 /**
  * @Author: 许杨
  * @Description: 违纪或治安处罚等不良信息
  * @Date: 2018/9/8
- */
+ *//*
+
 @Entity
 @DiscriminatorValue("PUNISHMENT")
 public class PunishmentEvidence extends BaseUserEvidence{
     @Enumerated(value = EnumType.STRING)
-    private BonusPunishmentType type;
+    private BonusType type;
 
     public PunishmentEvidence(User user, UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence) {
         super(user, item, time, state, evidence);
@@ -28,11 +31,12 @@ public class PunishmentEvidence extends BaseUserEvidence{
     public PunishmentEvidence() {
     }
 
-    public BonusPunishmentType getType() {
+    public BonusType getType() {
         return type;
     }
 
-    public void setType(BonusPunishmentType type) {
+    public void setType(BonusType type) {
         this.type = type;
     }
 }
+*/

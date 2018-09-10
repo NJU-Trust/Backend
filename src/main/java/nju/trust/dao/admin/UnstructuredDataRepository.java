@@ -13,4 +13,6 @@ import java.util.List;
  */
 public interface UnstructuredDataRepository extends CrudRepository<UnstructuredData, Long> {
     UnstructuredData findFirstByUserUsernameAndDataType(String username, UnstructuredDataType dataType);
+
+    boolean existsUnstructuredDataByUserUsername(String username);
 }

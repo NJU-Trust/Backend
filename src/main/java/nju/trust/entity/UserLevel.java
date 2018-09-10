@@ -23,7 +23,12 @@ public enum UserLevel {
     /**
      * School fellow account : need diploma photo
      */
-    SF;
+    SF,
+
+    /**
+     * Discredit user: can't do any operation
+     */
+    DISCREDIT;
 
 
     /**
@@ -36,6 +41,7 @@ public enum UserLevel {
         userLevelTrans.put(INTERMEDIATE, "中级账号");
         userLevelTrans.put(COMPLETE, "完整账号");
         userLevelTrans.put(SF, "校友账号");
+        userLevelTrans.put(DISCREDIT, "失信人员");
     }
 
     public static String getUserLevelTrans(UserLevel userLevel) {

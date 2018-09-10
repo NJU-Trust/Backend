@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
  * @Date: 2018/9/8
  */
 @Entity
-@DiscriminatorValue("FAIL")
+@DiscriminatorValue("FAILNUM")
 public class FailEvidence extends BaseUserEvidence{
     private Integer num;
 

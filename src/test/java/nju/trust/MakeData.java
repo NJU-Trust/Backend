@@ -8,6 +8,8 @@ import nju.trust.dao.user.UserRepository;
 import nju.trust.entity.CheckItem;
 import nju.trust.entity.CheckState;
 import nju.trust.entity.record.UserEvidence.DiscreditEvidence;
+import nju.trust.entity.record.UserEvidence.StudentWorkEvidence;
+import nju.trust.entity.record.UserEvidence.StudentWorkType;
 import nju.trust.entity.record.UserEvidence.VolunteerEvidence;
 import nju.trust.entity.record.UserInfoCheckRecord;
 import nju.trust.entity.user.UnstructuredData;
@@ -30,7 +32,7 @@ import java.time.LocalDateTime;
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
-public class test {
+public class MakeData {
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -77,7 +79,7 @@ public class test {
     // 建立UserInfoCheckRecord
     public void createUserInfoCheckRecord() {
         UserInfoCheckRecord record = new UserInfoCheckRecord();
-        record.setCheckItem(CheckItem.VOLUNTEERTIME);
+        record.setCheckItem(CheckItem.STUDENTWORK);
         User user = userRepository.findByUsername("weiwei").get();
         record.setUser(user);
         record.setCheckState(CheckState.ONGING);
@@ -122,5 +124,25 @@ public class test {
 
         VolunteerEvidence volunteerEvidence = new VolunteerEvidence(user, item, time, state, evidence, length);
         userEvidenceRepository.save(volunteerEvidence);
+    }*/
+/*
+    @Test
+    public void createStudentWorkEvidence() {
+        User user = userRepository.findByUsername("weiwei").get();
+
+        UserInfoCheckRecord item = userInfoCheckRecordRepository.findById((long)13).get();
+        System.out.println("item id:"+item.getId());
+
+        LocalDateTime time = LocalDateTime.now();
+        System.out.println("time:"+time);
+
+        CheckState state = CheckState.ONGING;
+
+        String evidence = "student work evidence";
+
+        StudentWorkType type = StudentWorkType.WORKER;
+
+        StudentWorkEvidence studentWorkEvidence = new StudentWorkEvidence(user, item, time, state, evidence, type);
+        userEvidenceRepository.save(studentWorkEvidence);
     }*/
 }

@@ -19,7 +19,7 @@ public enum CheckItem {
     FAILNUM("挂科数"),                      // 对应于表2 挂科数           int
     STUDY("学习成绩"),                      // 对应于表2 成绩排名           int
     DISCREDIT("是否为失信人员"),             // 对应于表2 是否为失信人员      int
-    PUNISHMENT("违纪或治安处罚等不良信息"),   // 对应于表2 违纪或治安处罚等不良信息 int
+//    PUNISHMENT("违纪或治安处罚等不良信息"),   // 对应于表2 违纪或治安处罚等不良信息 int
     TESTCHEAT("考试作弊"),                  // 对应于表2 考试作弊           int
     PAYMENT("学费及住宿费的缴纳情况"),        // 对应于表2 学费及住宿费的缴纳情况 int
     REPAYMENT("贷款偿还"),                  // 对应于表2 贷款等偿还信息       int
