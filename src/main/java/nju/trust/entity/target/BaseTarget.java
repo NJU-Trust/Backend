@@ -76,6 +76,9 @@ public abstract class BaseTarget {
      */
     private String proof;
 
+    public BaseTarget() {
+    }
+
     public BaseTarget(LocalDate startTime, String name, Double money, String useOfFunds,
                       Double completionRate, String projectDescription, User user, String proof) {
         this.startTime = startTime;
@@ -89,6 +92,7 @@ public abstract class BaseTarget {
 
         targetState = TargetState.PENDING;
         collectedMoney = 0.;
+
     }
 
     public boolean inThePayment() {

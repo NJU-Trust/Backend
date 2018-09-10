@@ -1,11 +1,15 @@
 package nju.trust.service.admin;
 
 import nju.trust.dao.admin.RepaymentRepository;
+import nju.trust.dao.user.UserRepository;
 import nju.trust.entity.UserType;
 import nju.trust.entity.user.Repayment;
+import nju.trust.entity.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,16 +18,23 @@ import java.util.List;
  * @Date: 2018/8/30
  */
 // Repayment中的startDate（开始时间）repaymentDuration（还款期限）
+@Service
 public class LoanStateCheckUtil {
-    @Autowired
     private RepaymentRepository repaymentRepository;
+    private UserRepository userRepository;
 
     private String username;
     private LocalDate today;
     private List<Repayment> records;
     private boolean hasGetInfo;
 
-    LoanStateCheckUtil(String username) {
+    @Autowired
+    public LoanStateCheckUtil(RepaymentRepository repaymentRepository, UserRepository userRepository) {
+        this.repaymentRepository = repaymentRepository;
+        this.userRepository = userRepository;
+    }
+
+    public void setUsername(String username) {
         this.username = username;
         today = LocalDate.now();
         hasGetInfo = false;
@@ -36,7 +47,12 @@ public class LoanStateCheckUtil {
     }
     // 查找用户的借款信息
     private void getInfo() {
-        records = repaymentRepository.getRepaymentByUsername(username);
+        User user = userRepository.findByUsername(username).get();
+        if(!repaymentRepository.existsByUser(user)) {
+            records = new ArrayList<>();
+        }else {
+            records = repaymentRepository.getRepaymentByUser(user);
+        }
     }
 
     /**
@@ -44,7 +60,6 @@ public class LoanStateCheckUtil {
      * @return UserType
      */
     public UserType checkUserType() {
-        // TODO test
         check();
         boolean haveLoan = false;    // 用户是否存在还款
 

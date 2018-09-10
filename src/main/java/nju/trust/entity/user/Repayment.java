@@ -56,6 +56,9 @@ public class Repayment {
     @Column(name = "type", nullable = false, insertable = false, updatable = false)
     private RepaymentType type;
 
+    public Repayment() {
+    }
+
     public Repayment(BaseTarget target, User user, Double interestRate, Double totalInterest,
                      Integer duration, LocalDate startDate, Double remainingAmount,
                      @DecimalMin("0.0") @DecimalMax("100.0") Double difficulty, RepaymentType type) {

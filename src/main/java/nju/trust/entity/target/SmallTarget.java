@@ -23,7 +23,11 @@ public class SmallTarget extends BaseTarget {
         targetType = TargetType.SMALL;
     }
 
+    public SmallTarget() {
+    }
+
     @Override
+
     public String toString() {
         return "SmallTarget{" +
                 "classification=" + classification +

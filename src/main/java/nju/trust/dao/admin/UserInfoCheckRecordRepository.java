@@ -12,6 +12,7 @@ import java.util.List;
  * @Date: 2018/9/1
  */
 public interface UserInfoCheckRecordRepository extends CrudRepository<UserInfoCheckRecord, Long> {
-    List<UserInfoCheckRecord> findByCheckStateOrCheckState(CheckState checkState1, CheckState checkState2);
     List<UserInfoCheckRecord> findByUserUsername(String username);
+
+    List<UserInfoCheckRecord> findByCheckState(CheckState update);
 }
