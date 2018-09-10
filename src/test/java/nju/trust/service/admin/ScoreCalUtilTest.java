@@ -4,6 +4,8 @@ package nju.trust.service.admin;
 import nju.trust.dao.admin.UserInfoCheckRecordRepository;
 import nju.trust.dao.user.UserRepository;
 import nju.trust.entity.record.UserInfoCheckRecord;
+import nju.trust.entity.user.UnstructuredData;
+import nju.trust.entity.user.UnstructuredDataType;
 import nju.trust.entity.user.User;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,7 +32,7 @@ public class ScoreCalUtilTest {
     private UserInfoCheckRecordRepository userInfoCheckRecordRepository;
     @Autowired
     private ScoreCalUtil test;
-/*
+
     @Test
     // 志愿时长
     public void calScore1() {
@@ -205,5 +207,21 @@ public class ScoreCalUtilTest {
             System.out.println("record id = "+record.getId());
         }
         test.calScore(record);
+    }
+/*
+    @Test
+    public void getUnstructuredData1() {
+        String username = "weiwei";
+        UnstructuredDataType type = UnstructuredDataType.MAJOR;
+        double score = test.getUnstructuredData(username, type);
+        System.out.println(username+"的得分为："+score);
+    }
+
+    @Test
+    public void getUnstructuredData2() {
+        String username = "weiwei";
+        UnstructuredDataType type = UnstructuredDataType.EDUCATION;
+        double score = test.getUnstructuredData(username, type);
+        System.out.println(username+"的得分为："+score);
     }*/
 }

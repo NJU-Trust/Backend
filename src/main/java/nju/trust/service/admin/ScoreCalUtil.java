@@ -108,7 +108,7 @@ public class ScoreCalUtil {
         StudentWorkType workType = userEvidenceRepository.findStudentWorkEvidenceByItemId(id).getType();
         double score = workType.getScore();
         String username = checkRecord.getUser().getUsername();
-        UnstructuredData preData = unstructuredDataRepository.findFirstByUserUsernameAndDataType(username, UnstructuredDataType.SOCIALITY);
+        UnstructuredData preData = getUnstructuredData(username, UnstructuredDataType.SOCIALITY);
         score = checkScore(preData.getScore(), score);
         preData.setScore(score);
         unstructuredDataRepository.save(preData);
@@ -119,7 +119,7 @@ public class ScoreCalUtil {
         String username = checkRecord.getUser().getUsername();
         RewardType type = userEvidenceRepository.findRewardEvidenceByItemId(id).getType();
         double score = type.getScore();
-        UnstructuredData preData = unstructuredDataRepository.findFirstByUserUsernameAndDataType(username, UnstructuredDataType.AWARD);
+        UnstructuredData preData = getUnstructuredData(username, UnstructuredDataType.AWARD);
         score = checkScore(preData.getScore(), score);
         preData.setScore(score);
         unstructuredDataRepository.save(preData);
@@ -130,7 +130,7 @@ public class ScoreCalUtil {
         Long id = checkRecord.getId();
         BonusType type = userEvidenceRepository.findMatchEvidenceByItemId(id).getType();
         double score = type.getScore();
-        UnstructuredData preData = unstructuredDataRepository.findFirstByUserUsernameAndDataType(username, UnstructuredDataType.AWARD);
+        UnstructuredData preData = getUnstructuredData(username, UnstructuredDataType.AWARD);
         score = checkScore(preData.getScore(), score);
         preData.setScore(score);
         unstructuredDataRepository.save(preData);
@@ -141,7 +141,7 @@ public class ScoreCalUtil {
         Long id = checkRecord.getId();
         BonusType type = userEvidenceRepository.findScholarshipByItemId(id).getType();
         double score = type.getScore();
-        UnstructuredData preData = unstructuredDataRepository.findFirstByUserUsernameAndDataType(username, UnstructuredDataType.AWARD);
+        UnstructuredData preData = getUnstructuredData(username, UnstructuredDataType.AWARD);
         score = checkScore(preData.getScore(), score);
         preData.setScore(score);
         unstructuredDataRepository.save(preData);
@@ -151,7 +151,7 @@ public class ScoreCalUtil {
         String username = checkRecord.getUser().getUsername();
         Long id = checkRecord.getId();
         SchoolType type = userEvidenceRepository.findSchoolByItemId(id).getSchoolType();
-        UnstructuredData preData = unstructuredDataRepository.findFirstByUserUsernameAndDataType(username, UnstructuredDataType.SCHOOL);
+        UnstructuredData preData = getUnstructuredData(username, UnstructuredDataType.SCHOOL);
         preData.setScore(type.getScore());
         unstructuredDataRepository.save(preData);
     }
@@ -160,7 +160,7 @@ public class ScoreCalUtil {
         String username = checkRecord.getUser().getUsername();
         Long id = checkRecord.getId();
         EducationType type = userEvidenceRepository.findEducationByItemId(id).getEducationType();
-        UnstructuredData preData = unstructuredDataRepository.findFirstByUserUsernameAndDataType(username, UnstructuredDataType.EDUCATION);
+        UnstructuredData preData = getUnstructuredData(username, UnstructuredDataType.EDUCATION);
         preData.setScore(type.getScore());
         unstructuredDataRepository.save(preData);
     }
@@ -169,7 +169,7 @@ public class ScoreCalUtil {
         String username = checkRecord.getUser().getUsername();
         Long id = checkRecord.getId();
         int num = userEvidenceRepository.findFailNumByItemId(id).getNum();
-        UnstructuredData preData = unstructuredDataRepository.findFirstByUserUsernameAndDataType(username, UnstructuredDataType.FAILED_SUBJECTS);
+        UnstructuredData preData = getUnstructuredData(username, UnstructuredDataType.FAILED_SUBJECTS);
         preData.setScore(calFailScore(num));
         unstructuredDataRepository.save(preData);
     }
@@ -189,7 +189,7 @@ public class ScoreCalUtil {
         String username = checkRecord.getUser().getUsername();
         Long id = checkRecord.getId();
         double ranking = userEvidenceRepository.findStudyByItemId(id).getRanking();
-        UnstructuredData preData = unstructuredDataRepository.findFirstByUserUsernameAndDataType(username, UnstructuredDataType.GRADE);
+        UnstructuredData preData = getUnstructuredData(username, UnstructuredDataType.GRADE);
         preData.setScore(calStudyRankScore(ranking));
         unstructuredDataRepository.save(preData);
     }
@@ -213,7 +213,7 @@ public class ScoreCalUtil {
         String username = checkRecord.getUser().getUsername();
         Long id = checkRecord.getId();
         int num = userEvidenceRepository.findTestCheatByItemId(id).getNum();
-        UnstructuredData preData = unstructuredDataRepository.findFirstByUserUsernameAndDataType(username, UnstructuredDataType.VIOLATION);
+        UnstructuredData preData = getUnstructuredData(username, UnstructuredDataType.VIOLATION);
         double score = preData.getScore() - 100 * num;
         preData.setScore(score);
         unstructuredDataRepository.save(preData);
@@ -223,7 +223,7 @@ public class ScoreCalUtil {
         String username = checkRecord.getUser().getUsername();
         Long id = checkRecord.getId();
         int num = userEvidenceRepository.findPaymentByItemId(id).getNum();
-        UnstructuredData preData = unstructuredDataRepository.findFirstByUserUsernameAndDataType(username, UnstructuredDataType.VIOLATION);
+        UnstructuredData preData = getUnstructuredData(username, UnstructuredDataType.VIOLATION);
         double score = preData.getScore() - 50 * num;
         preData.setScore(score);
         unstructuredDataRepository.save(preData);
@@ -233,7 +233,7 @@ public class ScoreCalUtil {
         String username = checkRecord.getUser().getUsername();
         Long id = checkRecord.getId();
         int num = userEvidenceRepository.findRepaymentByItemId(id).getNum();
-        UnstructuredData preData = unstructuredDataRepository.findFirstByUserUsernameAndDataType(username, UnstructuredDataType.VIOLATION);
+        UnstructuredData preData = getUnstructuredData(username, UnstructuredDataType.VIOLATION);
         double score = preData.getScore() - 100 * num;
         preData.setScore(score);
         unstructuredDataRepository.save(preData);
@@ -243,7 +243,7 @@ public class ScoreCalUtil {
         String username = checkRecord.getUser().getUsername();
         Long id = checkRecord.getId();
         int num = userEvidenceRepository.findReturnBooksByItemId(id).getNum();
-        UnstructuredData preData = unstructuredDataRepository.findFirstByUserUsernameAndDataType(username, UnstructuredDataType.VIOLATION);
+        UnstructuredData preData = getUnstructuredData(username, UnstructuredDataType.VIOLATION);
         double score = preData.getScore() - 10 * num;
         preData.setScore(score);
         unstructuredDataRepository.save(preData);
@@ -267,5 +267,20 @@ public class ScoreCalUtil {
             evidence.setState(state);
             userEvidenceRepository.save(evidence);
         }
+    }
+    // 获得非结构化数据
+    public UnstructuredData getUnstructuredData(String username, UnstructuredDataType dataType) {
+        // 检查unstructured_data是否存在，若无则初始化
+        UnstructuredData data = unstructuredDataRepository.findFirstByUserUsernameAndDataType(username, dataType);
+        if(data == null) {
+            data = new UnstructuredData();
+            data.setDataType(dataType);
+            data.setScore(dataType.getInitialScore());
+            User user = userRepository.findByUsername(username).get();
+            data.setUser(user);
+            unstructuredDataRepository.save(data);
+            data = unstructuredDataRepository.findFirstByUserUsernameAndDataType(username, dataType);
+        }
+        return data;
     }
 }
