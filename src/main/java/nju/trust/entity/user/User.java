@@ -94,6 +94,16 @@ public class User {
      */
     private Double account;
 
+    private String alipay;
+
+    private String birthday;
+
+    private String university;
+
+    private String institution;
+    //校园卡照片
+    private String schoolCardImage;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -306,6 +316,45 @@ public class User {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getAlipay() {
+        return alipay;
+    }
+
+    public void setAlipay(String alipay) {
+        this.alipay = alipay;
+    }
+
+    public String getBirthday() {
+        return birthday;
+    }
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
+    }
+
+    public String getUniversity() {
+        return university;
+    }
+
+    public void setUniversity(String university) {
+        this.university = university;
+    }
+
+    public String getInstitution() {
+        return institution;
+    }
+
+    public void setInstitution(String institution) {
+        this.institution = institution;
+    }
+
+    public String getSchoolCardImage() {
+        return schoolCardImage;
+    }
+
+    public void setSchoolCardImage(String schoolCardImage) {
+        this.schoolCardImage = schoolCardImage;
     }
 
     public Set<RoleName> getRoles() {
