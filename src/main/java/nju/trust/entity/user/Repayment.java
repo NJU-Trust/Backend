@@ -87,6 +87,15 @@ public class Repayment {
         return now.until(pointer, ChronoUnit.DAYS);
     }
 
+    public LocalDate nextDueDate() {
+        LocalDate now = LocalDate.now();
+        LocalDate pointer = startDate;
+        while (pointer.isBefore(now)) {
+            pointer = pointer.plusMonths(1);
+        }
+        return pointer;
+    }
+
     public Double getTotalInterest() {
         return totalInterest;
     }

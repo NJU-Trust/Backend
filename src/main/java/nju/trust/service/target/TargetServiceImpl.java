@@ -334,7 +334,7 @@ public class TargetServiceImpl implements TargetService {
         UserMonthlyDataHelper helper = new UserMonthlyDataHelper(statistics);
 
         // Calculate difficulty value
-        RepaymentNoteHelper noteHelper = new RepaymentNoteHelper(helper.getTotalSurplus(), helper.getTotalDisc(),
+        RepaymentNoteHelper noteHelper = new RepaymentNoteHelper(helper.getTotalSurplus(),
                 helper.forecastSurplus(), helper.forecastDisc(), helper.getCurrentDebt(),
                 duration, totalRepayment, monthlyRepayment);
 

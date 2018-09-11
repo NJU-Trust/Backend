@@ -18,8 +18,6 @@ class ConsumptionCorrectionEvaluator {
 
     private double remainingSurplus;
 
-    private double remainingDisc;
-
     private double surplusPerMonth;
 
     private double discPerMonth;
@@ -43,7 +41,7 @@ class ConsumptionCorrectionEvaluator {
         int duration = target.getRepaymentDuration();
 
         double remainingS = remainingSurplus + surplusPerMonth - debt;
-        double remainingD = remainingDisc + discPerMonth;
+        double remainingD = discPerMonth;
         List<Double> surplusRatios = new ArrayList<>();
         List<Double> discRatios = new ArrayList<>();
         List<Double> needExtraIncomes = new ArrayList<>();
@@ -68,7 +66,7 @@ class ConsumptionCorrectionEvaluator {
             }
 
             remainingS = Math.max(surplusPerMonth, remainingS + surplusPerMonth);
-            remainingD = Math.max(discPerMonth, remainingD + discPerMonth);
+            remainingD = discPerMonth;
         }
 
         return new ConsumptionCorrection(repayment.nextDue(), surplusRatios, discRatios, needExtraIncomes);
@@ -77,7 +75,6 @@ class ConsumptionCorrectionEvaluator {
     private void init(List<UserMonthStatistics> monthlyData) {
         UserMonthlyDataHelper helper = new UserMonthlyDataHelper(monthlyData);
         remainingSurplus = helper.getTotalSurplus();
-        remainingDisc = helper.getTotalDisc();
         surplusPerMonth = helper.forecastSurplus();
         discPerMonth = helper.forecastDisc();
         debt = helper.getCurrentDebt();

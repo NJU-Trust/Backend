@@ -4,6 +4,7 @@ import nju.trust.entity.record.RepaymentRecord;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,4 +20,6 @@ public interface RepaymentRecordRepository extends JpaRepository<RepaymentRecord
     Optional<RepaymentRecord> findByTargetIdAndPeriod(Long targetId, Integer period);
 
     List<RepaymentRecord> findAllByTargetId(Long targetId);
+
+    Optional<RepaymentRecord> findByReturnDateAndTargetId(LocalDate returnDate, Long targetId);
 }

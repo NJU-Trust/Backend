@@ -22,6 +22,8 @@ public class BaseRecord {
         this.user = user;
     }
 
+    BaseRecord() {}
+
     public LocalDateTime getTime() {
         return time;
     }
