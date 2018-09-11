@@ -9,10 +9,12 @@ import org.springframework.stereotype.Service;
  * @Description:
  * @Date: 2018/9/11
  */
-@Service
 public interface VerifyService {
-    /*
-    校园验证的基本信息
+    /**
+     * 保存校园验证
+     * @param schoolVerifyInfo 校园验证的基本信息
+     * @param username 用户名
+     * @return
      */
-    public ApiResponse schoolVerify(SchoolVerifyInfo schoolVerifyInfo);
+    ApiResponse schoolVerify(SchoolVerifyInfo schoolVerifyInfo, String username);
 }
