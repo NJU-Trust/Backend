@@ -60,7 +60,7 @@ public abstract class BaseTarget {
     /**
      * 还款方案
      */
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @NotNull
     private Repayment repayment;
 
