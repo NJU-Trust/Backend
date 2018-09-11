@@ -1,6 +1,8 @@
 package nju.trust.payloads.target;
 
+import nju.trust.entity.target.BaseTarget;
 import nju.trust.entity.target.TargetState;
+import nju.trust.entity.user.Repayment;
 
 import java.time.LocalDate;
 
@@ -31,6 +33,17 @@ public class ReleasedTarget {
         this.duration = duration;
         this.state = state;
         this.targetId = targetId;
+    }
+
+    public ReleasedTarget(BaseTarget target) {
+        name = target.getName();
+        money = target.getMoney();
+        Repayment repayment = target.getRepayment();
+        interestRate = repayment.getInterestRate();
+        duration = new LocalDate[]{target.getStartTime(),
+                repayment.getStartDate().plusMonths(repayment.getDuration())};
+        state = target.getTargetState();
+        targetId = target.getId();
     }
 
     public String getName() {

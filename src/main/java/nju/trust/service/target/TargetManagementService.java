@@ -1,9 +1,11 @@
 package nju.trust.service.target;
 
+import nju.trust.dao.record.DefaultRecordRepository;
 import nju.trust.dao.record.RepaymentRecordRepository;
 import nju.trust.dao.target.TargetRepository;
 import nju.trust.entity.record.RepaymentRecord;
 import nju.trust.entity.target.BaseTarget;
+import nju.trust.entity.target.TargetState;
 import nju.trust.entity.user.Repayment;
 import nju.trust.exception.ResourceNotFoundException;
 import nju.trust.payloads.target.DefaultRecord;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Author: J.D. Liao
@@ -27,6 +30,8 @@ public class TargetManagementService {
     private TargetRepository targetRepository;
 
     private RepaymentRecordRepository repaymentRecordRepository;
+
+    private DefaultRecordRepository defaultRecordRepository;
 
     public List<OnGoingTarget> getOnGoingTargetList(String username, TargetFilter filter) {
         List<BaseTarget> targets = targetRepository.findAll(filter.toSpecification(username));
@@ -47,15 +52,19 @@ public class TargetManagementService {
     }
 
     public List<ReleasedTarget> completedTargetList(String username, TargetFilter filter) {
-        return null;
+        return targetRepository.findAll(filter.toSpecification(username))
+                .stream().filter(t -> t.getTargetState() == TargetState.PAY_OFF)
+                .map(ReleasedTarget::new).collect(Collectors.toList());
     }
 
     public List<ReleasedTarget> releasedTargetList(String username, TargetFilter filter) {
-        return null;
+        return targetRepository.findAll(filter.toSpecification(username))
+                .stream().map(ReleasedTarget::new).collect(Collectors.toList());
     }
 
     public List<DefaultRecord> defaultRecords(String username) {
-        return null;
+        // TODO: 2018/9/11 等有空再实现吧 orz
+        return new ArrayList<>();
     }
 
     @Autowired
@@ -66,5 +75,10 @@ public class TargetManagementService {
     @Autowired
     public void setRepaymentRecordRepository(RepaymentRecordRepository repaymentRecordRepository) {
         this.repaymentRecordRepository = repaymentRecordRepository;
+    }
+
+    @Autowired
+    public void setDefaultRecordRepository(DefaultRecordRepository defaultRecordRepository) {
+        this.defaultRecordRepository = defaultRecordRepository;
     }
 }

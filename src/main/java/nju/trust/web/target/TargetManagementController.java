@@ -30,17 +30,17 @@ public class TargetManagementController {
 
     @RequestMapping("/complete")
     public List<ReleasedTarget> completedTargets(Principal principal, TargetFilter filter) {
-        return null;
+        return targetManagementService.completedTargetList(principal.getName(), filter);
     }
 
     @RequestMapping("/released")
     public List<ReleasedTarget> releasedTargets(Principal principal, TargetFilter filter) {
-        return null;
+        return targetManagementService.releasedTargetList(principal.getName(), filter);
     }
 
     @RequestMapping("/default")
     public List<DefaultRecord> defaultRecords(Principal principal, TargetFilter filter) {
-        return null;
+        return targetManagementService.defaultRecords(principal.getName());
     }
 
     @Autowired
