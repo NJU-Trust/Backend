@@ -14,8 +14,6 @@ class RepaymentNoteHelper {
 
     private double remainingSurplus;
 
-    private double remainingDisc;
-
     private double surplusPerMonth;
 
     private double discPerMonth;
@@ -31,11 +29,10 @@ class RepaymentNoteHelper {
 
     private List<Double> monthlyRepayment;
 
-    RepaymentNoteHelper(double remainingSurplus, double remainingDisc, double surplusPerMonth,
+    RepaymentNoteHelper(double remainingSurplus, double surplusPerMonth,
                         double discPerMonth, double debt, double duration, double totalRepayment,
                         List<Double> monthlyRepayment) {
         this.remainingSurplus = remainingSurplus;
-        this.remainingDisc = remainingDisc;
         this.surplusPerMonth = surplusPerMonth;
         this.discPerMonth = discPerMonth;
         this.debt = debt;
@@ -56,7 +53,7 @@ class RepaymentNoteHelper {
 
     double evaluateDifficulty() {
         double totalSurplus = remainingSurplus + duration * surplusPerMonth;
-        double totalDisc = remainingDisc + duration * discPerMonth;
+        double totalDisc = duration * discPerMonth;
         double difficulty;
 
         if (totalRepayment <= (totalSurplus - debt))
@@ -87,7 +84,7 @@ class RepaymentNoteHelper {
 
     List<Integer> evaluateDisc() {
         double remainingS = remainingSurplus + surplusPerMonth - debt;
-        double remainingD = remainingDisc + discPerMonth;
+        double remainingD = discPerMonth;
         List<Integer> months = new ArrayList<>();
 
         for (int i = 0; i < duration; i++) {
@@ -101,7 +98,7 @@ class RepaymentNoteHelper {
             }
 
             remainingS = Math.max(surplusPerMonth, remainingS + surplusPerMonth);
-            remainingD = Math.max(discPerMonth, remainingD + discPerMonth);
+            remainingD = discPerMonth;
         }
 
         return months;
@@ -110,7 +107,6 @@ class RepaymentNoteHelper {
     private void init(List<UserMonthStatistics> monthlyData) {
         UserMonthlyDataHelper helper = new UserMonthlyDataHelper(monthlyData);
         remainingSurplus = helper.getTotalSurplus();
-        remainingDisc = helper.getTotalDisc();
         surplusPerMonth = helper.forecastSurplus();
         discPerMonth = helper.forecastDisc();
         debt = helper.getCurrentDebt();
