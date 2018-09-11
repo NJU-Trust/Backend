@@ -467,6 +467,22 @@ public class AdminServiceImpl implements AdminService {
         return info;
     }
 
+    // TODO code
+    @Override
+    public PendingTargetDetailInfo getPendingTarget(Long id) {
+        BaseTarget baseTarget = targetRepository.findById(id).get();
+        User user = baseTarget.getUser();
+        Repayment repayment = repaymentRepository.findFirstByTargetId(id);
+        TargetType targetType = baseTarget.getTargetType();
+        if(targetType.equals(TargetType.LARGE)) {
+            LargeTarget largeTarget = largeTargetRepository.getOne(id);
+            return new PendingTargetDetailInfo(user, largeTarget, repayment);
+        }else {
+            SmallTarget smallTarget = smallTargetRepository.getOne(id);
+            return new PendingTargetDetailInfo(user, smallTarget, repayment);
+        }
+    }
+
     /**
      * 审批标的
      * @param targetId 标的编号

@@ -283,4 +283,9 @@ public class ScoreCalUtil {
         }
         return data;
     }
+
+    public CheckState checkUserState(String username) {
+        List<UserInfoCheckRecord> records = userInfoCheckRecordRepository.findByUserUsername(username);
+        return null;
+    }
 }

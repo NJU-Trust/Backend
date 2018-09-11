@@ -20,7 +20,7 @@ import java.util.List;
  * @Description: 用于【管理员】用户管理
  * @Date: 2018/8/26
  */
-@Service
+//@Service
 public interface AdminService {
     // 用户管理
     /**
@@ -89,7 +89,6 @@ public interface AdminService {
     List<BreakContractStatistics> getBreakContractStatistics();
 
     // 管理审核
-    // TODO 用户审核
     /**
      * 用户审核时得到待审核用户及其状态的列表
      * 优先级：UPDATE > SUBMIT 时间早 > 时间晚
@@ -148,6 +147,8 @@ public interface AdminService {
      * 若id对应的不是大额标的，则返回null
      */
     LargeTargetInfo getLargeTargetInfo(Long id);
+
+    PendingTargetDetailInfo getPendingTarget(Long id);
 
     /**
      * 审批标的
