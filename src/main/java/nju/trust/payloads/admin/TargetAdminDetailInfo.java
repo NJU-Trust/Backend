@@ -121,6 +121,12 @@ public class TargetAdminDetailInfo {
         this.type = type;
     }
     public TargetAdminDetailInfo(TargetInfo targetInfo, RepaymentType type) {
+        if(targetInfo == null) {
+            System.out.println("targetInfo == null");
+        }
+        if(targetInfo.getId() == null) {
+            System.out.println("targetInfo.getId() == null");
+        }
         this.id = targetInfo.getId();
         this.username = targetInfo.getUsername();
         this.startTime = targetInfo.getStartTime();

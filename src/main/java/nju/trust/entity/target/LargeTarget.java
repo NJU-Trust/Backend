@@ -10,6 +10,9 @@ import java.time.LocalDate;
 @DiscriminatorValue("LARGE")
 public class LargeTarget extends BaseTarget {
 
+    public LargeTarget() {
+    }
+
     /**
      * 学习项目类别分类
      */

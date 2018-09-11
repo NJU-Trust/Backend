@@ -38,6 +38,7 @@ import java.util.stream.Collectors;
  */
 @Service
 public class AdminServiceImpl implements AdminService {
+    private LoanStateCheckUtil calUtil;
     private TargetService targetService;
     private AdminUserRepository adminUserRepository;
     private BaseTargetRepository baseTargetRepository;
@@ -50,7 +51,8 @@ public class AdminServiceImpl implements AdminService {
     private UserEvidenceRepository userEvidenceRecordRepository;
     private ScoreCalUtil scoreCalUtil;
     @Autowired
-    public AdminServiceImpl(TargetService targetService,
+    public AdminServiceImpl(LoanStateCheckUtil calUtil,
+                            TargetService targetService,
                             AdminUserRepository adminUserRepository,
                             BaseTargetRepository baseTargetRepository,
                             AdminInvestmentRecordRepository adminInvestmentRecordRepository,
@@ -61,6 +63,7 @@ public class AdminServiceImpl implements AdminService {
                             RepaymentRepository repaymentRepository,
                             UserEvidenceRepository userEvidenceRecordRepository,
                             ScoreCalUtil scoreCalUtil) {
+        this.calUtil = calUtil;
         this.targetService = targetService;
         this.adminUserRepository = adminUserRepository;
         this.baseTargetRepository = baseTargetRepository;
@@ -78,7 +81,6 @@ public class AdminServiceImpl implements AdminService {
      * 查找所有用户的概要信息
      * @param keyword 关键字
      * @param type 用户类别（借款用户：无借款用户、待还款用户、逾期用户；投资用户）
-     * TODO test
      * @return List<UserSimpleInfo>
      */
     @Override
@@ -93,37 +95,47 @@ public class AdminServiceImpl implements AdminService {
 
         // 通过用户类别筛选用户
         List<UserSimpleInfo> infoList;
-        switch (type) {
-            case NOLOAN:    // 无借款用户
-                infoList = getLoanUserInfo(usernames, type);
-                break;
-            case HAVELOAN:  // 待还款用户
-                infoList = getLoanUserInfo(usernames, type);
-                break;
-            case OVERDUE:   // 逾期用户
-                infoList = getOverdueUserInfo(usernames);
-                break;
+        if(type == null) {// 不区分usertype
+            infoList = getLoanUserInfo(usernames);
+        }else {
+            switch (type) {
+                case NOLOAN:    // 无借款用户
+                    infoList = getLoanUserInfo(usernames, type);
+                    break;
+                case HAVELOAN:  // 待还款用户
+                    infoList = getLoanUserInfo(usernames, type);
+                    break;
+                case OVERDUE:   // 逾期用户
+                    infoList = getOverdueUserInfo(usernames);
+                    break;
             /*case INVESTMENT:// 投资用户
                 infoList = getInvestorInfo(usernames);
                 break;*/
-            default:        // 不区分usertype
-                infoList = getLoanUserInfo(usernames);
-                break;
+                default:        // 不区分usertype
+                    infoList = getLoanUserInfo(usernames);
+                    break;
+            }
         }
 
         if(infoList == null || infoList.size() == 0) {
             return new ArrayList<>();
         }
 
-        Page<UserSimpleInfo> pages = null;
-        infoList = pages.stream().map(UserSimpleInfo::new).collect(Collectors.toList());
-        return infoList;
+        // 分页
+        int pageNumber = pageable.getPageNumber();
+        int pageSize = pageable.getPageSize();
+        List<UserSimpleInfo> infoList2 = new ArrayList<>();
+        for(int i = pageNumber*pageSize ; i < infoList.size() && i < (pageNumber+1)*pageSize ; i++) {
+            infoList2.add(infoList.get(i));
+        }
+
+        return infoList2;
     }
-    // TODO test 查找用户是否欠款，返回未欠款/欠款用户的UserSimpleInfo
+    // 查找用户是否欠款，返回未欠款/欠款用户的UserSimpleInfo
     private List<UserSimpleInfo> getLoanUserInfo(List<String> usernames, UserType type) {
         List<UserSimpleInfo> list = new ArrayList<>();
         for (String username : usernames) {
-            LoanStateCheckUtil calUtil = new LoanStateCheckUtil(username);
+            calUtil.setUsername(username);
             if ((calUtil.checkUserType().equals(type))) {   // 是所求用户
                 if(adminUserRepository.existsById(username)) {
                     User user = adminUserRepository.findById(username).get();
@@ -134,12 +146,12 @@ public class AdminServiceImpl implements AdminService {
         }
         return list;
     }
-    // TODO test 查找逾期用户（逾期金额>0）
+    // 查找逾期用户（逾期金额>0）
     private List<UserSimpleInfo> getOverdueUserInfo(List<String> usernames) {
         int i = 0;
         while (i < usernames.size()) {
             String username = usernames.get(i);
-            LoanStateCheckUtil calUtil = new LoanStateCheckUtil(username);
+            calUtil.setUsername(username);
             if(!calUtil.checkUserType().equals(UserType.OVERDUE)) {// 不是逾期用户
                 usernames.remove(i);
             }else {
@@ -149,11 +161,11 @@ public class AdminServiceImpl implements AdminService {
         List<User> users = (List<User>)adminUserRepository.findAllById(usernames);
         return getSimpleInfo(users, UserType.OVERDUE);
     }
-    // TODO test 不区分用户类别时查看用户概要信息
+    // 不区分用户类别时查看用户概要信息
     private List<UserSimpleInfo> getLoanUserInfo(List<String> usernames) {
         List<UserSimpleInfo> list = new ArrayList<>();
         for (String username : usernames) {
-            LoanStateCheckUtil calUtil = new LoanStateCheckUtil(username);
+            calUtil.setUsername(username);
             UserType type = calUtil.checkUserType();
             User user = adminUserRepository.findById(username).get();
             UserSimpleInfo userSimpleInfo = new UserSimpleInfo(user, type);
@@ -172,7 +184,6 @@ public class AdminServiceImpl implements AdminService {
 
     /**
      * 查看项目
-     * TODO test
      * @param state 项目状态(招标中,审核中,还款中,已还款)
      * @param type  项目类型（小额拆借类、学习培训类）
      * @return 项目的概要信息列表
@@ -199,11 +210,16 @@ public class AdminServiceImpl implements AdminService {
         List<TargetAdminBriefInfo> infos = baseTargetsToBriefInfos(records);
 
         // 分页
-        Page<TargetAdminBriefInfo> pages = null;
-        infos = pages.stream().map(TargetAdminBriefInfo::new).collect(Collectors.toList());
-        return infos;
+        int pageNumber = pageable.getPageNumber();
+        int pageSize = pageable.getPageSize();
+        List<TargetAdminBriefInfo> infoList = new ArrayList<>();
+        for(int i = pageNumber*pageSize ; i < infos.size() && i < (pageNumber+1)*pageSize ; i++) {
+            infoList.add(infos.get(i));
+        }
+
+        return infoList;
     }
-    // TODO test 通过type对target进行筛选并分页
+    // 通过type对target进行筛选并分页
     private List<BaseTarget> getTargetInfoByType(List<BaseTarget> records, TargetType type, Pageable pageable) {
         if(type != null) {  // 通过type对target进行筛选
             int i = 0;
@@ -230,7 +246,7 @@ public class AdminServiceImpl implements AdminService {
     private TargetAdminBriefInfo baseTargetToBriefInfo(BaseTarget baseTarget) {
         Long targetId = baseTarget.getId();
         List<User> investors = adminInvestmentRecordRepository.findUserById(targetId);
-        List nameList = new ArrayList();
+        List<String> nameList = new ArrayList();
         for(User user : investors) {
             String username = user.getUsername();
             if(!nameList.contains(username)) {
@@ -249,8 +265,10 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public TargetAdminDetailInfo seeTarget(Long id) {
         TargetInfo targetInfo = targetService.getTargetInfo(id);
-        if(repaymentRepository.existsById(id)) {
-            Repayment repayment = repaymentRepository.findById(id).get();
+        if(repaymentRepository.existsByTargetId(id)) {
+            System.out.println("repayment exists");
+            Repayment repayment = repaymentRepository.findFirstByTargetId(id);
+            // TODO 等待接口
             return new TargetAdminDetailInfo(targetInfo, repayment.getType());
         }else {
             return new TargetAdminDetailInfo();
@@ -285,24 +303,29 @@ public class AdminServiceImpl implements AdminService {
     /**
      * 用户审核时得到待审核用户及其状态的列表
      * 优先级：UPDATE > SUBMIT 时间早 > 时间晚
-     * TODO test
      * @return List<UserStateList>
      */
     @Override
     public List<UserStateList> getUserStateList(Pageable pageable) {
-        List<UserInfoCheckRecord> records = userInfoCheckRecordRepository.findByCheckStateOrCheckState(CheckState.UPDATE, CheckState.ONGING);
+        List<UserInfoCheckRecord> records = userInfoCheckRecordRepository.findByCheckState(CheckState.UPDATE);
+        records.addAll(userInfoCheckRecordRepository.findByCheckState(CheckState.ONGING));
+
         List<UserStateList> list = getList(records);
 
         Collections.sort(list);
 
-        Page<UserStateList> pages = null;
-        list = pages.stream().map(UserStateList::new).collect(Collectors.toList());
-        return list;
+        // 分页
+        int pageNumber = pageable.getPageNumber();
+        int pageSize = pageable.getPageSize();
+        List<UserStateList> infoList = new ArrayList<>();
+        for(int i = pageNumber*pageSize ; i < list.size() && i < (pageNumber+1)*pageSize ; i++) {
+            infoList.add(list.get(i));
+        }
+        return infoList;
     }
 
     /**
      * 返回用户的待审核条目
-     * TODO test
      * @param username 用户名
      * @return 待审核条目信息
      */
@@ -335,8 +358,13 @@ public class AdminServiceImpl implements AdminService {
      */
     @Override
     public ApiResponse approveItem(String username, Long id, ApproveResult result) {
-
         UserInfoCheckRecord checkRecord = userInfoCheckRecordRepository.findById(id).get();
+        if(checkRecord.getCheckState().equals(CheckState.PASS) || checkRecord.getCheckState().equals(CheckState.REJECT)) {
+            // 条目已经审批
+            ApiResponse response = new ApiResponse(false, "该条目已经审批");
+            return response;
+        }
+
         CheckState state = result.getCheckState();
         String message = result.getStr();
         checkRecord.setCheckState(state);
@@ -350,7 +378,9 @@ public class AdminServiceImpl implements AdminService {
         }
 
         // 计算得分
-        scoreCalUtil.calScore(checkRecord);
+        if(state.equals(CheckState.PASS)) {
+            scoreCalUtil.calScore(checkRecord);
+        }
 
         return ApiResponse.successResponse();
     }
@@ -383,7 +413,6 @@ public class AdminServiceImpl implements AdminService {
 
     /**
      * 得到待审核的标的列表
-     * TODO test
      * @param type 标的类别
      * @return 标的概要信息
      */
@@ -409,13 +438,13 @@ public class AdminServiceImpl implements AdminService {
         }
         return list;
     }
-
-    /**
+/*
+    *//**
      * 查看小额标的内容
      * @param id 标的编号
      * @return 小额标的的详细内容
      * 若id对应的不是小额标的，则返回null
-     */
+     *//*
     @Override
     public SmallTargetInfo getSmallTargetInfo(Long id) {
         SmallTarget target = smallTargetRepository.findById(id).get();
@@ -423,37 +452,57 @@ public class AdminServiceImpl implements AdminService {
         return info;
     }
 
-    /**
+    *//**
      * 查看大额标的内容
      * @param id 标的编号
      * @return 大额标的的详细内容
      * 若id对应的不是大额标的，则返回null
-     */
+     *//*
     @Override
     public LargeTargetInfo getLargeTargetInfo(Long id) {
         LargeTarget target = largeTargetRepository.findById(id).get();
         LargeTargetInfo info = new LargeTargetInfo(target);
         return info;
+    }*/
+
+    @Override
+    public PendingTargetDetailInfo getPendingTarget(Long id) {
+        BaseTarget baseTarget = targetRepository.findById(id).get();
+        User user = baseTarget.getUser();
+        TargetType targetType = baseTarget.getTargetType();
+        CheckState state = scoreCalUtil.checkUserState(user.getUsername());
+        if(targetType.equals(TargetType.LARGE)) {
+            LargeTarget largeTarget = largeTargetRepository.findById(id).get();
+            LargeProjectClassification classification = largeTarget.getClassification();
+            System.out.println("targetId:"+id);
+            Repayment repayment = repaymentRepository.findFirstByTargetId(id);
+            System.out.println(repayment==null);
+            return new PendingTargetDetailInfo(user, baseTarget, repayment, state, classification);
+        }else {
+            SmallTarget smallTarget = smallTargetRepository.findById(id).get();
+            SmallProjectClassification classification = smallTarget.getClassification();
+            Repayment repayment = repaymentRepository.findFirstByTargetId(id);
+            return new PendingTargetDetailInfo(user, baseTarget, repayment, state, classification);
+        }
     }
 
     /**
      * 审批标的
-     * TODO test
      * @param targetId 标的编号
      * @param result 审批结果
      * @return 是否成功
      */
     @Override
     public ApiResponse approveTarget(Long targetId, ApproveResult result) {
-        BaseTarget target = targetRepository.findById(targetId).get();
-        if(target == null) {
-            ApiResponse response = new ApiResponse(false, "该任务不存在");
-        }
-        if(!target.getTargetState().equals(TargetState.PENDING)) {
-            ApiResponse response = new ApiResponse(false, "该任务已经审核通过");
+        if(!targetRepository.existsById(targetId)) {
+            return new ApiResponse(false, "该任务不存在");
         }
         if(result == null) {
-            ApiResponse response = new ApiResponse(false, "请选择“通过”或“拒绝”");
+            return new ApiResponse(false, "请选择“通过”或“拒绝”");
+        }
+        BaseTarget target = targetRepository.findById(targetId).get();
+        if(!target.getTargetState().equals(TargetState.PENDING)) {
+            return new ApiResponse(false, "该任务已经审核");
         }
 
         // 审核操作成功，数据库进行存储

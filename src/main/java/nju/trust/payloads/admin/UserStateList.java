@@ -59,9 +59,9 @@ public class UserStateList implements Comparable{
         UserStateList other = (UserStateList)o;
 
         if(this.getCheckState().equals(CheckState.ONGING) && other.getCheckState().equals(CheckState.UPDATE)) {
-            return -1;
-        }else if(this.getCheckState().equals(CheckState.UPDATE) && other.getCheckState().equals(CheckState.ONGING)) {
             return 1;
+        }else if(this.getCheckState().equals(CheckState.UPDATE) && other.getCheckState().equals(CheckState.ONGING)) {
+            return -1;
         }
 
         if(this.getTime().isBefore(other.getTime())) {
