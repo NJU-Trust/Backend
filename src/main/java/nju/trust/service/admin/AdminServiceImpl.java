@@ -125,7 +125,7 @@ public class AdminServiceImpl implements AdminService {
         int pageNumber = pageable.getPageNumber();
         int pageSize = pageable.getPageSize();
         List<UserSimpleInfo> infoList2 = new ArrayList<>();
-        for(int i = (pageNumber-1)*pageSize ; i < infoList.size() && i < pageNumber*pageSize ; i++) {
+        for(int i = pageNumber*pageSize ; i < infoList.size() && i < (pageNumber+1)*pageSize ; i++) {
             infoList2.add(infoList.get(i));
         }
 
@@ -213,7 +213,7 @@ public class AdminServiceImpl implements AdminService {
         int pageNumber = pageable.getPageNumber();
         int pageSize = pageable.getPageSize();
         List<TargetAdminBriefInfo> infoList = new ArrayList<>();
-        for(int i = (pageNumber-1)*pageSize ; i < infos.size() && i < pageNumber*pageSize ; i++) {
+        for(int i = pageNumber*pageSize ; i < infos.size() && i < (pageNumber+1)*pageSize ; i++) {
             infoList.add(infos.get(i));
         }
 
@@ -318,7 +318,7 @@ public class AdminServiceImpl implements AdminService {
         int pageNumber = pageable.getPageNumber();
         int pageSize = pageable.getPageSize();
         List<UserStateList> infoList = new ArrayList<>();
-        for(int i = (pageNumber-1)*pageSize ; i < list.size() && i < pageNumber*pageSize ; i++) {
+        for(int i = pageNumber*pageSize ; i < list.size() && i < (pageNumber+1)*pageSize ; i++) {
             infoList.add(list.get(i));
         }
         return infoList;
@@ -354,22 +354,21 @@ public class AdminServiceImpl implements AdminService {
      * @param username 用户名
      * @param id       条目编号
      * @param result   审批结果
-     * TODO test
      * @return
      */
     @Override
     public ApiResponse approveItem(String username, Long id, ApproveResult result) {
-
         UserInfoCheckRecord checkRecord = userInfoCheckRecordRepository.findById(id).get();
+        if(checkRecord.getCheckState().equals(CheckState.PASS) || checkRecord.getCheckState().equals(CheckState.REJECT)) {
+            // 条目已经审批
+            ApiResponse response = new ApiResponse(false, "该条目已经审批");
+            return response;
+        }
+
         CheckState state = result.getCheckState();
         String message = result.getStr();
-        System.out.println("message:"+message);
         checkRecord.setCheckState(state);
-        System.out.println("checkRecord state:"+checkRecord.getCheckState());
         checkRecord.setMessage(message);
-        System.out.println("id:"+checkRecord.getId());
-        checkRecord.setCheckState(CheckState.REJECT);
-        // TODO CheckState无法修改
         userInfoCheckRecordRepository.save(checkRecord);
 
         List<BaseUserEvidence> baseUserEvidences = userEvidenceRecordRepository.findByItem(checkRecord);
@@ -379,7 +378,9 @@ public class AdminServiceImpl implements AdminService {
         }
 
         // 计算得分
-        scoreCalUtil.calScore(checkRecord);
+        if(state.equals(CheckState.PASS)) {
+            scoreCalUtil.calScore(checkRecord);
+        }
 
         return ApiResponse.successResponse();
     }
@@ -412,7 +413,6 @@ public class AdminServiceImpl implements AdminService {
 
     /**
      * 得到待审核的标的列表
-     * TODO test
      * @param type 标的类别
      * @return 标的概要信息
      */
@@ -446,6 +446,7 @@ public class AdminServiceImpl implements AdminService {
      * 若id对应的不是小额标的，则返回null
      */
     @Override
+    // TODO wait
     public SmallTargetInfo getSmallTargetInfo(Long id) {
         SmallTarget target = smallTargetRepository.findById(id).get();
         SmallTargetInfo info = new SmallTargetInfo(target);
@@ -459,6 +460,7 @@ public class AdminServiceImpl implements AdminService {
      * 若id对应的不是大额标的，则返回null
      */
     @Override
+    // TODO wait
     public LargeTargetInfo getLargeTargetInfo(Long id) {
         LargeTarget target = largeTargetRepository.findById(id).get();
         LargeTargetInfo info = new LargeTargetInfo(target);
@@ -467,22 +469,21 @@ public class AdminServiceImpl implements AdminService {
 
     /**
      * 审批标的
-     * TODO test
      * @param targetId 标的编号
      * @param result 审批结果
      * @return 是否成功
      */
     @Override
     public ApiResponse approveTarget(Long targetId, ApproveResult result) {
-        BaseTarget target = targetRepository.findById(targetId).get();
-        if(target == null) {
-            ApiResponse response = new ApiResponse(false, "该任务不存在");
-        }
-        if(!target.getTargetState().equals(TargetState.PENDING)) {
-            ApiResponse response = new ApiResponse(false, "该任务已经审核通过");
+        if(!targetRepository.existsById(targetId)) {
+            return new ApiResponse(false, "该任务不存在");
         }
         if(result == null) {
-            ApiResponse response = new ApiResponse(false, "请选择“通过”或“拒绝”");
+            return new ApiResponse(false, "请选择“通过”或“拒绝”");
+        }
+        BaseTarget target = targetRepository.findById(targetId).get();
+        if(!target.getTargetState().equals(TargetState.PENDING)) {
+            return new ApiResponse(false, "该任务已经审核");
         }
 
         // 审核操作成功，数据库进行存储

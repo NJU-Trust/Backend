@@ -63,6 +63,14 @@ public class PendingTargetBriefInfo {
         CreditRating creditRating = target.getUser().getCreditRating();
         Long targetId = target.getId();
         TargetState targetState = target.getTargetState();
-        new PendingTargetBriefInfo(username, creditRating, targetId, targetState);
+
+        if(username == null) {
+            this.username = "";
+        }else {
+            this.username = username;
+        }
+        this.creditRating = creditRating;
+        this.targetId = targetId;
+        this.targetState = targetState;
     }
 }
