@@ -5,26 +5,18 @@ package nju.trust.payloads.personalinfomation;
  * @Description:
  * @Date: 2018/9/11
  */
-public class InvestandLoan {
-    /*
-    totalInvestment	double	投资总额
-    totalLoan	double	借款总额
-    pendingPrincipal	double	待收回本金
-    pendingInterest	double	待收回利息
-    creditRatingScore	double	信用评分
-    creditRating	string	信用评级
-     */
-    private double totalInvestment;
+public class InvestAndLoan {
+    private double totalInvestment; // 投资总额
 
-    private double totalLoan;
+    private double totalLoan;   // 借款总额
 
-    private double pendingPrincipal;
+    private double pendingPrincipal;    // 待收回本金
 
-    private double pendingInterest;
+    private double pendingInterest; // 待收回利息
 
-    private double creditRatingScore;
+    private double creditRatingScore;   // 信用评分
 
-    private String creditRating;
+    private String creditRating;    // 信用评级
 
     public double getTotalInvestment() {
         return totalInvestment;

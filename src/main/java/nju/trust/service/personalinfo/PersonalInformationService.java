@@ -1,6 +1,6 @@
 package nju.trust.service.personalinfo;
 
-import nju.trust.payloads.personalinfomation.InvestandLoan;
+import nju.trust.payloads.personalinfomation.InvestAndLoan;
 
 /**
  * @Author: 161250127
@@ -8,6 +8,10 @@ import nju.trust.payloads.personalinfomation.InvestandLoan;
  * @Date: 2018/9/11
  */
 public interface PersonalInformationService {
-
-    public InvestandLoan getInvestAndLoanInfo(String username);
+    /**
+     *
+     * @param username 用户名
+     * @return
+     */
+    InvestAndLoan getInvestAndLoanInfo(String username);
 }
