@@ -132,7 +132,7 @@ public interface AdminService {
      * @return 小额标的的详细内容
      * 若id对应的不是小额标的，则返回null
      */
-    SmallTargetInfo getSmallTargetInfo(Long id);
+    //SmallTargetInfo getSmallTargetInfo(Long id);
 
     /**
      * 得到待审核的大额标的编号
@@ -146,8 +146,13 @@ public interface AdminService {
      * @return 大额标的的详细内容
      * 若id对应的不是大额标的，则返回null
      */
-    LargeTargetInfo getLargeTargetInfo(Long id);
+    //LargeTargetInfo getLargeTargetInfo(Long id);
 
+    /**
+     * 查看标的详情
+     * @param id 标的编号
+     * @return 标的详情
+     */
     PendingTargetDetailInfo getPendingTarget(Long id);
 
     /**

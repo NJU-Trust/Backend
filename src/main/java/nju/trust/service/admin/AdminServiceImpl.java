@@ -438,48 +438,51 @@ public class AdminServiceImpl implements AdminService {
         }
         return list;
     }
-
-    /**
+/*
+    *//**
      * 查看小额标的内容
      * @param id 标的编号
      * @return 小额标的的详细内容
      * 若id对应的不是小额标的，则返回null
-     */
+     *//*
     @Override
-    // TODO wait
     public SmallTargetInfo getSmallTargetInfo(Long id) {
         SmallTarget target = smallTargetRepository.findById(id).get();
         SmallTargetInfo info = new SmallTargetInfo(target);
         return info;
     }
 
-    /**
+    *//**
      * 查看大额标的内容
      * @param id 标的编号
      * @return 大额标的的详细内容
      * 若id对应的不是大额标的，则返回null
-     */
+     *//*
     @Override
-    // TODO wait
     public LargeTargetInfo getLargeTargetInfo(Long id) {
         LargeTarget target = largeTargetRepository.findById(id).get();
         LargeTargetInfo info = new LargeTargetInfo(target);
         return info;
-    }
+    }*/
 
-    // TODO code
     @Override
     public PendingTargetDetailInfo getPendingTarget(Long id) {
         BaseTarget baseTarget = targetRepository.findById(id).get();
         User user = baseTarget.getUser();
-        Repayment repayment = repaymentRepository.findFirstByTargetId(id);
         TargetType targetType = baseTarget.getTargetType();
+        CheckState state = scoreCalUtil.checkUserState(user.getUsername());
         if(targetType.equals(TargetType.LARGE)) {
-            LargeTarget largeTarget = largeTargetRepository.getOne(id);
-            return new PendingTargetDetailInfo(user, largeTarget, repayment);
+            LargeTarget largeTarget = largeTargetRepository.findById(id).get();
+            LargeProjectClassification classification = largeTarget.getClassification();
+            System.out.println("targetId:"+id);
+            Repayment repayment = repaymentRepository.findFirstByTargetId(id);
+            System.out.println(repayment==null);
+            return new PendingTargetDetailInfo(user, baseTarget, repayment, state, classification);
         }else {
-            SmallTarget smallTarget = smallTargetRepository.getOne(id);
-            return new PendingTargetDetailInfo(user, smallTarget, repayment);
+            SmallTarget smallTarget = smallTargetRepository.findById(id).get();
+            SmallProjectClassification classification = smallTarget.getClassification();
+            Repayment repayment = repaymentRepository.findFirstByTargetId(id);
+            return new PendingTargetDetailInfo(user, baseTarget, repayment, state, classification);
         }
     }
 

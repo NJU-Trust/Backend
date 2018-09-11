@@ -14,6 +14,7 @@ import nju.trust.entity.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -286,6 +287,19 @@ public class ScoreCalUtil {
 
     public CheckState checkUserState(String username) {
         List<UserInfoCheckRecord> records = userInfoCheckRecordRepository.findByUserUsername(username);
-        return null;
+        List<CheckState> states = new ArrayList<>();
+        for(int i = 0 ; i < records.size() ; i++) {
+            states.add(records.get(i).getCheckState());
+        }
+        if(states.contains(CheckState.PASS)) {
+            return CheckState.PASS;
+        }
+        if(states.contains(CheckState.UPDATE)) {
+            return CheckState.UPDATE;
+        }
+        if(states.contains(CheckState.REJECT)) {
+            return CheckState.REJECT;
+        }
+        return CheckState.ONGING;
     }
 }

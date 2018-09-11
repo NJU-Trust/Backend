@@ -56,20 +56,7 @@ public class AdminTargetController {
         return adminService.getPendingTargets(pageable, type);
     }
 
-    // TODO 大额、小额合成一个方法
-    // 查看小额标的内容
-    @GetMapping(value = "/pendingSmallDetail")
-    @PreAuthorize("hasRole('ADMIN')")
-    public SmallTargetInfo getSmallTargetInfo(Long id) {
-        return adminService.getSmallTargetInfo(id);
-    }
-
-    // 查看大额标的内容
-    @GetMapping(value = "/pendingLargeDetail")
-    @PreAuthorize("hasRole('ADMIN')")
-    public LargeTargetInfo getLargeTargetInfo(Long id) {
-        return adminService.getLargeTargetInfo(id);
-    }
+    // TODO
 
     // 标的审核结果
     @GetMapping(value = "/targetcheck")

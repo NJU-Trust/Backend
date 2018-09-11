@@ -2,8 +2,7 @@ package nju.trust.payloads.admin;
 
 import nju.trust.entity.CheckState;
 import nju.trust.entity.CreditRating;
-import nju.trust.entity.target.LargeTarget;
-import nju.trust.entity.target.SmallTarget;
+import nju.trust.entity.target.*;
 import nju.trust.entity.user.IdentityOption;
 import nju.trust.entity.user.Repayment;
 import nju.trust.entity.user.RepaymentType;
@@ -42,16 +41,42 @@ public class PendingTargetDetailInfo {
     private Integer duration;   // 还款期数
     private RepaymentType returntype;   // 还款方式
 
-    public PendingTargetDetailInfo(User user, LargeTarget largeTarget, Repayment repayment) {
+    public PendingTargetDetailInfo(User user, BaseTarget baseTarget, Repayment repayment, CheckState state, LargeProjectClassification classification) {
         username = user.getUsername();
         grade = user.getCreditRating();
-      //  checkState =
-        targetId = largeTarget.getId();
-
+        checkState = state;
+        targetId = baseTarget.getId();
+        name = baseTarget.getName();
+        startTime = baseTarget.getStartTime();
+        endTime = repayment.getStartDate().plusMonths(repayment.getDuration());
+        identityOption = baseTarget.getIdentityOption();
+        completionRate = baseTarget.getCompletionRate();
+        classify = Classification.getClassification(classification);
+        explanation = baseTarget.getUseOfFunds();
+        proof = baseTarget.getProof();
+        money = baseTarget.getMoney();
+        creditRating = repayment.getInterestRate();
+        duration = repayment.getDuration();
+        returntype = repayment.getType();
     }
 
-    public PendingTargetDetailInfo(User user, SmallTarget smallTarget, Repayment repayment) {
-
+    public PendingTargetDetailInfo(User user, BaseTarget baseTarget, Repayment repayment, CheckState state, SmallProjectClassification classification) {
+        username = user.getUsername();
+        grade = user.getCreditRating();
+        checkState = state;
+        targetId = baseTarget.getId();
+        name = baseTarget.getName();
+        startTime = baseTarget.getStartTime();
+        endTime = repayment.getStartDate().plusMonths(repayment.getDuration());
+        identityOption = baseTarget.getIdentityOption();
+        completionRate = baseTarget.getCompletionRate();
+        classify = Classification.getClassification(classification);
+        explanation = baseTarget.getUseOfFunds();
+        proof = baseTarget.getProof();
+        money = baseTarget.getMoney();
+        creditRating = repayment.getInterestRate();
+        duration = repayment.getDuration();
+        returntype = repayment.getType();
     }
 
     public String getUsername() {
