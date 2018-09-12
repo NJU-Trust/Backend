@@ -5,6 +5,7 @@ import nju.trust.entity.UserLevel;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -96,7 +97,7 @@ public class User {
 
     private String alipay;
 
-    private String birthday;
+    private LocalDate birthday;
 
     private String university;
 
@@ -326,10 +327,10 @@ public class User {
         this.alipay = alipay;
     }
 
-    public String getBirthday() {
+    public LocalDate getBirthday() {
         return birthday;
     }
-    public void setBirthday(String birthday) {
+    public void setBirthday(LocalDate birthday) {
         this.birthday = birthday;
     }
 

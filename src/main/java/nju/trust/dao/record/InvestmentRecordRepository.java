@@ -12,4 +12,6 @@ import java.util.List;
  */
 public interface InvestmentRecordRepository extends CrudRepository<InvestmentRecord, Long> {
     List<InvestmentRecord> findAllByTargetId(Long targetId);
+
+    List<InvestmentRecord> findAllByUserUsername(String username);
 }

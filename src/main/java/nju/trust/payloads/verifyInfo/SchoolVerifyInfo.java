@@ -2,6 +2,8 @@ package nju.trust.payloads.verifyInfo;
 
 import nju.trust.entity.user.Gender;
 
+import java.time.LocalDate;
+
 /**
  * @Author: 161250127
  * @Description:
@@ -13,7 +15,7 @@ public class SchoolVerifyInfo {
     //性别
     private Gender gender;
     //出生日期
-    private String brithday;
+    private LocalDate birthday;
     //身份证号
     private String idCardNumber;
     //学校
@@ -22,7 +24,7 @@ public class SchoolVerifyInfo {
     private String institution;
     //专业
     private String major;
-    //
+    //支付宝账号
     private String alipay;
     //学生证照片
     private String stuCardImage;
@@ -45,12 +47,12 @@ public class SchoolVerifyInfo {
         this.gender = gender;
     }
 
-    public String getBrithday() {
-        return brithday;
+    public LocalDate getBirthday() {
+        return birthday;
     }
 
-    public void setBrithday(String brithday) {
-        this.brithday = brithday;
+    public void setBirthday(LocalDate birthday) {
+        this.birthday = birthday;
     }
 
     public String getIdCardNumber() {
@@ -107,5 +109,21 @@ public class SchoolVerifyInfo {
 
     public void setSchoolCardImage(String schoolCardImage) {
         this.schoolCardImage = schoolCardImage;
+    }
+
+    public boolean hasNull() {
+        if(realName == null || realName.length() == 0 ||
+                gender == null ||
+                birthday == null ||
+                idCardNumber == null || (idCardNumber.length() != 15 && idCardNumber.length() != 18) ||
+                university == null || university.length() == 0 ||
+                institution == null || institution.length() == 0 ||
+                major == null || major.length() == 0 ||
+                alipay == null || alipay.length() == 0 ||
+                stuCardImage == null || stuCardImage.length() == 0 ||
+                schoolCardImage == null || schoolCardImage.length() == 0) {
+            return true;
+        }
+        return false;
     }
 }
