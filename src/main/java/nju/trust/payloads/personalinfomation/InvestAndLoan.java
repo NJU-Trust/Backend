@@ -10,9 +10,13 @@ public class InvestAndLoan {
 
     private double totalLoan;   // 借款总额
 
-    private double pendingPrincipal;    // 待收回本金
+    private double getMoney;    // 待收回本息
 
-    private double pendingInterest; // 待收回利息
+    private double getMoneyProgress;    //本息收回进度
+
+    private double payMoney;    //待偿还本息
+
+    private double payMoneyProgress;    //本息偿还进度
 
     private double creditRatingScore;   // 信用评分
 
@@ -34,22 +38,6 @@ public class InvestAndLoan {
         this.totalLoan = totalLoan;
     }
 
-    public double getPendingPrincipal() {
-        return pendingPrincipal;
-    }
-
-    public void setPendingPrincipal(double pendingPrincipal) {
-        this.pendingPrincipal = pendingPrincipal;
-    }
-
-    public double getPendingInterest() {
-        return pendingInterest;
-    }
-
-    public void setPendingInterest(double pendingInterest) {
-        this.pendingInterest = pendingInterest;
-    }
-
     public double getCreditRatingScore() {
         return creditRatingScore;
     }
@@ -64,5 +52,37 @@ public class InvestAndLoan {
 
     public void setCreditRating(String creditRating) {
         this.creditRating = creditRating;
+    }
+
+    public double getGetMoney() {
+        return getMoney;
+    }
+
+    public void setGetMoney(double getMoney) {
+        this.getMoney = getMoney;
+    }
+
+    public double getGetMoneyProgress() {
+        return getMoneyProgress;
+    }
+
+    public void setGetMoneyProgress(double getMoneyProgress) {
+        this.getMoneyProgress = getMoneyProgress;
+    }
+
+    public double getPayMoney() {
+        return payMoney;
+    }
+
+    public void setPayMoney(double payMoney) {
+        this.payMoney = payMoney;
+    }
+
+    public double getPayMoneyProgress() {
+        return payMoneyProgress;
+    }
+
+    public void setPayMoneyProgress(double payMoneyProgress) {
+        this.payMoneyProgress = payMoneyProgress;
     }
 }

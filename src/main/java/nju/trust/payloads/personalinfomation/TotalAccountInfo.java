@@ -6,21 +6,16 @@ package nju.trust.payloads.personalinfomation;
  * @Date: 2018/9/11
  */
 public class TotalAccountInfo {
-    /*
-    totalAccount	double	账户总额
-    balance	double	账户余额
-    frozenAmount	double	冻结金额
-    pendingPI	double	待回收本息(PI指 principal interst)
-    investmentInBidding	double	招标中投资
-     */
+
+    //账户总额
     private double totalAccount;
-
+    //账户余额
     private double balance;
-
+    //冻结金额
     private double frozenAmount;
-
+    //待回收本息(PI指 principal interst)
     private double pendingPI;
-
+    //招标中投资
     private double investmentInBidding;
 
     public double getTotalAccount() {

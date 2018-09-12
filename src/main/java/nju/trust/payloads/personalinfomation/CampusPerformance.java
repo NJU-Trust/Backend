@@ -8,7 +8,7 @@ import java.util.List;
  * @Date: 2018/9/11
  */
 public class CampusPerformance {
-    //个人表现数值
+    //个人表现数值--学校、学历、社交情况、获奖情况、成绩
     private List<Integer> personalPerformance;
     //平均表现数值
     private List<Integer> averagePerformance;

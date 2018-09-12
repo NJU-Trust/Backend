@@ -1,6 +1,8 @@
 package nju.trust.service.personalinfo;
 
-import nju.trust.payloads.personalinfomation.InvestAndLoan;
+import nju.trust.payloads.personalinfomation.*;
+
+import java.util.List;
 
 /**
  * @Author: 161250127
@@ -14,4 +16,28 @@ public interface PersonalInformationService {
      * @return
      */
     InvestAndLoan getInvestAndLoanInfo(String username);
+    /**
+     *
+     * @param username 用户名
+     * @return
+     */
+    TotalAccountInfo getTotalAccountInfo(String username);
+    /**
+     *
+     * @param username 用户名
+     * @return
+     */
+    List<EventsInfo> getAllEventsInfo(String username);
+    /**
+     *
+     * @param username 用户名
+     * @return
+     */
+    CampusPerformance getCampusPerformance(String username);
+    /**
+     *
+     * @param username 用户名
+     * @return
+     */
+    PersonalDetailInfomation getPersonalDetailInfomation(String username);
 }
