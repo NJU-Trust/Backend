@@ -100,10 +100,13 @@ public class User {
     private LocalDate birthday;
 
     private String university;
-
+    //学院 or 工作单位
     private String institution;
     //校园卡照片
     private String schoolCardImage;
+
+    private String livingPlace;
+
 
     @Override
     public boolean equals(Object o) {
@@ -356,6 +359,14 @@ public class User {
 
     public void setSchoolCardImage(String schoolCardImage) {
         this.schoolCardImage = schoolCardImage;
+    }
+
+    public String getLivingPlace() {
+        return livingPlace;
+    }
+
+    public void setLivingPlace(String livingPlace) {
+        this.livingPlace = livingPlace;
     }
 
     public Set<RoleName> getRoles() {
