@@ -4,14 +4,14 @@ import java.util.Date;
 
 /**
  * @Author: 161250127
- * @Description:
+ * @Description: 收款/还款的消息提示
  * @Date: 2018/9/12
  */
 public class EventsInfo {
 
     private Date date;  //发生日期
 
-    private String title;   //类型 ：已还款|已收款
+    private String title;   //类型 ：已还款|已收款   // TODO enum
 
     private String description;     //描述
 

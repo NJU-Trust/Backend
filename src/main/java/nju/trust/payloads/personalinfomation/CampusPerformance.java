@@ -4,7 +4,7 @@ import java.util.List;
 
 /**
  * @Author: 161250127
- * @Description:
+ * @Description: 校园表现
  * @Date: 2018/9/11
  */
 public class CampusPerformance {

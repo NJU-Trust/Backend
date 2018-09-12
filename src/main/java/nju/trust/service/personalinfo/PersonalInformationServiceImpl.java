@@ -4,7 +4,7 @@ import nju.trust.dao.record.InvestmentRecordRepository;
 import nju.trust.dao.user.UserRepository;
 import nju.trust.entity.record.InvestmentRecord;
 import nju.trust.entity.user.User;
-import nju.trust.payloads.personalinfomation.InvestAndLoan;
+import nju.trust.payloads.personalinfomation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,12 +32,63 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
         InvestAndLoan info = new InvestAndLoan();
         info.setTotalInvestment(calTotalInvestment(username));
         info.setTotalLoan(calTotalLoan(username));
-        info.setPendingPrincipal(calPendingPrincipal(username));
-        info.setPendingInterest(calPendingInterest(username));
+        //info.setPendingPrincipal(calPendingPrincipal(username));
+        //info.setPendingInterest(calPendingInterest(username));
         info.setCreditRating(user.getCreditRating().toString());
         info.setCreditRatingScore(user.getCreditScore());
         return info;
     }
+
+    /**
+     * TODO code
+     * @param username 用户名
+     * @return
+     */
+    @Override
+    public TotalAccountInfo getTotalAccountInfo(String username) {
+        return null;
+    }
+
+    /**
+     * TODO code
+     * @param username 用户名
+     * @return
+     */
+    @Override
+    public List<EventsInfo> getAllEventsInfo(String username) {
+        return null;
+    }
+
+    /**
+     * TODO code
+     * @param username 用户名
+     * @return
+     */
+    @Override
+    public CampusPerformance getCampusPerformance(String username) {
+        return null;
+    }
+
+    /**
+     * TODO code
+     * @param username 用户名
+     * @return
+     */
+    @Override
+    public PersonalDetailInfomation getPersonalDetailInformation(String username) {
+        return null;
+    }
+
+    /**
+     * TODO code
+     * @param username 用户名
+     * @return
+     */
+    @Override
+    public List<PersonalRelationship> getPersonalRelationships(String username) {
+        return null;
+    }
+
     // TODO test 计算投资总额
     private double calTotalInvestment(String username) {
         List<InvestmentRecord> records = investmentRecordRepository.findAllByUserUsername(username);

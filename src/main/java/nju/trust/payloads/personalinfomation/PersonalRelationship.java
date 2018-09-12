@@ -19,7 +19,7 @@ public class PersonalRelationship {
 
     private String relationship;    //关系名称
 
-    private String creditChange;    //信用变化情况
+    private String creditChange;    //信用变化情况    // TODO enum 详细解释
 
     public String getUsername() {
         return username;
