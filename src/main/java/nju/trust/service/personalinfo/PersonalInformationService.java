@@ -39,5 +39,11 @@ public interface PersonalInformationService {
      * @param username 用户名
      * @return
      */
-    PersonalDetailInfomation getPersonalDetailInfomation(String username);
+    PersonalDetailInfomation getPersonalDetailInformation(String username);
+    /**
+     *
+     * @param username 用户名
+     * @return
+     */
+    List<PersonalRelationship> getPersonalRelationships(String username);
 }
