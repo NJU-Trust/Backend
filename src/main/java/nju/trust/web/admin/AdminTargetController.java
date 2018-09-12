@@ -5,6 +5,7 @@ import nju.trust.entity.target.TargetState;
 import nju.trust.entity.target.TargetType;
 import nju.trust.payloads.ApiResponse;
 import nju.trust.payloads.admin.PendingTargetBriefInfo;
+import nju.trust.payloads.admin.PendingTargetDetailInfo;
 import nju.trust.payloads.admin.TargetAdminBriefInfo;
 import nju.trust.payloads.admin.TargetAdminDetailInfo;
 import nju.trust.payloads.target.LargeTargetInfo;
@@ -56,7 +57,12 @@ public class AdminTargetController {
         return adminService.getPendingTargets(pageable, type);
     }
 
-    // TODO
+    //查看标的详情
+    @GetMapping(value = "/targetpendingitem")
+    @PreAuthorize("hasRole('ADMIN')")
+    public PendingTargetDetailInfo getPendingTargetDetailInfo(Long targetID){
+        return adminService.getPendingTarget(targetID);
+    }
 
     // 标的审核结果
     @GetMapping(value = "/targetcheck")
