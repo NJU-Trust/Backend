@@ -90,4 +90,8 @@ public class UserServiceImpl implements UserService {
 
         return new Range<>(lower, upper);
     }
+
+    private void settingUser(User user) {
+
+    }
 }

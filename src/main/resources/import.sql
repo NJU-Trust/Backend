@@ -1,1 +1,22 @@
-insert into user_month_statistics values ()
+insert into user (username, password, credit_score) values ('test', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS', 85);
+insert into user_month_statistics(id, income, disc, surplus, username, debt) values (1, 1000, 500, 500, 'test', 100);
+insert into user_month_statistics(id, income, disc, surplus, username, debt) values (2, 1050, 500, 500, 'test', 100);
+insert into user_month_statistics(id, income, disc, surplus, username, debt) values (3, 1010, 500, 500, 'test', 100);
+insert into user_month_statistics(id, income, disc, surplus, username, debt) values (4, 900, 500, 500, 'test', 100);
+insert into user_month_statistics(id, income, disc, surplus, username, debt) values (5, 890, 500, 500, 'test', 100);
+insert into user_month_statistics(id, income, disc, surplus, username, debt) values (6, 1001, 500, 500, 'test', 100);
+insert into user_month_statistics(id, income, disc, surplus, username, debt) values (7, 1023, 500, 500, 'test', 100);
+insert into user_month_statistics(id, income, disc, surplus, username, debt) values (8, 1045, 500, 500, 'test', 100);
+insert into user_month_statistics(id, income, disc, surplus, username, debt) values (9, 1567, 500, 500, 'test', 100);
+insert into user_month_statistics(id, income, disc, surplus, username, debt) values (10, 1234, 500, 500, 'test', 100);
+insert into user_month_statistics(id, income, disc, surplus, username, debt) values (11, 1111, 500, 500, 'test', 100);
+insert into user_month_statistics(id, income, disc, surplus, username, debt) values (12, 1243, 500, 500, 'test', 100);
+insert into user_month_statistics(id, income, disc, surplus, username, debt) values (13, 1456, 500, 500, 'test', 100);
+insert into user_month_statistics(id, income, disc, surplus, username, debt) values (14, 1325, 500, 500, 'test', 100);
+insert into user_month_statistics(id, income, disc, surplus, username, debt) values (15, 1456, 500, 500, 'test', 100);
+insert into user_month_statistics(id, income, disc, surplus, username, debt) values (16, 1346, 500, 500, 'test', 100);
+insert into user_month_statistics(id, income, disc, surplus, username, debt) values (17, 908, 500, 400, 'test', 100);
+insert into user_month_statistics(id, income, disc, surplus, username, debt) values (18, 1432, 500, 300, 'test', 100);
+insert into user_month_statistics(id, income, disc, surplus, username, debt) values (19, 1200, 500, 400, 'test', 100);
+insert into user_month_statistics(id, income, disc, surplus, username, debt) values (60, 1000, 500, 501, 'test', 100);
+

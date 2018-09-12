@@ -17,10 +17,11 @@ import java.time.temporal.ChronoUnit;
 public class Repayment {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @MapsId
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "targetId")
     private BaseTarget target;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -53,7 +54,7 @@ public class Repayment {
     private Double difficulty;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "type", nullable = false, insertable = false, updatable = false)
+    @Column(name = "type", nullable = false, updatable = false)
     private RepaymentType type;
 
     public Repayment() {

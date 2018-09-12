@@ -35,6 +35,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.criteria.Predicate;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -114,7 +115,7 @@ public class TargetServiceImpl implements TargetService {
 
         settingTarget(smallTarget, request);
         smallTarget = targetRepository.save(smallTarget);
-        recordDao.save(new LoanRecord(user, smallTarget));
+//        recordDao.save(new LoanRecord(user, smallTarget));
         return ApiResponse.successResponse();
     }
 
@@ -378,7 +379,7 @@ public class TargetServiceImpl implements TargetService {
     }
 
 
-    private void setTargetRepayment(BaseTarget target, BasicTargetRequest request) {
+    private List<RepaymentRecord> setTargetRepayment(BaseTarget target, BasicTargetRequest request) {
         RepaymentCalculator calculator = RepaymentCalculator.getCalculator(request.getRepaymentType(),
                 request.getMoney(), request.getDuration(), request.getInterestRate());
 
@@ -394,18 +395,22 @@ public class TargetServiceImpl implements TargetService {
 
         // Create repayment records
         LocalDate startRepayingTime = request.getStartTime();
+        List<RepaymentRecord> records = new ArrayList<>();
         for (int i = 0; i < repayment.getDuration(); i++) {
             RepaymentMonthInfo monthInfo = calculator.monthlyRepayment.get(i);
             RepaymentRecord record = new RepaymentRecord(target.getUser(), target,
                     monthInfo.getSum(), monthInfo.getPrincipal(), i + 1, monthInfo.getInterest(),
                     monthInfo.getRemainingPrincipal(), startRepayingTime.plusMonths(i + 1));
-            repaymentRecordRepository.save(record);
+            records.add(record);
         }
+        return records;
     }
 
     private void settingTarget(BaseTarget target, BasicTargetRequest request) {
-        setTargetRepayment(target, request);
+        List<RepaymentRecord> records = setTargetRepayment(target, request);
         setTargetRating(target);
+        targetRepository.save(target);
+        repaymentRecordRepository.saveAll(records);
     }
 
 }

@@ -8,7 +8,6 @@ import javax.persistence.Entity;
 import java.time.LocalDate;
 
 @Entity
-@DiscriminatorValue("SMALL")
 public class SmallTarget extends BaseTarget {
 
     private SmallProjectClassification classification;

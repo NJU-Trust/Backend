@@ -10,11 +10,10 @@ import java.time.LocalDate;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "targetType")
-public abstract class BaseTarget {
+public class BaseTarget {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(targetEntity = User.class)
@@ -60,8 +59,8 @@ public abstract class BaseTarget {
     /**
      * 还款方案
      */
-    @OneToOne(fetch = FetchType.EAGER)
-    @NotNull
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST,
+            mappedBy = "target")
     private Repayment repayment;
 
     IdentityOption identityOption;

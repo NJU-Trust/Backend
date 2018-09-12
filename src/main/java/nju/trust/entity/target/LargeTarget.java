@@ -7,7 +7,6 @@ import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-@DiscriminatorValue("LARGE")
 public class LargeTarget extends BaseTarget {
 
     public LargeTarget() {
