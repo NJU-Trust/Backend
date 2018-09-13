@@ -39,7 +39,6 @@ import java.util.stream.Collectors;
 @Service
 public class AdminServiceImpl implements AdminService {
     private LoanStateCheckUtil calUtil;
-    private TargetService targetService;
     private AdminUserRepository adminUserRepository;
     private BaseTargetRepository baseTargetRepository;
     private AdminInvestmentRecordRepository adminInvestmentRecordRepository;
@@ -52,7 +51,6 @@ public class AdminServiceImpl implements AdminService {
     private ScoreCalUtil scoreCalUtil;
     @Autowired
     public AdminServiceImpl(LoanStateCheckUtil calUtil,
-                            TargetService targetService,
                             AdminUserRepository adminUserRepository,
                             BaseTargetRepository baseTargetRepository,
                             AdminInvestmentRecordRepository adminInvestmentRecordRepository,
@@ -64,7 +62,6 @@ public class AdminServiceImpl implements AdminService {
                             UserEvidenceRepository userEvidenceRecordRepository,
                             ScoreCalUtil scoreCalUtil) {
         this.calUtil = calUtil;
-        this.targetService = targetService;
         this.adminUserRepository = adminUserRepository;
         this.baseTargetRepository = baseTargetRepository;
         this.adminInvestmentRecordRepository = adminInvestmentRecordRepository;
@@ -258,18 +255,16 @@ public class AdminServiceImpl implements AdminService {
 
     /**
      * 查看项目信息
-     * TODO test
      * @param id 项目编号
      * @return 项目的详细信息
      */
     @Override
     public TargetAdminDetailInfo seeTarget(Long id) {
-        TargetInfo targetInfo = targetService.getTargetInfo(id);
-        if(repaymentRepository.existsByTargetId(id)) {
+        if(repaymentRepository.existsByTargetId(id) && targetRepository.existsById(id)) {
             System.out.println("repayment exists");
+            BaseTarget baseTarget = targetRepository.findById(id).get();
             Repayment repayment = repaymentRepository.findFirstByTargetId(id);
-            // TODO 等待接口
-            return new TargetAdminDetailInfo(targetInfo, repayment.getType());
+            return new TargetAdminDetailInfo(baseTarget, repayment);
         }else {
             return new TargetAdminDetailInfo();
         }
@@ -354,15 +349,13 @@ public class AdminServiceImpl implements AdminService {
      * @param username 用户名
      * @param id       条目编号
      * @param result   审批结果
-     * @return
      */
     @Override
     public ApiResponse approveItem(String username, Long id, ApproveResult result) {
         UserInfoCheckRecord checkRecord = userInfoCheckRecordRepository.findById(id).get();
         if(checkRecord.getCheckState().equals(CheckState.PASS) || checkRecord.getCheckState().equals(CheckState.REJECT)) {
             // 条目已经审批
-            ApiResponse response = new ApiResponse(false, "该条目已经审批");
-            return response;
+            return new ApiResponse(false, "该条目已经审批");
         }
 
         CheckState state = result.getCheckState();
@@ -474,9 +467,7 @@ public class AdminServiceImpl implements AdminService {
         if(targetType.equals(TargetType.LARGE)) {
             LargeTarget largeTarget = largeTargetRepository.findById(id).get();
             LargeProjectClassification classification = largeTarget.getClassification();
-            System.out.println("targetId:"+id);
             Repayment repayment = repaymentRepository.findFirstByTargetId(id);
-            System.out.println(repayment==null);
             return new PendingTargetDetailInfo(user, baseTarget, repayment, state, classification);
         }else {
             SmallTarget smallTarget = smallTargetRepository.findById(id).get();
