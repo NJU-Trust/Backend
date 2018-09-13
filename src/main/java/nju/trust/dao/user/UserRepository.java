@@ -10,7 +10,7 @@ public interface UserRepository extends CrudRepository<User, String> {
 
     Boolean existsByUsername(String username);
 
-    boolean existsByEmail(String email);
+    Boolean existsByEmail(String email);
 
-    boolean existsByPhoneNumber(String phoneNumber);
+    Boolean existsByPhoneNumber(String phoneNumber);
 }

@@ -3,6 +3,8 @@ package nju.trust.config;
 import nju.trust.security.JwtAuthenticationEntryPoint;
 import nju.trust.security.JwtAuthenticationFilter;
 import nju.trust.service.UserPrincipalService;
+import okhttp3.OkHttpClient;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -82,6 +84,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    public OkHttpClient okHttpClient() { return new OkHttpClient(); }
+
+    @Bean
+    public Base64 base64() { return new Base64(); }
 
     /**
      * @param http
