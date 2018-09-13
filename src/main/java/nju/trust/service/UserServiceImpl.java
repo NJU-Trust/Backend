@@ -78,9 +78,9 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         double upper = Constant.BENCHMARK_INTEREST_RATE +
-                user.getCreditScore() * (Constant.INTEREST_RATE_UPPER_BOUND - Constant.BENCHMARK_INTEREST_RATE);
+                user.getCreditScore() / 100 * (Constant.INTEREST_RATE_UPPER_BOUND - Constant.BENCHMARK_INTEREST_RATE);
         double lower = Constant.BENCHMARK_INTEREST_RATE -
-                user.getCreditScore() * (Constant.BENCHMARK_INTEREST_RATE - Constant.INTEREST_RATE_LOWER_BOUND);
+                user.getCreditScore() / 100 * (Constant.BENCHMARK_INTEREST_RATE - Constant.INTEREST_RATE_LOWER_BOUND);
 
         return new Range<>(lower, upper);
     }

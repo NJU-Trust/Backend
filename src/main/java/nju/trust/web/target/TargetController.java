@@ -9,10 +9,7 @@ import nju.trust.payloads.target.*;
 import nju.trust.service.UserService;
 import nju.trust.service.target.TargetService;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -70,7 +67,7 @@ public class TargetController {
     }
 
     @RequestMapping("/recommendStrategy")
-    public List<InvestmentStrategy> getRecommendationStrategy(List<Long> targets,
+    public List<InvestmentStrategy> getRecommendationStrategy(@RequestParam("targets") List<Integer> targets,
                                                               Double expectedInterestRate, Double money) {
         return targetService.recommendStrategy(targets, money, expectedInterestRate);
     }
