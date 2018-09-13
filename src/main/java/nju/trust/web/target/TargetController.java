@@ -10,6 +10,7 @@ import nju.trust.service.UserService;
 import nju.trust.service.target.TargetService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -57,7 +58,9 @@ public class TargetController {
     }
 
     @RequestMapping("/smallTargetList")
-    public List<TargetInfo> getSmallTargets(Pageable pageable, @Valid SmallTargetFilterRequest filter) {
+    public List<TargetInfo> getSmallTargets(Pageable pageable, SmallTargetFilterRequest filter) {
+        System.out.println(pageable);
+        System.out.println(filter);
         return targetService.filterSmallTargets(pageable, filter);
     }
 

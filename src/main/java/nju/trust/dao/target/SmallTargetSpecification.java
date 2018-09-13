@@ -1,12 +1,12 @@
 package nju.trust.dao.target;
 
 import nju.trust.entity.CreditRating;
-import nju.trust.entity.target.SmallProjectClassification;
 import nju.trust.entity.target.SmallTarget;
 import nju.trust.payloads.target.SmallTargetFilterRequest;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +52,7 @@ public class SmallTargetSpecification implements Specification<SmallTarget> {
                 .ifPresent(t -> predicates.add(builder.le(durationExpression, t)));
 
         // Start time
-        Expression<LocalDateTime> timeExpression = root.get("startTime");
+        Expression<LocalDate> timeExpression = root.get("startTime");
         Optional.ofNullable(filter.getTime()[0])
                 .ifPresent(t -> predicates.add(builder.greaterThanOrEqualTo(timeExpression, t)));
         Optional.ofNullable(filter.getTime()[1])

@@ -57,6 +57,9 @@ public class TargetInfo {
 
     private String projectDescription;
 
+    @JsonProperty("useOfFunds")
+    private String useOfFunds;
+
     public TargetInfo(BaseTarget baseTarget) {
         id = baseTarget.getId();
         targetType = baseTarget.getTargetType();
@@ -71,6 +74,7 @@ public class TargetInfo {
         projectDescription = baseTarget.getProjectDescription();
         User user = baseTarget.getUser();
         username = user.getUsername();
+        useOfFunds = baseTarget.getUseOfFunds();
     }
 
     @Override
@@ -88,6 +92,7 @@ public class TargetInfo {
                 ", interestRate=" + interestRate +
                 ", targetRating=" + targetRating +
                 ", projectDescription='" + projectDescription + '\'' +
+                ", useOfFunds='" + useOfFunds + '\'' +
                 '}';
     }
 
