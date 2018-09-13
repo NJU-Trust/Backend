@@ -1,6 +1,7 @@
 package nju.trust.service;
 
 import nju.trust.dao.user.UserRepository;
+import nju.trust.entity.CreditRating;
 import nju.trust.entity.user.IdentityOption;
 import nju.trust.entity.UserLevel;
 import nju.trust.entity.user.RoleName;
@@ -16,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Author: J.D. Liao
@@ -50,16 +52,8 @@ public class UserServiceImpl implements UserService {
             return new ApiResponse(false, "PhoneNumber is already taken");
         }
 
-        //TODO: Verify email address
-        User user = new User();
-        user.setUsername(request.getUsername());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        ArrayList<RoleName> roles = new ArrayList<>();
-        roles.add(RoleName.ROLE_PRIMARY);
-        user.setRoles(roles);
-        user.setUserLevel(UserLevel.PRIMARY);
+        initAndSaveUser(request);
 
-        userRepository.save(user);
         return new ApiResponse(true, "User registered successfully");
     }
 
@@ -84,14 +78,29 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         double upper = Constant.BENCHMARK_INTEREST_RATE +
-                user.getCreditScore() * (Constant.INTEREST_RATE_UPPER_BOUND - Constant.BENCHMARK_INTEREST_RATE);
+                user.getCreditScore() / 100 * (Constant.INTEREST_RATE_UPPER_BOUND - Constant.BENCHMARK_INTEREST_RATE);
         double lower = Constant.BENCHMARK_INTEREST_RATE -
-                user.getCreditScore() * (Constant.BENCHMARK_INTEREST_RATE - Constant.INTEREST_RATE_LOWER_BOUND);
+                user.getCreditScore() / 100 * (Constant.BENCHMARK_INTEREST_RATE - Constant.INTEREST_RATE_LOWER_BOUND);
 
         return new Range<>(lower, upper);
     }
 
-    private void settingUser(User user) {
+    private void initAndSaveUser(SignUpRequest request) {
+        User user = new User();
 
+        user.setUsername(request.getUsername());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        ArrayList<RoleName> roles = new ArrayList<>();
+        roles.add(RoleName.ROLE_PRIMARY);
+        user.setRoles(roles);
+        user.setUserLevel(UserLevel.PRIMARY);
+
+        // Generate credit rating score randomly
+        Random random = new Random();
+        double creditScore = random.nextDouble() * 100.;
+        user.setCreditScore(creditScore);
+        user.setCreditRating(CreditRating.of(creditScore));
+        userRepository.save(user);
     }
 }

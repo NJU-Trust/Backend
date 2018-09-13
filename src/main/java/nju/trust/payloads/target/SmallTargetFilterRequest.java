@@ -1,11 +1,11 @@
 package nju.trust.payloads.target;
 
 import nju.trust.entity.CreditRating;
-import nju.trust.entity.target.SmallProjectClassification;
 
 import javax.validation.constraints.Size;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -20,7 +20,7 @@ public class SmallTargetFilterRequest {
         filter.setInterestRate(new Double[]{0., 0.});
         filter.setMoney(new Double[]{0., 0.});
         filter.setRepaymentDuration(new Integer[]{0, 0});
-        filter.setTime(new LocalDateTime[]{LocalDateTime.now(), LocalDateTime.now()});
+        filter.setTime(new @Size(min = 2, max = 2) LocalDate[]{LocalDate.now(), LocalDate.now()});
         filter.setUseOfFunds(new ArrayList<>());
         filter.setUserCreditRating(new CreditRating[]{});
 
@@ -30,8 +30,7 @@ public class SmallTargetFilterRequest {
     @Size(min = 2, max = 2)
     private Double[] money;
 
-    @Size(min = 2, max = 2)
-    private LocalDateTime[] time;
+    private @Size(min = 2, max = 2) LocalDate[] time;
 
     @Size(min = 2, max = 2)
     private Double[] interestRate;
@@ -42,6 +41,18 @@ public class SmallTargetFilterRequest {
     private CreditRating[] userCreditRating;
 
     private List<String> useOfFunds;
+
+    @Override
+    public String toString() {
+        return "SmallTargetFilterRequest{" +
+                "money=" + Arrays.toString(money) +
+                ", time=" + Arrays.toString(time) +
+                ", interestRate=" + Arrays.toString(interestRate) +
+                ", repaymentDuration=" + Arrays.toString(repaymentDuration) +
+                ", userCreditRating=" + Arrays.toString(userCreditRating) +
+                ", useOfFunds=" + useOfFunds +
+                '}';
+    }
 
     public List<String> getUseOfFunds() {
         return useOfFunds;
@@ -59,11 +70,11 @@ public class SmallTargetFilterRequest {
         this.money = money;
     }
 
-    public LocalDateTime[] getTime() {
+    public @Size(min = 2, max = 2) LocalDate[] getTime() {
         return time;
     }
 
-    public void setTime(LocalDateTime[] time) {
+    public void setTime(@Size(min = 2, max = 2) LocalDate[] time) {
         this.time = time;
     }
 

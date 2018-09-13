@@ -20,7 +20,6 @@ import java.util.List;
  * @Description: 用于【管理员】用户管理
  * @Date: 2018/8/26
  */
-//@Service
 public interface AdminService {
     // 用户管理
     /**

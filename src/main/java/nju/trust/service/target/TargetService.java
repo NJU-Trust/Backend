@@ -27,7 +27,7 @@ public interface TargetService {
 
     List<TargetInfo> recommendSmallTargets(SmallTargetFilterRequest filterRequest);
 
-    List<InvestmentStrategy> recommendStrategy(List<Long> targetIds, double money, double interestRate);
+    List<InvestmentStrategy> recommendStrategy(List<Integer> targetIds, double money, double interestRate);
 
     Range<Double> getLoanTimeRange(String username, double money);
 

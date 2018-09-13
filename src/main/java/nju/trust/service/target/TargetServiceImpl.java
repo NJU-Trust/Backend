@@ -180,15 +180,16 @@ public class TargetServiceImpl implements TargetService {
         // Get top 8 targets with highest success rate
         Specification<SmallTarget> specification = new SmallTargetSpecification(filterRequest);
         List<SmallTarget> targets = smallTargetRepository
-                .findAll(specification, PageRequest.of(0, RECOMMENDATION_NUMBER)).getContent();
+                .findAll(specification, PageRequest.of(0, RECOMMENDATION_NUMBER,
+                        Sort.by(Sort.Direction.DESC, "targetRatingScore"))).getContent();
 
         return targets.stream().map(SmallTargetInfo::new).collect(Collectors.toList());
     }
 
     @Override
-    public List<InvestmentStrategy> recommendStrategy(List<Long> targetIds, double money, double interestRate) {
+    public List<InvestmentStrategy> recommendStrategy(List<Integer> targetIds, double money, double interestRate) {
         List<SmallTarget> targets = targetIds.stream()
-                .map(id -> smallTargetRepository.findById(id)
+                .map(id -> smallTargetRepository.findById(id.longValue())
                         .orElseThrow(() -> new ResourceNotFoundException("target", "targetId", id)))
                 .collect(Collectors.toList());
 
@@ -215,6 +216,8 @@ public class TargetServiceImpl implements TargetService {
 
         double upper = Math.min(12., Math.ceil((money - k0) / k));
         double lower = Math.min(12., Math.ceil((money - k0 - a0) / (k + a)));
+        if (lower < 0)
+            lower = 0;
 
         return new Range<>(lower, upper);
     }

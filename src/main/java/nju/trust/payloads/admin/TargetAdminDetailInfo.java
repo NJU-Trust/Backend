@@ -1,8 +1,10 @@
 package nju.trust.payloads.admin;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import nju.trust.entity.target.BaseTarget;
 import nju.trust.entity.target.TargetRating;
 import nju.trust.entity.target.TargetState;
+import nju.trust.entity.user.Repayment;
 import nju.trust.entity.user.RepaymentType;
 import nju.trust.payloads.target.TargetInfo;
 
@@ -25,6 +27,19 @@ public class TargetAdminDetailInfo {
     @JsonProperty("riskRating")
     private TargetRating targetRating;// 项目风险评级
     private RepaymentType type; // 还款方案
+
+    public TargetAdminDetailInfo(BaseTarget baseTarget, Repayment repayment) {
+        this.id = baseTarget.getId();
+        this.username = baseTarget.getUser().getUsername();
+        this.startTime = baseTarget.getStartTime();
+        this.money = baseTarget.getMoney();
+        this.collectedMoney = baseTarget.getCollectedMoney();
+        this.projectDescription = baseTarget.getProjectDescription();
+        this.state = baseTarget.getTargetState();
+        this.interestRate = repayment.getInterestRate();
+        this.targetRating = baseTarget.getTargetRating();
+        this.type = repayment.getType();
+    }
 
     public Long getId() {
         return id;
@@ -120,7 +135,7 @@ public class TargetAdminDetailInfo {
         this.targetRating = targetRating;
         this.type = type;
     }
-    public TargetAdminDetailInfo(TargetInfo targetInfo, RepaymentType type) {
+/*    public TargetAdminDetailInfo(TargetInfo targetInfo, RepaymentType type) {
         if(targetInfo == null) {
             System.out.println("targetInfo == null");
         }
@@ -137,5 +152,5 @@ public class TargetAdminDetailInfo {
         this.interestRate = targetInfo.getInterestRate();
         this.targetRating = targetInfo.getTargetRating();
         this.type = type;
-    }
+    }*/
 }
