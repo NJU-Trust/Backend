@@ -1,20 +1,17 @@
 package nju.trust.service;
 
 import com.google.gson.JsonParser;
-import io.jsonwebtoken.impl.Base64Codec;
-import jdk.nashorn.internal.parser.JSONParser;
 import nju.trust.dao.user.UserRepository;
 import nju.trust.entity.user.User;
-import nju.trust.exception.ResourceNotFoundException;
 import okhttp3.*;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import sun.misc.BASE64Encoder;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.util.UUID;
 
 /**
@@ -27,8 +24,8 @@ import java.util.UUID;
  * All rights Reserved, Designed by Popping Lim
  *
  * @Author: Popping Lim
- * @Date: 2018/9/12
- * @Todo: add api
+ * @Date: 2018/9/14
+ * @Todo: add api and revise bugs
  */
 
 @Component
@@ -55,14 +52,14 @@ public class TransferHelper {
         this.userRepository = userRepository;
     }
 
-    @Transactional
+    @Transactional(rollbackOn = Exception.class)
     public void transferLoanToUserAccount(User user, Double money) {
-        transferMoney();
         user.addAccount(money);
+        transferMoney();
         userRepository.save(user);
     }
 
-    @Transactional
+    @Transactional(rollbackOn = Exception.class)
     public boolean getRepaymentFromUserAccount(User user, Double money) {
         if (user.hasEnoughMoney(money)) {
             user.minusAccount(money);
@@ -75,7 +72,7 @@ public class TransferHelper {
         }
     }
 
-    @Transactional
+    @Transactional(rollbackOn = Exception.class)
     public void repaidToInvestor(User borrower, User investor, Double money) {
         // todo use citi-api to do transfering work and add a record
         transferMoney();
@@ -109,7 +106,7 @@ public class TransferHelper {
                     .addHeader("content-type", "application/json")
                     .build();
             response = okHttpClient.newCall(request).execute();
-        }catch (Exception e) {
+        }catch (IOException e) {
             log.error(e.getMessage());
         }
     }
