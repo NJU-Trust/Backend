@@ -12,7 +12,7 @@ import java.util.List;
  * @Date: 2018/9/8
  */
 public interface BaseUserEvidenceRepository extends CrudRepository<BaseUserEvidence, Long> {
-    List<String> findEvidencesByItem(UserInfoCheckRecord item);
+    List<BaseUserEvidence> findEvidencesByItem(UserInfoCheckRecord item);
 
     List<BaseUserEvidence> findByItem(UserInfoCheckRecord item);
 

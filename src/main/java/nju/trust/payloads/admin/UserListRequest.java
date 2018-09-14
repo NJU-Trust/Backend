@@ -9,16 +9,16 @@ import nju.trust.entity.UserType;
  */
 public class UserListRequest {
 
-    private String keyword;
+    private String key;
 
     private UserType type;
 
     public String getKeyword() {
-        return keyword;
+        return key;
     }
 
     public void setKeyword(String keyword) {
-        this.keyword = keyword;
+        this.key = keyword;
     }
 
     public UserType getType() {

@@ -98,6 +98,9 @@ public class ScoreCalUtil {
         double time = userEvidenceRepository.getVolunteerTime(id);
         double score = time * 1.2;
         UnstructuredData pre = unstructuredDataRepository.findFirstByUserUsernameAndDataType(username, UnstructuredDataType.SOCIALITY);
+        if(pre == null) {
+            pre = createUnstructuredData(checkRecord.getUser(), UnstructuredDataType.SOCIALITY);
+        }
         double preScore = pre.getScore();
         score = checkScore(preScore, score);
         pre.setScore(score);
@@ -110,6 +113,9 @@ public class ScoreCalUtil {
         double score = workType.getScore();
         String username = checkRecord.getUser().getUsername();
         UnstructuredData preData = getUnstructuredData(username, UnstructuredDataType.SOCIALITY);
+        if(preData == null) {
+            preData = createUnstructuredData(checkRecord.getUser(), UnstructuredDataType.SOCIALITY);
+        }
         score = checkScore(preData.getScore(), score);
         preData.setScore(score);
         unstructuredDataRepository.save(preData);
@@ -121,6 +127,9 @@ public class ScoreCalUtil {
         RewardType type = userEvidenceRepository.findRewardEvidenceByItemId(id).getType();
         double score = type.getScore();
         UnstructuredData preData = getUnstructuredData(username, UnstructuredDataType.AWARD);
+        if(preData == null) {
+            preData = createUnstructuredData(checkRecord.getUser(), UnstructuredDataType.AWARD);
+        }
         score = checkScore(preData.getScore(), score);
         preData.setScore(score);
         unstructuredDataRepository.save(preData);
@@ -132,6 +141,9 @@ public class ScoreCalUtil {
         BonusType type = userEvidenceRepository.findMatchEvidenceByItemId(id).getType();
         double score = type.getScore();
         UnstructuredData preData = getUnstructuredData(username, UnstructuredDataType.AWARD);
+        if(preData == null) {
+            preData = createUnstructuredData(checkRecord.getUser(), UnstructuredDataType.AWARD);
+        }
         score = checkScore(preData.getScore(), score);
         preData.setScore(score);
         unstructuredDataRepository.save(preData);
@@ -143,6 +155,9 @@ public class ScoreCalUtil {
         BonusType type = userEvidenceRepository.findScholarshipByItemId(id).getType();
         double score = type.getScore();
         UnstructuredData preData = getUnstructuredData(username, UnstructuredDataType.AWARD);
+        if(preData == null) {
+            preData = createUnstructuredData(checkRecord.getUser(), UnstructuredDataType.AWARD);
+        }
         score = checkScore(preData.getScore(), score);
         preData.setScore(score);
         unstructuredDataRepository.save(preData);
@@ -153,6 +168,9 @@ public class ScoreCalUtil {
         Long id = checkRecord.getId();
         SchoolType type = userEvidenceRepository.findSchoolByItemId(id).getSchoolType();
         UnstructuredData preData = getUnstructuredData(username, UnstructuredDataType.SCHOOL);
+        if(preData == null) {
+            preData = createUnstructuredData(checkRecord.getUser(), UnstructuredDataType.SCHOOL);
+        }
         preData.setScore(type.getScore());
         unstructuredDataRepository.save(preData);
     }
@@ -162,6 +180,9 @@ public class ScoreCalUtil {
         Long id = checkRecord.getId();
         EducationType type = userEvidenceRepository.findEducationByItemId(id).getEducationType();
         UnstructuredData preData = getUnstructuredData(username, UnstructuredDataType.EDUCATION);
+        if(preData == null) {
+            preData = createUnstructuredData(checkRecord.getUser(), UnstructuredDataType.EDUCATION);
+        }
         preData.setScore(type.getScore());
         unstructuredDataRepository.save(preData);
     }
@@ -171,6 +192,9 @@ public class ScoreCalUtil {
         Long id = checkRecord.getId();
         int num = userEvidenceRepository.findFailNumByItemId(id).getNum();
         UnstructuredData preData = getUnstructuredData(username, UnstructuredDataType.FAILED_SUBJECTS);
+        if(preData == null) {
+            preData = createUnstructuredData(checkRecord.getUser(), UnstructuredDataType.FAILED_SUBJECTS);
+        }
         preData.setScore(calFailScore(num));
         unstructuredDataRepository.save(preData);
     }
@@ -191,6 +215,9 @@ public class ScoreCalUtil {
         Long id = checkRecord.getId();
         double ranking = userEvidenceRepository.findStudyByItemId(id).getRanking();
         UnstructuredData preData = getUnstructuredData(username, UnstructuredDataType.GRADE);
+        if(preData == null) {
+            preData = createUnstructuredData(checkRecord.getUser(), UnstructuredDataType.GRADE);
+        }
         preData.setScore(calStudyRankScore(ranking));
         unstructuredDataRepository.save(preData);
     }
@@ -215,6 +242,9 @@ public class ScoreCalUtil {
         Long id = checkRecord.getId();
         int num = userEvidenceRepository.findTestCheatByItemId(id).getNum();
         UnstructuredData preData = getUnstructuredData(username, UnstructuredDataType.VIOLATION);
+        if(preData == null) {
+            preData = createUnstructuredData(checkRecord.getUser(), UnstructuredDataType.VIOLATION);
+        }
         double score = preData.getScore() - 100 * num;
         preData.setScore(score);
         unstructuredDataRepository.save(preData);
@@ -225,6 +255,9 @@ public class ScoreCalUtil {
         Long id = checkRecord.getId();
         int num = userEvidenceRepository.findPaymentByItemId(id).getNum();
         UnstructuredData preData = getUnstructuredData(username, UnstructuredDataType.VIOLATION);
+        if(preData == null) {
+            preData = createUnstructuredData(checkRecord.getUser(), UnstructuredDataType.VIOLATION);
+        }
         double score = preData.getScore() - 50 * num;
         preData.setScore(score);
         unstructuredDataRepository.save(preData);
@@ -235,6 +268,9 @@ public class ScoreCalUtil {
         Long id = checkRecord.getId();
         int num = userEvidenceRepository.findRepaymentByItemId(id).getNum();
         UnstructuredData preData = getUnstructuredData(username, UnstructuredDataType.VIOLATION);
+        if(preData == null) {
+            preData = createUnstructuredData(checkRecord.getUser(), UnstructuredDataType.VIOLATION);
+        }
         double score = preData.getScore() - 100 * num;
         preData.setScore(score);
         unstructuredDataRepository.save(preData);
@@ -245,6 +281,9 @@ public class ScoreCalUtil {
         Long id = checkRecord.getId();
         int num = userEvidenceRepository.findReturnBooksByItemId(id).getNum();
         UnstructuredData preData = getUnstructuredData(username, UnstructuredDataType.VIOLATION);
+        if(preData == null) {
+            preData = createUnstructuredData(checkRecord.getUser(), UnstructuredDataType.VIOLATION);
+        }
         double score = preData.getScore() - 10 * num;
         preData.setScore(score);
         unstructuredDataRepository.save(preData);
@@ -301,5 +340,13 @@ public class ScoreCalUtil {
             return CheckState.REJECT;
         }
         return CheckState.ONGING;
+    }
+
+    private UnstructuredData createUnstructuredData(User user, UnstructuredDataType type) {
+        UnstructuredData preData = new UnstructuredData();
+        preData.setUser(user);
+        preData.setDataType(type);
+        preData.setScore(type.getInitialScore());
+        return preData;
     }
 }

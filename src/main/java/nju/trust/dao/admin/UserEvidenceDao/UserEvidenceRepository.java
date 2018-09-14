@@ -5,6 +5,7 @@ import nju.trust.entity.record.UserInfoCheckRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -51,7 +52,12 @@ public class UserEvidenceRepository {
     }
 
     public List<String> findEvidencesByItem(UserInfoCheckRecord record) {
-        return baseUserEvidenceRepository.findEvidencesByItem(record);
+        List<BaseUserEvidence> evidences = baseUserEvidenceRepository.findEvidencesByItem(record);
+        List<String> result = new ArrayList<>();
+        for(BaseUserEvidence evidence : evidences) {
+            result.add(evidence.getEvidence());
+        }
+        return result;
     }
 
     public List<BaseUserEvidence> findByItem(UserInfoCheckRecord item) {
