@@ -27,8 +27,6 @@ public class RepaymentRecord extends BaseRecord {
 
     private Double remainingPrincipal;
 
-    private boolean payOff;
-
     @NotNull
     private LocalDate returnDate;
 
@@ -45,8 +43,8 @@ public class RepaymentRecord extends BaseRecord {
         this.period = period;
         this.interest = interest;
         this.remainingPrincipal = remainingPrincipal;
-        this.payOff = false;
         this.returnDate = returnDate;
+        actualRepayDate = null;
     }
 
     public boolean isOverdue() {
@@ -71,7 +69,6 @@ public class RepaymentRecord extends BaseRecord {
     }
 
     public void makeRepaid() {
-        payOff = true;
         actualRepayDate = LocalDate.now();
     }
 
@@ -79,12 +76,8 @@ public class RepaymentRecord extends BaseRecord {
         return period;
     }
 
-    public boolean isPayOff() {
-        return payOff;
-    }
-
-    public void setPayOff(boolean payOff) {
-        this.payOff = payOff;
+    public boolean hasPaidOff() {
+        return actualRepayDate != null;
     }
 
     public LocalDate getReturnDate() {
@@ -144,7 +137,7 @@ public class RepaymentRecord extends BaseRecord {
     }
 
     private boolean overdueAndNotRepaid() {
-        return !payOff && LocalDate.now().isAfter(returnDate);
+        return !hasPaidOff() && LocalDate.now().isAfter(returnDate);
     }
 
     private boolean overdueButRepaid() {

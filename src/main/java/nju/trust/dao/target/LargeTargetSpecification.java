@@ -3,6 +3,7 @@ package nju.trust.dao.target;
 import nju.trust.entity.CreditRating;
 import nju.trust.entity.target.LargeProjectClassification;
 import nju.trust.entity.target.LargeTarget;
+import nju.trust.entity.target.TargetRating;
 import nju.trust.payloads.target.LargeTargetFilterRequest;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -80,6 +81,8 @@ public class LargeTargetSpecification implements Specification<LargeTarget> {
             result = builder.or(result, builder.equal(root.get("user").get("creditRating"), creditRating));
         for (String usage : filter.getUseOfFunds())
             result = builder.or(result, builder.equal(root.get("useOfFunds"), usage));
+        for (TargetRating targetRating : filter.getTargetRating())
+            result = builder.or(result, builder.equal(root.get("targetRating"), targetRating));
 
         return result;
     }

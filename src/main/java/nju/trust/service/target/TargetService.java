@@ -15,6 +15,8 @@ import java.util.List;
  */
 public interface TargetService {
 
+    TargetDetails getTargetDetails(Long targetId);
+
     TargetInfo getTargetInfo(Long targetId);
 
     ApiResponse applySmallTarget(SmallTargetRequest request, String username);

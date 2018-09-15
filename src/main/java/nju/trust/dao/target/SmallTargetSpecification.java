@@ -2,6 +2,7 @@ package nju.trust.dao.target;
 
 import nju.trust.entity.CreditRating;
 import nju.trust.entity.target.SmallTarget;
+import nju.trust.entity.target.TargetRating;
 import nju.trust.payloads.target.SmallTargetFilterRequest;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -67,6 +68,8 @@ public class SmallTargetSpecification implements Specification<SmallTarget> {
 //            result = builder.or(result, builder.equal(root.get("classification"), classification));
         for (String usage : filter.getUseOfFunds())
             result = builder.or(result, builder.equal(root.get("useOfFunds"), usage));
+        for (TargetRating targetRating : filter.getTargetRating())
+            result = builder.or(result, builder.equal(root.get("targetRating"), targetRating));
 
         return result;
 

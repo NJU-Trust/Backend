@@ -107,6 +107,14 @@ public class BaseTarget {
         return false;
     }
 
+    public double currentProgress() {
+        return collectedMoney / money;
+    }
+
+    public double needMoney() {
+        return money - collectedMoney;
+    }
+
     public void setRepaymentStartDate(LocalDate date) {
         repayment.setStartDate(date);
     }

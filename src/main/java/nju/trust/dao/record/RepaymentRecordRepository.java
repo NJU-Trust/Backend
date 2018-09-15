@@ -22,4 +22,6 @@ public interface RepaymentRecordRepository extends JpaRepository<RepaymentRecord
     List<RepaymentRecord> findAllByTargetId(Long targetId);
 
     Optional<RepaymentRecord> findByReturnDateAndTargetId(LocalDate returnDate, Long targetId);
+
+    List<RepaymentRecord> findAllByReturnDate(LocalDate returnDate);
 }

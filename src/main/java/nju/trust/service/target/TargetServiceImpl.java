@@ -95,6 +95,18 @@ public class TargetServiceImpl implements TargetService {
     }
 
     @Override
+    public TargetDetails getTargetDetails(Long targetId) {
+        BaseTarget target = targetRepository.findById(targetId)
+                .orElseThrow(() -> new ResourceNotFoundException("Target not found"));
+        Repayment repayment = target.getRepayment();
+        RepaymentRecord record = repaymentRecordRepository
+                .findByReturnDateAndTargetId(repayment.nextDueDate(), targetId)
+                .orElseThrow(() -> new ResourceNotFoundException("Repayment records not found"));
+
+        return new TargetDetails(target, record);
+    }
+
+    @Override
     public TargetInfo getTargetInfo(Long targetId) {
         return null;
     }
@@ -270,7 +282,7 @@ public class TargetServiceImpl implements TargetService {
 
         double money = 0.;
         double serviceCharge = 0.;
-        if (record.isPayOff())
+        if (record.hasPaidOff())
             return new ApiResponse(false, "This period has been repaid");
         else if (record.isOverdue()) {
             double principalInterestSum = record.getSum();
@@ -303,6 +315,8 @@ public class TargetServiceImpl implements TargetService {
 
         return ApiResponse.successResponse();
     }
+
+
 
     private RepaymentNote getRepaymentNote(String username, List<Double> monthlyRepayment, double duration, double totalRepayment) {
         // Generate repayment note

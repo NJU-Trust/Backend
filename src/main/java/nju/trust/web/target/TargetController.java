@@ -34,6 +34,11 @@ public class TargetController {
         this.userService = userService;
     }
 
+    @RequestMapping("/details")
+    public TargetDetails targetDetails(Long targetId) {
+        return targetService.getTargetDetails(targetId);
+    }
+
     @PostMapping("/new/small")
     public ApiResponse createSmallTarget(SmallTargetRequest smallTargetRequest, Principal principal) {
         return targetService.applySmallTarget(smallTargetRequest, principal.getName());
