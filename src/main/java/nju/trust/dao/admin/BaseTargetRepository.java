@@ -27,4 +27,6 @@ public interface BaseTargetRepository extends CrudRepository<BaseTarget, Long> {
      * @return 记录
      */
     List<BaseTarget> findDistinctByTargetStateAndTargetType(TargetState targetState, TargetType targetType);
+
+    List<BaseTarget> findDistinctByUserUsername(String username);
 }

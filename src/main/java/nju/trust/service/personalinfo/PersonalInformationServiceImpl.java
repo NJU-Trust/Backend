@@ -1,9 +1,14 @@
 package nju.trust.service.personalinfo;
 
+import nju.trust.dao.admin.BaseTargetRepository;
 import nju.trust.dao.admin.UnstructuredDataRepository;
 import nju.trust.dao.record.InvestmentRecordRepository;
 import nju.trust.dao.user.UserRepository;
 import nju.trust.entity.record.InvestmentRecord;
+import nju.trust.entity.record.UserEvidence.EducationType;
+import nju.trust.entity.record.UserEvidence.MajorType;
+import nju.trust.entity.record.UserEvidence.SchoolType;
+import nju.trust.entity.target.BaseTarget;
 import nju.trust.entity.user.UnstructuredData;
 import nju.trust.entity.user.UnstructuredDataType;
 import nju.trust.entity.user.User;
@@ -11,6 +16,7 @@ import nju.trust.payloads.personalinfomation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,11 +31,13 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
     private UserRepository userRepository;
     private InvestmentRecordRepository investmentRecordRepository;
     private UnstructuredDataRepository unstructuredDataRepository;
+    private BaseTargetRepository baseTargetRepository;
     @Autowired
-    public PersonalInformationServiceImpl(UserRepository userRepository, InvestmentRecordRepository investmentRecordRepository, UnstructuredDataRepository unstructuredDataRepository) {
+    public PersonalInformationServiceImpl(UserRepository userRepository, InvestmentRecordRepository investmentRecordRepository, UnstructuredDataRepository unstructuredDataRepository, BaseTargetRepository baseTargetRepository) {
         this.userRepository = userRepository;
         this.investmentRecordRepository = investmentRecordRepository;
         this.unstructuredDataRepository = unstructuredDataRepository;
+        this.baseTargetRepository = baseTargetRepository;
     }
 
     // TODO code
@@ -39,11 +47,50 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
         InvestAndLoan info = new InvestAndLoan();
         info.setTotalInvestment(calTotalInvestment(username));
         info.setTotalLoan(calTotalLoan(username));
-        //info.setPendingPrincipal(calPendingPrincipal(username));
-        //info.setPendingInterest(calPendingInterest(username));
+        info.setGetMoney(calSetGetMoney(username));
+        info.setGetMoneyProgress(calSetGetMoneyRrogress(username));
+        info.setPayMoney(calSetPayMoney(username));
+        info.setPayMoneyProgress(calSetPayMoneyRrogress(username));
         info.setCreditRating(user.getCreditRating().toString());
         info.setCreditRatingScore(user.getCreditScore());
         return info;
+    }
+    // TODO test 计算投资总额
+    private double calTotalInvestment(String username) {
+        List<InvestmentRecord> records = investmentRecordRepository.findAllByUserUsername(username);
+        double sum = 0;
+        for(InvestmentRecord record : records) {
+            sum = sum + record.getInvestedMoney();
+        }
+        return sum;
+    }
+    // TODO test 借款总额
+    private double calTotalLoan(String username) {
+        List<BaseTarget> targets = baseTargetRepository.findDistinctByUserUsername(username);
+        double sum = 0;
+        if(targets == null) {
+            return sum;
+        }
+        for(BaseTarget target : targets) {
+            sum = sum + target.getMoney();
+        }
+        return sum;
+    }
+    // TODO code 待收回本息
+    private double calSetGetMoney(String username) {
+        return 0;
+    }
+    // TODO code
+    private double calSetGetMoneyRrogress(String username) {
+        return 0;
+    }
+    // TODO code
+    private double calSetPayMoney(String username) {
+        return 0;
+    }
+    // TODO code
+    private double calSetPayMoneyRrogress(String username){
+        return 0;
     }
 
     /**
@@ -77,23 +124,18 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
         List<UnstructuredDataType> types = Arrays.asList(UnstructuredDataType.SCHOOL, UnstructuredDataType.EDUCATION, UnstructuredDataType.SOCIALITY, UnstructuredDataType.AWARD, UnstructuredDataType.GRADE);
         List<Double> personalPerformance = new ArrayList<>();
         List<Double> averagePerformance = new ArrayList<>();
-        double person = 1;
-        double platform = 1;
 
         for(UnstructuredDataType type : types) {
             double personal = getPersonalPerformance(username, type);
             personalPerformance.add(personal);
-
-            person = person * personal;
             double average = getAveragePerformance(type);
             averagePerformance.add(average);
-            platform = platform * average;
         }
 
         CampusPerformance performance = new CampusPerformance();
         performance.setPersonalPerformance(personalPerformance);
         performance.setAveragePerformance(averagePerformance);
-        performance.setAboveAverage(person > platform);
+        performance.setAboveAverage(calArea(personalPerformance) > calArea(averagePerformance));
 
         return performance;
     }
@@ -115,6 +157,16 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
         }
         return sum/userNum;
     }
+    // 计算面积
+    private double calArea(List<Double> record) {
+        double area = 0;
+        for(int i = 0 ; i < record.size() ; i++) {
+            for (int j = i+1 ; j < record.size() ; j++) {
+                area = area + record.get(i)*record.get(j);
+            }
+        }
+        return area;
+    }
 
     /**
      * TODO code
@@ -123,6 +175,9 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
      */
     @Override
     public PersonalDetailInfomation getPersonalDetailInformation(String username) {
+        /*SchoolType schoolType = getSchoolType(username);
+        MajorType majorType = getMajorType(username);
+        EducationType educationType = getEducationType(username);*/
         return null;
     }
 
@@ -136,22 +191,4 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
 
         return null;
     }
-
-    // TODO test 计算投资总额
-    private double calTotalInvestment(String username) {
-        List<InvestmentRecord> records = investmentRecordRepository.findAllByUserUsername(username);
-        double sum = 0;
-        for(InvestmentRecord record : records) {
-            sum = sum + record.getInvestedMoney();
-        }
-        return sum;
-    }
-    // TODO code
-    private double calTotalLoan(String username) {
-        return 0;
-    }
-    // TODO code
-    private double calPendingPrincipal(String username) {return 0;}
-    // TODO code
-    private double calPendingInterest(String username){return 0;}
 }

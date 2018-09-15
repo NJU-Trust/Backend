@@ -8,7 +8,6 @@ import java.util.List;
  * @Date: 2018/9/11
  */
 public class PersonalDetailInfomation {
-
     //学校分类
     private String schoolClass;
     //专业情况
@@ -30,11 +29,11 @@ public class PersonalDetailInfomation {
     //惩罚情况
     private List<String> punishment;
     //学费及住宿费缴纳状况
-    private String payment;
+    private Integer payment;
     //图书馆借阅还书情况
-    private String library;
+    private Integer library;
     //考试作弊的信息
-    private String cheating;
+    private Integer cheating;
 
     public String getSchoolClass() {
         return schoolClass;
@@ -100,27 +99,27 @@ public class PersonalDetailInfomation {
         this.punishment = punishment;
     }
 
-    public String getPayment() {
+    public Integer getPayment() {
         return payment;
     }
 
-    public void setPayment(String payment) {
+    public void setPayment(Integer payment) {
         this.payment = payment;
     }
 
-    public String getLibrary() {
+    public Integer getLibrary() {
         return library;
     }
 
-    public void setLibrary(String library) {
+    public void setLibrary(Integer library) {
         this.library = library;
     }
 
-    public String getCheating() {
+    public Integer getCheating() {
         return cheating;
     }
 
-    public void setCheating(String cheating) {
+    public void setCheating(Integer cheating) {
         this.cheating = cheating;
     }
 
