@@ -21,7 +21,7 @@ insert into user_month_statistics(id, income, disc, surplus, username, debt) val
 insert into user_month_statistics(id, income, disc, surplus, username, debt) values (60, 1000, 500, 501, 'test', 100);
 insert into user (username, password, credit_score, roles) values ('admin', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS', 0, 'ADMIN');
 insert into base_target(id, username, target_type, collected_money, money, project_description, start_time, target_state, target_rating) values (1, 'test', 'SMALL', 200, 500, 'description', '2018-09-10', 'ON_GOING', 'A');
-insert into repayment(id, username, interest_rate, target_id, duration, type) values (1, 'test', 0.5, 1, 2, 'EQUAL_PRINCIPAL');
+insert into repayment(id, username, interest_rate, target_id, duration, type, start_date) values (1, 'test', 0.5, 1, 2, 'EQUAL_PRINCIPAL', '2018-09-01');
 insert into small_target(id, classification) VALUES (1, 0);
 INSERT INTO user_info_check_record(id, check_item, check_state, description, message, time, username) VALUES ('1', 'VOLUNTEERTIME', 'UPDATE', 'description', 'message', '2018-09-13', 'test');
 INSERT INTO base_user_evidence(data_type, id, evidence, state, time, item, username) VALUES ('VOLUNTEERTIME', '1', 'evidence1', 'UPDATE', '2018-09-13', '1', 'test');
