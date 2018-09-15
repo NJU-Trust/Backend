@@ -3,6 +3,7 @@ package nju.trust.payloads.target;
 import nju.trust.entity.CreditRating;
 import nju.trust.entity.target.TargetRating;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -39,10 +40,13 @@ public class SmallTargetFilterRequest {
     @Size(min = 2, max = 2)
     private Integer[] repaymentDuration;
 
+    @NotNull
     private CreditRating[] userCreditRating;
 
+    @NotNull
     private List<String> useOfFunds;
 
+    @NotNull
     private List<TargetRating> targetRating;
 
     @Override
