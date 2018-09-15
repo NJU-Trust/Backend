@@ -95,6 +95,18 @@ public class TargetServiceImpl implements TargetService {
     }
 
     @Override
+    public TargetDetails getTargetDetails(Long targetId) {
+        BaseTarget target = targetRepository.findById(targetId)
+                .orElseThrow(() -> new ResourceNotFoundException("Target not found"));
+        Repayment repayment = target.getRepayment();
+        RepaymentRecord record = repaymentRecordRepository
+                .findByReturnDateAndTargetId(repayment.nextDueDate(), targetId)
+                .orElseThrow(() -> new ResourceNotFoundException("Repayment records not found"));
+
+        return new TargetDetails(target, record);
+    }
+
+    @Override
     public TargetInfo getTargetInfo(Long targetId) {
         return null;
     }

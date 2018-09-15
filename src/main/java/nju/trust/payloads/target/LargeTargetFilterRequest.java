@@ -2,6 +2,7 @@ package nju.trust.payloads.target;
 
 import nju.trust.entity.CreditRating;
 import nju.trust.entity.target.LargeProjectClassification;
+import nju.trust.entity.target.TargetRating;
 
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
@@ -50,6 +51,12 @@ public class LargeTargetFilterRequest {
     private CreditRating[] userCreditRating;
 
     private List<String> useOfFunds;
+
+    private List<TargetRating> targetRating;
+
+    public List<TargetRating> getTargetRating() {
+        return targetRating;
+    }
 
     public List<String> getUseOfFunds() {
         return useOfFunds;

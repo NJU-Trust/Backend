@@ -1,6 +1,7 @@
 package nju.trust.payloads.target;
 
 import nju.trust.entity.CreditRating;
+import nju.trust.entity.target.TargetRating;
 
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
@@ -42,6 +43,8 @@ public class SmallTargetFilterRequest {
 
     private List<String> useOfFunds;
 
+    private List<TargetRating> targetRating;
+
     @Override
     public String toString() {
         return "SmallTargetFilterRequest{" +
@@ -51,7 +54,12 @@ public class SmallTargetFilterRequest {
                 ", repaymentDuration=" + Arrays.toString(repaymentDuration) +
                 ", userCreditRating=" + Arrays.toString(userCreditRating) +
                 ", useOfFunds=" + useOfFunds +
+                ", targetRating=" + targetRating +
                 '}';
+    }
+
+    public List<TargetRating> getTargetRating() {
+        return targetRating;
     }
 
     public List<String> getUseOfFunds() {
