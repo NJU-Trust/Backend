@@ -17,7 +17,7 @@ public class PersonalDetailInfomation {
     //经济来源
     private String financeSource;
     //学习成绩
-    private String GPA;
+    private String studyRank;
     //挂科数
     private Integer numNoPass;
     //奖学金
@@ -67,12 +67,12 @@ public class PersonalDetailInfomation {
         this.financeSource = financeSource;
     }
 
-    public String getGPA() {
-        return GPA;
+    public String getStudyRank() {
+        return studyRank;
     }
 
-    public void setGPA(String GPA) {
-        this.GPA = GPA;
+    public void setStudyRank(String studyRank) {
+        this.studyRank = studyRank;
     }
 
     public Integer getNumNoPass() {

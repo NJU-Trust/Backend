@@ -1,6 +1,7 @@
 package nju.trust.service.personalinfo;
 
 import nju.trust.payloads.personalinfomation.CampusPerformance;
+import nju.trust.payloads.personalinfomation.PersonalDetailInfomation;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,23 @@ public class PersonalInformationServiceImplTest {
 
     @Test
     public void getPersonalDetailInformation() {
+        String username = "test";
+        PersonalDetailInfomation info = test.getPersonalDetailInformation(username);
+        System.out.println("username:"+username);
+        System.out.println("PersonalDetailInfomation:");
+        System.out.println("schoolClass:"+info.getSchoolClass());
+        System.out.println("majorCondition:"+info.getMajorCondition());
+        System.out.println("educationBackground:"+info.getEducationBackground());
+        System.out.println("financeSource:"+info.getFinanceSource());
+        System.out.println("studyRank:"+info.getStudyRank());
+        System.out.println("numNoPass:"+info.getNumNoPass());
+        System.out.println("scholarship:"+info.getScholarship());
+        System.out.println("researchCompetition:"+info.getResearchCompetition());
+        System.out.println("awards:"+info.getAwards());
+        System.out.println("punishment:"+info.getPunishment());
+        System.out.println("payment:"+info.getSchoolClass());
+        System.out.println("library:"+info.getLibrary());
+        System.out.println("cheating:"+info.getCheating());
     }
 
     @Test

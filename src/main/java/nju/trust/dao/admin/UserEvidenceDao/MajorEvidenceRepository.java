@@ -12,4 +12,6 @@ import java.util.List;
  */
 public interface MajorEvidenceRepository extends CrudRepository<MajorEvidence, Long> {
     List<MajorEvidence> findByItemId(Long id);
+
+    List<MajorEvidence> findDistinctByUserUsername(String username);
 }

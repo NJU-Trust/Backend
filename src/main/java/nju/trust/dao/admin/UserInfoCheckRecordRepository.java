@@ -1,5 +1,6 @@
 package nju.trust.dao.admin;
 
+import nju.trust.entity.CheckItem;
 import nju.trust.entity.CheckState;
 import nju.trust.entity.record.UserInfoCheckRecord;
 import org.springframework.data.repository.CrudRepository;
@@ -15,4 +16,6 @@ public interface UserInfoCheckRecordRepository extends CrudRepository<UserInfoCh
     List<UserInfoCheckRecord> findByUserUsername(String username);
 
     List<UserInfoCheckRecord> findByCheckState(CheckState update);
+
+    List<UserInfoCheckRecord> findDistinctByUserUsernameAndAndCheckItem(String username, CheckItem item);
 }

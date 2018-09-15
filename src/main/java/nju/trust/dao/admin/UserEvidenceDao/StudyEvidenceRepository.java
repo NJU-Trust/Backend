@@ -12,4 +12,6 @@ import java.util.List;
  */
 public interface StudyEvidenceRepository extends CrudRepository<StudyEvidence, Long> {
     List<StudyEvidence> findByItemId(Long id);
+
+    List<StudyEvidence> findDistinctByUserUsername(String username);
 }
