@@ -1,9 +1,7 @@
 package nju.trust.service.target;
 
 import nju.trust.entity.record.RepaymentRecord;
-import nju.trust.exception.ResourceNotFoundException;
 
-import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -84,7 +82,7 @@ class FineCalculator {
     }
 
     private static double getRemainingPrincipal(List<RepaymentRecord> records) {
-        return records.stream().filter(r -> !r.isPayOff() && !r.isAtSettlementDay())
+        return records.stream().filter(r -> !r.hasPaidOff() && !r.isAtSettlementDay())
                 .mapToDouble(RepaymentRecord::getPrincipal).sum();
     }
 }

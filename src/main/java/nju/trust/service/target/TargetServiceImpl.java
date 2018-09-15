@@ -270,7 +270,7 @@ public class TargetServiceImpl implements TargetService {
 
         double money = 0.;
         double serviceCharge = 0.;
-        if (record.isPayOff())
+        if (record.hasPaidOff())
             return new ApiResponse(false, "This period has been repaid");
         else if (record.isOverdue()) {
             double principalInterestSum = record.getSum();
@@ -303,6 +303,8 @@ public class TargetServiceImpl implements TargetService {
 
         return ApiResponse.successResponse();
     }
+
+
 
     private RepaymentNote getRepaymentNote(String username, List<Double> monthlyRepayment, double duration, double totalRepayment) {
         // Generate repayment note
