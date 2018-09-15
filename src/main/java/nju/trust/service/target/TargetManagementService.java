@@ -63,8 +63,6 @@ public class TargetManagementService {
     }
 
     public List<DefaultRecord> defaultRecords(String username) {
-        defaultRecordRepository.findAllByUserUsername(username).stream()
-                .map()
         // TODO: 2018/9/11 等有空再实现吧 orz
         return new ArrayList<>();
     }
