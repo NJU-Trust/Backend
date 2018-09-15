@@ -1,13 +1,18 @@
 package nju.trust.service.personalinfo;
 
+import nju.trust.dao.admin.UnstructuredDataRepository;
 import nju.trust.dao.record.InvestmentRecordRepository;
 import nju.trust.dao.user.UserRepository;
 import nju.trust.entity.record.InvestmentRecord;
+import nju.trust.entity.user.UnstructuredData;
+import nju.trust.entity.user.UnstructuredDataType;
 import nju.trust.entity.user.User;
 import nju.trust.payloads.personalinfomation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -19,10 +24,12 @@ import java.util.List;
 public class PersonalInformationServiceImpl implements PersonalInformationService {
     private UserRepository userRepository;
     private InvestmentRecordRepository investmentRecordRepository;
+    private UnstructuredDataRepository unstructuredDataRepository;
     @Autowired
-    public PersonalInformationServiceImpl(UserRepository userRepository, InvestmentRecordRepository investmentRecordRepository) {
+    public PersonalInformationServiceImpl(UserRepository userRepository, InvestmentRecordRepository investmentRecordRepository, UnstructuredDataRepository unstructuredDataRepository) {
         this.userRepository = userRepository;
         this.investmentRecordRepository = investmentRecordRepository;
+        this.unstructuredDataRepository = unstructuredDataRepository;
     }
 
     // TODO code
@@ -60,13 +67,53 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
     }
 
     /**
-     * TODO code
+     * 校园表现
      * @param username 用户名
      * @return
      */
     @Override
     public CampusPerformance getCampusPerformance(String username) {
-        return null;
+        // 学校、学历、社交情况、获奖情况、成绩
+        List<UnstructuredDataType> types = Arrays.asList(UnstructuredDataType.SCHOOL, UnstructuredDataType.EDUCATION, UnstructuredDataType.SOCIALITY, UnstructuredDataType.AWARD, UnstructuredDataType.GRADE);
+        List<Double> personalPerformance = new ArrayList<>();
+        List<Double> averagePerformance = new ArrayList<>();
+        double person = 1;
+        double platform = 1;
+
+        for(UnstructuredDataType type : types) {
+            double personal = getPersonalPerformance(username, type);
+            personalPerformance.add(personal);
+
+            person = person * personal;
+            double average = getAveragePerformance(type);
+            averagePerformance.add(average);
+            platform = platform * average;
+        }
+
+        CampusPerformance performance = new CampusPerformance();
+        performance.setPersonalPerformance(personalPerformance);
+        performance.setAveragePerformance(averagePerformance);
+        performance.setAboveAverage(person > platform);
+
+        return performance;
+    }
+    // 得到个人表现
+    private double getPersonalPerformance(String username, UnstructuredDataType type) {
+        UnstructuredData unstructuredData = unstructuredDataRepository.findFirstByUserUsernameAndDataType(username, type);
+        if(unstructuredData == null) {
+            return type.getInitialScore();
+        }
+        return unstructuredData.getScore();
+    }
+    // 得到平台表现
+    private double getAveragePerformance(UnstructuredDataType type) {
+        int userNum = ((List)userRepository.findAll()).size()-1;
+        List<UnstructuredData> dataList = unstructuredDataRepository.findDistinctByDataType(type);
+        double sum = 0;
+        for(UnstructuredData data : dataList) {
+            sum = sum + data.getScore();
+        }
+        return sum/userNum;
     }
 
     /**
@@ -86,6 +133,7 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
      */
     @Override
     public List<PersonalRelationship> getPersonalRelationships(String username) {
+
         return null;
     }
 

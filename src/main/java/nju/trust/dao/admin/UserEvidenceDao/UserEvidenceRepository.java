@@ -202,4 +202,13 @@ public class UserEvidenceRepository {
             return evidences.get(0);
         }
     }
+
+    public MajorEvidence findMajorByItemId(Long id) {
+        List<MajorEvidence> evidences = majorEvidenceRepository.findByItemId(id);
+        if(evidences == null || evidences.size() == 0) {
+            return new MajorEvidence();
+        }else {
+            return evidences.get(0);
+        }
+    }
 }

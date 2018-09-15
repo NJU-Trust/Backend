@@ -11,7 +11,7 @@ public class EventsInfo {
 
     private Date date;  //发生日期
 
-    private String title;   //类型 ：已还款|已收款   // TODO enum
+    private EventType title;   //类型 ：已还款|已收款   // TODO enum
 
     private String description;     //描述
 
@@ -23,11 +23,11 @@ public class EventsInfo {
         this.date = date;
     }
 
-    public String getTitle() {
+    public EventType getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
+    public void setTitle(EventType title) {
         this.title = title;
     }
 

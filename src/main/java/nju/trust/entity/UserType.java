@@ -1,5 +1,9 @@
 package nju.trust.entity;
 
+import com.google.common.collect.ImmutableMap;
+
+import java.util.Map;
+
 /**
  * @Author: 许杨
  * @Description: 在管理员进行用户管理时的查询用户选项
@@ -13,7 +17,7 @@ public enum UserType {
     // 投资用户:
     INVESTMENT("投资"); // 投资用户
 
-    private String str;
+    private final String str;
 
     UserType(String str) {
         this.str = str;
@@ -21,5 +25,11 @@ public enum UserType {
 
     public String getStr() {
         return str;
+    }
+    
+    public Map<String, Object> toMap() {
+        return ImmutableMap.<String, Object>builder()
+                    .put("str", str)
+                    .build();
     }
 }

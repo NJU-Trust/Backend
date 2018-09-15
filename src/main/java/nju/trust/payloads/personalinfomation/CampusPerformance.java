@@ -9,29 +9,29 @@ import java.util.List;
  */
 public class CampusPerformance {
     //个人表现数值--学校、学历、社交情况、获奖情况、成绩
-    private List<Integer> personalPerformance;
+    private List<Double> personalPerformance;
     //平均表现数值
-    private List<Integer> averagePerformance;
+    private List<Double> averagePerformance;
     //是否超过平均表现
     private boolean aboveAverage;
 
-    public List<Integer> getPersonalPerformance() {
+    public List<Double> getPersonalPerformance() {
         return personalPerformance;
     }
 
-    public void setPersonalPerformance(List<Integer> personalPerformance) {
+    public void setPersonalPerformance(List<Double> personalPerformance) {
         this.personalPerformance = personalPerformance;
     }
 
-    public List<Integer> getAveragePerformance() {
+    public List<Double> getAveragePerformance() {
         return averagePerformance;
     }
 
-    public void setAveragePerformance(List<Integer> averagePerformance) {
+    public void setAveragePerformance(List<Double> averagePerformance) {
         this.averagePerformance = averagePerformance;
     }
 
-    public boolean isAboveAverage() {
+    public boolean getAboveAverage() {
         return aboveAverage;
     }
 

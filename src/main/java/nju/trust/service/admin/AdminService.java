@@ -22,6 +22,7 @@ import java.util.List;
  */
 public interface AdminService {
     // 用户管理
+    int getUserListLen(String keyword, UserType type);
     /**
      * 查找所有用户的概要信息
      * @param keyword 关键字

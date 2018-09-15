@@ -1,5 +1,9 @@
 package nju.trust.entity;
 
+import com.google.common.collect.ImmutableMap;
+
+import java.util.Map;
+
 /**
  * @Author: 许杨
  * @Description: 管理员进行用户信息审核时的细分条目
@@ -34,5 +38,11 @@ public enum CheckItem {
 
     public String getItemStr() {
         return itemStr;
+    }
+
+    public Map<String, Object> toMap() {
+        return ImmutableMap.<String, Object>builder()
+                .put("str", itemStr)
+                .build();
     }
 }

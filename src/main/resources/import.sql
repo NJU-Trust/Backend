@@ -19,7 +19,7 @@ insert into user_month_statistics(id, income, disc, surplus, username, debt) val
 insert into user_month_statistics(id, income, disc, surplus, username, debt) values (18, 1432, 500, 300, 'test', 100);
 insert into user_month_statistics(id, income, disc, surplus, username, debt) values (19, 1200, 500, 400, 'test', 100);
 insert into user_month_statistics(id, income, disc, surplus, username, debt) values (60, 1000, 500, 501, 'test', 100);
-insert into user (username, password, credit_score) values ('admin', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS', 85);
+insert into user (username, password, credit_score, roles) values ('admin', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS', 0, 'ADMIN');
 insert into base_target(id, username, target_type, collected_money, money, project_description, start_time, target_state, target_rating) values (1, 'test', 'SMALL', 200, 500, 'description', '2018-09-10', 'ON_GOING', 'A');
 insert into repayment(id, username, interest_rate, target_id, duration, type) values (1, 'test', 0.5, 1, 2, 'EQUAL_PRINCIPAL');
 insert into small_target(id, classification) VALUES (1, 0);
@@ -28,5 +28,5 @@ INSERT INTO base_user_evidence(data_type, id, evidence, state, time, item, usern
 INSERT INTO base_user_evidence(data_type, id, evidence, state, time, item, username) VALUES ('VOLUNTEERTIME', '2', 'evidence2', 'ONGING', '2018-09-13', '1', 'test');
 INSERT INTO volunteer_evidence(length, id) VALUES ('1', '1');
 INSERT INTO volunteer_evidence(length, id) VALUES ('2', '2');
-
+INSERT INTO unstructured_data(id, data_type, score, username) VALUES (1, 0, 100, 'test');
 

@@ -62,6 +62,7 @@ public class ScoreCalUtil {
                 calSchoolTypeScore(checkRecord);
                 break;
             case MAJOR:
+                calMajorScore(checkRecord);
                 break;
             case EDUCATION:
                 calEducationScore(checkRecord);
@@ -172,6 +173,18 @@ public class ScoreCalUtil {
             preData = createUnstructuredData(checkRecord.getUser(), UnstructuredDataType.SCHOOL);
         }
         preData.setScore(type.getScore());
+        unstructuredDataRepository.save(preData);
+    }
+    // 专业分类
+    private void calMajorScore(UserInfoCheckRecord checkRecord) {
+        String username = checkRecord.getUser().getUsername();
+        Long id = checkRecord.getId();
+        MajorType type = userEvidenceRepository.findMajorByItemId(id).getMajorType();
+        UnstructuredData preData = getUnstructuredData(username, UnstructuredDataType.MAJOR);
+        if(preData == null) {
+            preData = createUnstructuredData(checkRecord.getUser(), UnstructuredDataType.MAJOR);
+        }
+        preData.setScore(0.0);
         unstructuredDataRepository.save(preData);
     }
     // 受教育情况

@@ -74,6 +74,11 @@ public class AdminServiceImpl implements AdminService {
         this.scoreCalUtil = scoreCalUtil;
     }
 
+    @Override
+    public int getUserListLen(String keyword, UserType type) {
+        return getUserSimpleList(keyword, type).size();
+    }
+
     /**
      * 查找所有用户的概要信息
      * @param keyword 关键字
@@ -82,6 +87,20 @@ public class AdminServiceImpl implements AdminService {
      */
     @Override
     public List<UserSimpleInfo> getUserList(Pageable pageable, String keyword, UserType type) {
+        // 通过模糊查询、用户类别筛选用户
+        List<UserSimpleInfo> infoList = getUserSimpleList(keyword, type);
+
+        // 分页
+        int pageNumber = pageable.getPageNumber();
+        int pageSize = pageable.getPageSize();
+        List<UserSimpleInfo> infoList2 = new ArrayList<>();
+        for(int i = pageNumber*pageSize ; i < infoList.size() && i < (pageNumber+1)*pageSize ; i++) {
+            infoList2.add(infoList.get(i));
+        }
+
+        return infoList2;
+    }
+    private List<UserSimpleInfo> getUserSimpleList(String keyword, UserType type) {
         List<String> usernames;
         // 通过模糊查询查找用户姓名
         if(keyword == null || keyword.equals("")) { // 关键字不存在，返回所有用户姓名
@@ -89,6 +108,7 @@ public class AdminServiceImpl implements AdminService {
         }else {
             usernames = adminUserRepository.getNamesByKeyword(keyword);
         }
+        usernames.remove("admin");
 
         // 通过用户类别筛选用户
         List<UserSimpleInfo> infoList;
@@ -114,19 +134,11 @@ public class AdminServiceImpl implements AdminService {
             }
         }
 
-        if(infoList == null || infoList.size() == 0) {
+        if(infoList == null) {
             return new ArrayList<>();
         }
 
-        // 分页
-        int pageNumber = pageable.getPageNumber();
-        int pageSize = pageable.getPageSize();
-        List<UserSimpleInfo> infoList2 = new ArrayList<>();
-        for(int i = pageNumber*pageSize ; i < infoList.size() && i < (pageNumber+1)*pageSize ; i++) {
-            infoList2.add(infoList.get(i));
-        }
-
-        return infoList2;
+        return infoList;
     }
     // 查找用户是否欠款，返回未欠款/欠款用户的UserSimpleInfo
     private List<UserSimpleInfo> getLoanUserInfo(List<String> usernames, UserType type) {
@@ -177,6 +189,19 @@ public class AdminServiceImpl implements AdminService {
             infos.add(info);
         }
         return infos;
+    }
+    // 去除管理员
+    private List<UserSimpleInfo> removeAdmin(List<UserSimpleInfo> infoList) {
+        int j = 0;
+        while(j < infoList.size()) {
+            UserSimpleInfo info = infoList.get(j);
+            if(info.getUsername().toLowerCase().equals("admin")) {
+                infoList.remove(j);
+            }else {
+                j++;
+            }
+        }
+        return infoList;
     }
 
     /**

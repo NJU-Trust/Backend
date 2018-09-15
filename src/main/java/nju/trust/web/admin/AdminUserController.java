@@ -33,9 +33,18 @@ public class AdminUserController {
     }
 
     // 用户管理
+    @GetMapping(value = "/manageLen")
+    @PreAuthorize("hasRole('ADMIN')")
+    public int getUserListLen(UserListRequest request) {
+        String keyword = request.getKeyword();
+        UserType type = request.getType();
+        return adminService.getUserListLen(keyword, type);
+    }
+
+
     @GetMapping(value = "/manage")
     @PreAuthorize("hasRole('ADMIN')")
-    public List<UserSimpleInfo> getUserList(Pageable pageable, @Valid UserListRequest request) {
+    public List<UserSimpleInfo> getUserList(Pageable pageable, UserListRequest request) {
         String keyword = request.getKeyword();
         UserType type = request.getType();
         return adminService.getUserList(pageable, keyword, type);
