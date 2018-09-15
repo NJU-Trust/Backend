@@ -12,4 +12,6 @@ import java.util.List;
  */
 public interface FailEvidenceRepository extends CrudRepository<FailEvidence, Long> {
     List<FailEvidence> findByItemId(Long id);
+
+    List<FailEvidence> findDistinctByUserUsername(String username);
 }

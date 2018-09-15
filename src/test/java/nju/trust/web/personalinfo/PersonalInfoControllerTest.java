@@ -37,4 +37,15 @@ public class PersonalInfoControllerTest {
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
     }
+
+    @Test
+    public void getPersonalDetailInformation() throws Exception{
+        MvcResult result = mvc.perform(
+                get("/profile/information")
+                        .param("username", "test")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk())
+                .andDo(MockMvcResultHandlers.print())
+                .andReturn();
+    }
 }

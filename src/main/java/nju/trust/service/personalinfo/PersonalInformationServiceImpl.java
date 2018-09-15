@@ -2,12 +2,15 @@ package nju.trust.service.personalinfo;
 
 import nju.trust.dao.admin.BaseTargetRepository;
 import nju.trust.dao.admin.UnstructuredDataRepository;
+import nju.trust.dao.admin.UserEvidenceDao.UserEvidenceRepository;
+import nju.trust.dao.admin.UserInfoCheckRecordRepository;
 import nju.trust.dao.record.InvestmentRecordRepository;
 import nju.trust.dao.user.UserRepository;
+import nju.trust.entity.CheckItem;
+import nju.trust.entity.CheckState;
 import nju.trust.entity.record.InvestmentRecord;
-import nju.trust.entity.record.UserEvidence.EducationType;
-import nju.trust.entity.record.UserEvidence.MajorType;
-import nju.trust.entity.record.UserEvidence.SchoolType;
+import nju.trust.entity.record.UserEvidence.*;
+import nju.trust.entity.record.UserInfoCheckRecord;
 import nju.trust.entity.target.BaseTarget;
 import nju.trust.entity.user.UnstructuredData;
 import nju.trust.entity.user.UnstructuredDataType;
@@ -32,12 +35,17 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
     private InvestmentRecordRepository investmentRecordRepository;
     private UnstructuredDataRepository unstructuredDataRepository;
     private BaseTargetRepository baseTargetRepository;
+    private UserEvidenceRepository userEvidenceRepository;
+    private UserInfoCheckRecordRepository userInfoCheckRecordRepository;
+    private static final String noComplete = "未填写";
     @Autowired
-    public PersonalInformationServiceImpl(UserRepository userRepository, InvestmentRecordRepository investmentRecordRepository, UnstructuredDataRepository unstructuredDataRepository, BaseTargetRepository baseTargetRepository) {
+    public PersonalInformationServiceImpl(UserRepository userRepository, InvestmentRecordRepository investmentRecordRepository, UnstructuredDataRepository unstructuredDataRepository, BaseTargetRepository baseTargetRepository, UserEvidenceRepository userEvidenceRepository, UserInfoCheckRecordRepository userInfoCheckRecordRepository) {
         this.userRepository = userRepository;
         this.investmentRecordRepository = investmentRecordRepository;
         this.unstructuredDataRepository = unstructuredDataRepository;
         this.baseTargetRepository = baseTargetRepository;
+        this.userEvidenceRepository = userEvidenceRepository;
+        this.userInfoCheckRecordRepository = userInfoCheckRecordRepository;
     }
 
     // TODO code
@@ -169,17 +177,133 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
     }
 
     /**
-     * TODO code
+     * 信息表
      * @param username 用户名
      * @return
      */
     @Override
     public PersonalDetailInfomation getPersonalDetailInformation(String username) {
-        /*SchoolType schoolType = getSchoolType(username);
-        MajorType majorType = getMajorType(username);
-        EducationType educationType = getEducationType(username);*/
-        return null;
+        String schoolType = getSchoolType(username);
+        String majorType = getMajorType(username);
+        String educationType = getEducationType(username);
+        String financeSource = getFinanceSource(username);
+        String studyRank = getStudyRank(username);
+        int noPass = getNoPass(username);
+        List<String> scholarship = getScholarship(username);
+        List<String> researchCompetition = getResearchCompetition(username);
+        List<String> awards = getAwards(username);
+        List<String> punishment = getPunishment(username);
+        int payment = getPayment(username);
+        int library = getLibrary(username);
+        int cheating = getCheating(username);
+
+        PersonalDetailInfomation info = new PersonalDetailInfomation();
+        info.setSchoolClass(schoolType);
+        info.setMajorCondition(majorType);
+        info.setEducationBackground(educationType);
+        info.setFinanceSource(financeSource);
+        info.setStudyRank(studyRank);
+        info.setNumNoPass(noPass);
+        info.setScholarship(scholarship);
+        info.setResearchCompetition(researchCompetition);
+        info.setAwards(awards);
+        info.setPunishment(punishment);
+        info.setPayment(payment);
+        info.setLibrary(library);
+        info.setCheating(cheating);
+
+        return info;
     }
+    // 学校分类
+    private String getSchoolType(String username) {
+        List<SchoolEvidence> schoolEvidence = userEvidenceRepository.findSchoolEvidenceByUser(username);
+        if(schoolEvidence == null || schoolEvidence.size() == 0) {
+            return noComplete;
+        }
+        return schoolEvidence.get(schoolEvidence.size()-1).getSchoolType().getStr();
+    }
+    // 专业情况
+    private String getMajorType(String username) {
+        List<MajorEvidence> majorEvidences = userEvidenceRepository.findMajorEvidenceByUser(username);
+        if(majorEvidences == null || majorEvidences.size() == 0) {
+            return noComplete;
+        }
+        return majorEvidences.get(majorEvidences.size()-1).getMajorType().getStr();
+    }
+    // 受教育情况
+    private String getEducationType(String username) {
+        List<EducationEvidence> educationEvidences = userEvidenceRepository.findEducationEvidenceByUser(username);
+        if(educationEvidences == null || educationEvidences.size() == 0) {
+            return noComplete;
+        }
+        return educationEvidences.get(educationEvidences.size()-1).getEducationType().getStr();
+    }
+    // 经济来源
+    private String getFinanceSource(String username) {
+        UnstructuredData data = unstructuredDataRepository.findFirstByUserUsernameAndDataType(username, UnstructuredDataType.ECONOMIC);
+        if(data == null || data.getDescription() == null || data.getDescription().length() == 0) {
+            return noComplete;
+        }
+        return data.getDescription();
+    }
+    // 学习成绩
+    private String getStudyRank(String username) {
+        List<StudyEvidence> studyEvidences = userEvidenceRepository.findStudyEvidenceByUser(username);
+        if(studyEvidences == null || studyEvidences.size() == 0) {
+            return noComplete;
+        }
+        double rank = studyEvidences.get(studyEvidences.size()-1).getRanking();
+        rank = (int)(rank*100)/100.0;
+        return rank+"%";
+    }
+    // 挂科数
+    private int getNoPass(String username) {
+        List<FailEvidence> failEvidences = userEvidenceRepository.findFailEvidenceByUser(username);
+        if(failEvidences == null || failEvidences.size() == 0) {
+            return 0;
+        }
+        return failEvidences.get(0).getNum();
+    }
+    // 奖学金
+    private List<String> getScholarship(String username) {
+        return getStrRecord(username, CheckItem.SCHOLARSHIP);
+    }
+    // 科研竞赛获奖情况
+    private List<String> getResearchCompetition(String username) {
+        return getStrRecord(username, CheckItem.SCHOLARSHIP);
+    }
+    // 奖励情况
+    private List<String> getAwards(String username) {
+        return getStrRecord(username, CheckItem.REWARD);
+    }
+    // 惩罚情况
+    private List<String> getPunishment(String username) {
+        return getStrRecord(username, CheckItem.PUNISHMENT);
+    }
+    // 学费及住宿费缴纳状况
+    private int getPayment(String username) {
+        return getStrRecord(username, CheckItem.PAYMENT).size();
+    }
+    // 图书馆借阅还书情况
+    private int getLibrary(String username) {
+        return getStrRecord(username, CheckItem.RETURNBOOKS).size();
+    }
+    // 考试作弊的信息
+    private int getCheating(String username) {
+        return getStrRecord(username, CheckItem.TESTCHEAT).size();
+    }
+    private List<String> getStrRecord(String username, CheckItem item) {
+        List<UserInfoCheckRecord> records = userInfoCheckRecordRepository.findDistinctByUserUsernameAndAndCheckItem(username, item);
+        List<String> scholarships = new ArrayList<>();
+        if(records == null) {
+            return scholarships;
+        }
+        for(UserInfoCheckRecord record : records) {
+            if(record.getCheckState().equals(CheckState.PASS)) {
+                scholarships.add(record.getDescription());
+            }
+        }
+        return scholarships;}
 
     /**
      * TODO code

@@ -211,4 +211,24 @@ public class UserEvidenceRepository {
             return evidences.get(0);
         }
     }
+
+    public List<SchoolEvidence> findSchoolEvidenceByUser(String username) {
+        return schoolEvidenceRepository.findDistinctByUserUsername(username);
+    }
+
+    public List<MajorEvidence> findMajorEvidenceByUser(String username) {
+        return majorEvidenceRepository.findDistinctByUserUsername(username);
+    }
+
+    public List<EducationEvidence> findEducationEvidenceByUser(String username) {
+        return educationEvidenceRepository.findDistinctByUserUsername(username);
+    }
+
+    public List<FailEvidence> findFailEvidenceByUser(String username) {
+        return failEvidenceRepository.findDistinctByUserUsername(username);
+    }
+
+    public List<StudyEvidence> findStudyEvidenceByUser(String username) {
+        return studyEvidenceRepository.findDistinctByUserUsername(username);
+    }
 }
