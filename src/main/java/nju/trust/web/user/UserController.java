@@ -59,7 +59,7 @@ public class UserController {
 
 
     @PostMapping(value = "/signin")
-    public ResponseEntity<JwtAuthenticationResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<JwtAuthenticationResponse> authenticateUser(@Valid LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getUsername(),
@@ -72,8 +72,8 @@ public class UserController {
         return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
     }
 
-    @PostMapping(value = "/signup", consumes = "application/json", produces = "application/json")
-    public ApiResponse registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
+    @PostMapping(value = "/signup")
+    public ApiResponse registerUser(@Valid SignUpRequest signUpRequest) {
         return userService.addUser(signUpRequest);
     }
 }
