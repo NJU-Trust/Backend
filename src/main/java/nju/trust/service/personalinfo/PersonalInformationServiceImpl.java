@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -234,7 +235,6 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
 
     /**
      * 待办列表
-     * TODO code
      * @param username 用户名
      */
     @Override
@@ -244,7 +244,7 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
         events1.addAll(events2);
         return events1;
     }
-    // TODO code 得到未来一周要付款的信息
+    // 得到未来一周要付款的信息
     private List<EventsInfo> getToPay(String username) {
         List<Repayment> repayments = repaymentRepository.findAllByUserUsername(username);
         List<EventsInfo> eventsInfos = new ArrayList<>();
@@ -252,39 +252,104 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
             return eventsInfos;
         }
         for(Repayment repayment : repayments) {
-            if(isToPay(repayment)) {
+            LocalDate payDate = toPay(repayment);
+            if(payDate != null) {
                 EventsInfo info = new EventsInfo();
-
+                info.setDate(toDateForm(payDate));
+                info.setTitle(EventType.HAVEPAY.getStr());
+                info.setDescription(getDescription(payDate, EventType.HAVEPAY));
+                eventsInfos.add(info);
             }
         }
+
+        Collections.sort(eventsInfos);
         return eventsInfos;
     }
-    // TODO code判断是否一周内需要还款
-    private boolean isToPay(Repayment repayment) {
-        if(repayment.getRemainingAmount() <= 0) {
-            return false;
+    // 判断还款时间（若一周内不还款，null）
+    private LocalDate toPay(Repayment repayment) {
+        if(repayment.getRemainingAmount() <= 0) {   // 还完
+            return null;
         }
         LocalDate payDate = repayment.getStartDate();
         int duration = repayment.getDuration();
         LocalDate now = LocalDate.now();
-        for(int i = 0 ; i < duration ; i++) {
-
+        LocalDate last = payDate.plusMonths(duration);
+        if(now.isAfter(last)) { // 过了期限
+            return null;
         }
-        return false;
-    }
 
-    // TODO code 得到收款信息
+        payDate = now.withDayOfMonth(last.getDayOfMonth());
+        now = LocalDate.now();
+        LocalDate define = now.plusDays(7);
+        if(define.isBefore(payDate)) {
+            return null;
+        }
+        return payDate;
+    }
+    // 得到收款信息
     private List<EventsInfo> getHasReceivrd(String username) {
+        List<EventsInfo> eventsInfos = new ArrayList<>();
+        // 得到用户的投资记录
+        List<InvestmentRecord> investmentRecords = investmentRecordRepository.findAllByUserUsername(username);
+        if(investmentRecords == null) {
+            return eventsInfos;
+        }
+        for(InvestmentRecord record : investmentRecords) {
+            BaseTarget target = record.getTarget();
+            if(!target.getTargetState().equals(TargetState.IN_THE_PAYMENT)) {
+                continue;
+            }
+            Long targetId = target.getId();
+            Repayment repayment = repaymentRepository.findFirstByTargetId(targetId);
+            LocalDate receiveDate = getReceivedDate(repayment);
+            if(receiveDate == null) {
+                continue;
+            }
+            EventsInfo info = new EventsInfo();
+            info.setDate(toDateForm(receiveDate));
+            info.setTitle(EventType.HAVEGOT.getStr());
+            info.setDescription(getDescription(receiveDate, EventType.HAVEGOT));
+            eventsInfos.add(info);
+        }
+
+        Collections.sort(eventsInfos);
+        Collections.reverse(eventsInfos);
+        return eventsInfos;
+    }
+    // 得到距离最近的收款日期
+    private LocalDate getReceivedDate(Repayment repayment) {
+        LocalDate now = LocalDate.now();
+        LocalDate date = repayment.getStartDate();
+        int duration = repayment.getDuration();
+
+        for(int i = 1 ; i <= duration ; i++) {
+            if(date.plusMonths(i).isAfter(now)) {
+                if(i == 1) {
+                    return null;
+                }
+                return date.plusMonths(i-1);
+            }
+        }
         return null;
     }
 
-    // TODO test 日期格式：2018/9/8
+    // 日期格式：2018/9/8
     private String toDateForm(LocalDate date) {
         String seperator = "/";
         int day = date.getDayOfMonth();
         int month = date.getMonthValue();
         int year = date.getYear();
         return year+seperator+month+seperator+day;
+    }
+    // 得到description
+    private String getDescription(LocalDate date, EventType type) {
+        String str = "您有一笔";
+        switch (type) {
+            case HAVEGOT:str = str + "收款在";  break;
+            case HAVEPAY:str = str + "还款在";  break;
+        }
+        String day = date.getMonthValue()+"月"+date.getDayOfMonth()+"日";
+        return str+day;
     }
 
     /**

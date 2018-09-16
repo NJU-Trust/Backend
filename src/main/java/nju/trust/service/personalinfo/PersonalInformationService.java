@@ -46,4 +46,6 @@ public interface PersonalInformationService {
      * @return
      */
     PersonalRelationship getPersonalRelationships(String username);
+
+
 }

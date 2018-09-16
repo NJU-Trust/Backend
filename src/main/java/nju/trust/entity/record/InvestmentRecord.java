@@ -12,11 +12,14 @@ public class InvestmentRecord extends BaseRecord {
     @GeneratedValue
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "target_id")
     private BaseTarget target;
 
     private Double investedMoney;
+
+    public InvestmentRecord() {
+    }
 
     public InvestmentRecord(User user, BaseTarget target, Double investedMoney) {
         super(user);

@@ -11,7 +11,7 @@ public class EventsInfo implements Comparable<EventsInfo> {
 
     private String date;  //发生日期 格式：2018/9/8
 
-    private EventType title;   //类型 ：已还款|已收款   // TODO enum
+    private String title;   //类型 ：已还款|已收款   // TODO enum
 
     private String description;     //描述
 
@@ -23,11 +23,11 @@ public class EventsInfo implements Comparable<EventsInfo> {
         this.date = date;
     }
 
-    public EventType getTitle() {
+    public String getTitle() {
         return title;
     }
 
-    public void setTitle(EventType title) {
+    public void setTitle(String title) {
         this.title = title;
     }
 
@@ -41,27 +41,12 @@ public class EventsInfo implements Comparable<EventsInfo> {
 
     @Override
     public int compareTo(EventsInfo eventsInfo) {
-        if(this.getTitle().equals(EventType.HAVEGOT) && eventsInfo.getTitle().equals(EventType.HAVEPAY)) {
-            return -1;
-        }else if(eventsInfo.getTitle().equals(EventType.HAVEGOT) && this.getTitle().equals(EventType.HAVEPAY)) {
+        if(this.getDate().compareTo(eventsInfo.getDate()) > 0) {
             return 1;
+        }else if(this.getDate().compareTo(eventsInfo.getDate()) < 0){
+            return -1;
         }
 
-        if(this.getTitle().equals(EventType.HAVEGOT)) {
-            if(this.getDate().compareTo(eventsInfo.getDate()) > 0) {
-                return 1;
-            }else {
-                return -1;
-            }
-        }
-
-        if(this.getTitle().equals(EventType.HAVEPAY)) {
-            if(this.getDate().compareTo(eventsInfo.getDate()) > 0) {
-                return -1;
-            }else {
-                return 1;
-            }
-        }
         return 0;
     }
 }

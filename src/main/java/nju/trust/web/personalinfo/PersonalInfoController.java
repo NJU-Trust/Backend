@@ -52,4 +52,10 @@ public class PersonalInfoController {
     public TotalAccountInfo getTotalAccountInfo(String username) {
         return personalInformationService.getTotalAccountInfo(username);
     }
+
+    // 待办事项
+    @GetMapping(value = "/todo")
+    public List<EventsInfo> getAllEventsInfo(String username) {
+        return personalInformationService.getAllEventsInfo(username);
+    }
 }

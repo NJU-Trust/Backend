@@ -63,6 +63,17 @@ public class PersonalInformationServiceImplTest {
 
     @Test
     public void getAllEventsInfo() {
+        System.out.println("test getAllEventsInfo");
+        String username = "test";
+        System.out.println("username:"+username);
+        List<EventsInfo> result = test.getAllEventsInfo(username);
+        System.out.println("result:");
+        for(EventsInfo info : result) {
+            System.out.println("date:"+info.getDate());
+            System.out.println("title:"+info.getTitle());
+            System.out.println("description:"+info.getDescription());
+            System.out.println();
+        }
     }
 
     @Test
