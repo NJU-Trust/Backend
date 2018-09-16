@@ -1,5 +1,7 @@
 package nju.trust.payloads.personalinfomation;
 
+import java.util.List;
+
 /**
  * @Author: 161250127
  * @Description:
@@ -9,7 +11,7 @@ public class PersonalRelationship {
 
     private String username;    //用户名（可以直接得到，此处是为了配合前端数据格式）
 
-    private String othersName;    //此条关系对应的人物姓名
+    private List<String> othersName;    //此条关系对应的人物姓名
 
     private double creditScore;     //信用得分
 
@@ -29,11 +31,11 @@ public class PersonalRelationship {
         this.username = username;
     }
 
-    public String getOthersName() {
+    public List<String> getOthersName() {
         return othersName;
     }
 
-    public void setOthersName(String othersName) {
+    public void setOthersName(List<String> othersName) {
         this.othersName = othersName;
     }
 

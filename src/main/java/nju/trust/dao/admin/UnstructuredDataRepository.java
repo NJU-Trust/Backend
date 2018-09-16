@@ -17,4 +17,6 @@ public interface UnstructuredDataRepository extends CrudRepository<UnstructuredD
     boolean existsUnstructuredDataByUserUsername(String username);
 
     List<UnstructuredData> findDistinctByDataType(UnstructuredDataType type);
+
+    List<UnstructuredData> findDistinctByUserUsername(String username);
 }

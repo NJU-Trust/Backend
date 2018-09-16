@@ -1,5 +1,6 @@
 package nju.trust.web.personalinfo;
 
+import nju.trust.payloads.personalinfomation.PersonalRelationship;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+
+import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -53,6 +56,17 @@ public class PersonalInfoControllerTest {
     public void getInvestAndLoanInfo() throws Exception{
         MvcResult result = mvc.perform(
                 get("/profile/investAndLoan")
+                        .param("username", "test")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk())
+                .andDo(MockMvcResultHandlers.print())
+                .andReturn();
+    }
+
+    @Test
+    public void getPersonalRelationships() throws Exception{
+        MvcResult result = mvc.perform(
+                get("/profile/relationship")
                         .param("username", "test")
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
