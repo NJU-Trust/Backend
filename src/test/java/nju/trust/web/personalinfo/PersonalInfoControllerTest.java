@@ -48,4 +48,15 @@ public class PersonalInfoControllerTest {
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
     }
+
+    @Test
+    public void getInvestAndLoanInfo() throws Exception{
+        MvcResult result = mvc.perform(
+                get("/profile/investAndLoan")
+                        .param("username", "test")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk())
+                .andDo(MockMvcResultHandlers.print())
+                .andReturn();
+    }
 }

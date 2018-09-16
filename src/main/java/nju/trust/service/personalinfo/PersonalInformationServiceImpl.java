@@ -1,6 +1,7 @@
 package nju.trust.service.personalinfo;
 
 import nju.trust.dao.admin.BaseTargetRepository;
+import nju.trust.dao.admin.RepaymentRepository;
 import nju.trust.dao.admin.UnstructuredDataRepository;
 import nju.trust.dao.admin.UserEvidenceDao.UserEvidenceRepository;
 import nju.trust.dao.admin.UserInfoCheckRecordRepository;
@@ -12,6 +13,7 @@ import nju.trust.entity.record.InvestmentRecord;
 import nju.trust.entity.record.UserEvidence.*;
 import nju.trust.entity.record.UserInfoCheckRecord;
 import nju.trust.entity.target.BaseTarget;
+import nju.trust.entity.user.Repayment;
 import nju.trust.entity.user.UnstructuredData;
 import nju.trust.entity.user.UnstructuredDataType;
 import nju.trust.entity.user.User;
@@ -19,7 +21,6 @@ import nju.trust.payloads.personalinfomation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -37,42 +38,86 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
     private BaseTargetRepository baseTargetRepository;
     private UserEvidenceRepository userEvidenceRepository;
     private UserInfoCheckRecordRepository userInfoCheckRecordRepository;
+    private RepaymentRepository repaymentRepository;
+
     private static final String noComplete = "未填写";
+
     @Autowired
-    public PersonalInformationServiceImpl(UserRepository userRepository, InvestmentRecordRepository investmentRecordRepository, UnstructuredDataRepository unstructuredDataRepository, BaseTargetRepository baseTargetRepository, UserEvidenceRepository userEvidenceRepository, UserInfoCheckRecordRepository userInfoCheckRecordRepository) {
+    public PersonalInformationServiceImpl(UserRepository userRepository, InvestmentRecordRepository investmentRecordRepository, UnstructuredDataRepository unstructuredDataRepository, BaseTargetRepository baseTargetRepository, UserEvidenceRepository userEvidenceRepository, UserInfoCheckRecordRepository userInfoCheckRecordRepository, RepaymentRepository repaymentRepository) {
         this.userRepository = userRepository;
         this.investmentRecordRepository = investmentRecordRepository;
         this.unstructuredDataRepository = unstructuredDataRepository;
         this.baseTargetRepository = baseTargetRepository;
         this.userEvidenceRepository = userEvidenceRepository;
         this.userInfoCheckRecordRepository = userInfoCheckRecordRepository;
+        this.repaymentRepository = repaymentRepository;
     }
 
-    // TODO code
+    // 账户总览 投资借款部分
     @Override
     public InvestAndLoan getInvestAndLoanInfo(String username) {
         User user = userRepository.findByUsername(username).get();
         InvestAndLoan info = new InvestAndLoan();
-        info.setTotalInvestment(calTotalInvestment(username));
-        info.setTotalLoan(calTotalLoan(username));
-        info.setGetMoney(calSetGetMoney(username));
-        info.setGetMoneyProgress(calSetGetMoneyRrogress(username));
-        info.setPayMoney(calSetPayMoney(username));
-        info.setPayMoneyProgress(calSetPayMoneyRrogress(username));
+        // 投资总额
+        double totalInvestment = calTotalInvestment(username);
+        info.setTotalInvestment(toForm(totalInvestment));
+        // 借款总额
+        double totalLoan = calTotalLoan(username);
+        info.setTotalLoan(toForm(totalLoan));
+        // 待收回本息
+        double getMoney = calGetMoney(username);
+        info.setGetMoney(toForm(getMoney));
+        // 本息收回进度
+        double totalMoney = calTotalMoney(username);  // 本息
+        double getMoneyRrogress = 100;
+        if(totalMoney != 0) {
+            getMoneyRrogress = getMoney / totalMoney * 100;
+        }
+        info.setGetMoneyProgress(toForm(getMoneyRrogress));
+        // 待偿还本息
+        double payMoney = calPayMoney(username);
+        info.setPayMoney(toForm(payMoney));
+        // 本息偿还进度
+        double payMoneyProgress = 100;
+        if(totalLoan != 0) {
+            payMoneyProgress = payMoney / totalLoan * 100;
+        }
+        info.setPayMoneyProgress(toForm(payMoneyProgress));
+        // 信用评分
         info.setCreditRating(user.getCreditRating().toString());
+        // 信用评级
         info.setCreditRatingScore(user.getCreditScore());
         return info;
     }
-    // TODO test 计算投资总额
+    // 本息
+    private double calTotalMoney(String username) {
+        double sum = 0;
+
+        List<InvestmentRecord> investmentRecords = investmentRecordRepository.findAllByUserUsername(username);
+        if(investmentRecords == null) {
+            return sum;
+        }
+        for(InvestmentRecord record : investmentRecords) {
+            long targetId = record.getTarget().getId();
+            Repayment repayment = repaymentRepository.findFirstByTargetId(targetId);
+            sum = sum + record.getInvestedMoney() * repayment.getInterestRate() * repayment.getDuration() / 12;
+        }
+
+        return sum;
+    }
+    // 计算投资总额
     private double calTotalInvestment(String username) {
         List<InvestmentRecord> records = investmentRecordRepository.findAllByUserUsername(username);
         double sum = 0;
+        if (records == null) {
+            return sum;
+        }
         for(InvestmentRecord record : records) {
             sum = sum + record.getInvestedMoney();
         }
         return sum;
     }
-    // TODO test 借款总额
+    // 借款总额
     private double calTotalLoan(String username) {
         List<BaseTarget> targets = baseTargetRepository.findDistinctByUserUsername(username);
         double sum = 0;
@@ -84,27 +129,49 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
         }
         return sum;
     }
-    // TODO code 待收回本息
-    private double calSetGetMoney(String username) {
-        return 0;
+    // 待收回本息
+    private double calGetMoney(String username) {
+        List<InvestmentRecord> investmentRecords = investmentRecordRepository.findDistinctByUserUsername(username);
+        double sum = 0;
+        if(investmentRecords == null) {
+            return sum;
+        }
+        for(InvestmentRecord record : investmentRecords) {
+            BaseTarget target = record.getTarget();
+            double investedMoney = record.getInvestedMoney();
+            Repayment repayment = repaymentRepository.findFirstByTargetId(target.getId());
+            double remaining = repayment.getRemainingAmount();
+            if(repayment == null) {
+                System.out.println("targetId:"+target.getId()+"  repayment == null");
+                continue;
+            }else {
+                double money = investedMoney<remaining ? investedMoney : remaining;
+                sum = sum + money;
+            }
+        }
+        return sum;
     }
-    // TODO code
-    private double calSetGetMoneyRrogress(String username) {
-        return 0;
+    // 待偿还本息
+    private double calPayMoney(String username) {
+        double sum = 0;
+        List<Repayment> repayments = repaymentRepository.findAllByUserUsername(username);
+        if(repayments == null) {
+            return sum;
+        }
+        for(Repayment repayment : repayments) {
+            sum = repayment.getRemainingAmount() + sum;
+        }
+        return sum;
     }
-    // TODO code
-    private double calSetPayMoney(String username) {
-        return 0;
+    // 保留两位小数 xx.xx
+    private double toForm(double num) {
+        return Double.parseDouble(String.format("%.2f",num));
     }
-    // TODO code
-    private double calSetPayMoneyRrogress(String username){
-        return 0;
-    }
+
 
     /**
      * TODO code
      * @param username 用户名
-     * @return
      */
     @Override
     public TotalAccountInfo getTotalAccountInfo(String username) {
@@ -114,7 +181,6 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
     /**
      * TODO code
      * @param username 用户名
-     * @return
      */
     @Override
     public List<EventsInfo> getAllEventsInfo(String username) {
@@ -124,7 +190,6 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
     /**
      * 校园表现
      * @param username 用户名
-     * @return
      */
     @Override
     public CampusPerformance getCampusPerformance(String username) {
@@ -179,7 +244,6 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
     /**
      * 信息表
      * @param username 用户名
-     * @return
      */
     @Override
     public PersonalDetailInfomation getPersonalDetailInformation(String username) {
@@ -308,7 +372,6 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
     /**
      * TODO code
      * @param username 用户名
-     * @return
      */
     @Override
     public List<PersonalRelationship> getPersonalRelationships(String username) {

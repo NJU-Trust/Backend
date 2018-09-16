@@ -1,14 +1,11 @@
 package nju.trust.web.personalinfo;
 
-import nju.trust.entity.UserType;
-import nju.trust.payloads.admin.UserListRequest;
 import nju.trust.payloads.personalinfomation.CampusPerformance;
+import nju.trust.payloads.personalinfomation.InvestAndLoan;
 import nju.trust.payloads.personalinfomation.PersonalDetailInfomation;
 import nju.trust.service.personalinfo.PersonalInformationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,5 +33,11 @@ public class PersonalInfoController {
     @GetMapping(value = "/information")
     public PersonalDetailInfomation getPersonalDetailInformation(String username) {
         return personalInformationService.getPersonalDetailInformation(username);
+    }
+
+    // 账户总览 投资借款部分
+    @GetMapping(value = "/investAndLoan")
+    public InvestAndLoan getInvestAndLoanInfo(String username) {
+        return personalInformationService.getInvestAndLoanInfo(username);
     }
 }
