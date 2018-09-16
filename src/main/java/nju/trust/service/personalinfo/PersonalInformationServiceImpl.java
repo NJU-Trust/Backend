@@ -9,6 +9,7 @@ import nju.trust.dao.record.InvestmentRecordRepository;
 import nju.trust.dao.user.UserRepository;
 import nju.trust.entity.CheckItem;
 import nju.trust.entity.CheckState;
+import nju.trust.entity.UserLevel;
 import nju.trust.entity.record.InvestmentRecord;
 import nju.trust.entity.record.UserEvidence.*;
 import nju.trust.entity.record.UserInfoCheckRecord;
@@ -370,12 +371,101 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
         return scholarships;}
 
     /**
-     * TODO code
+     * 校园关系图
      * @param username 用户名
      */
     @Override
     public List<PersonalRelationship> getPersonalRelationships(String username) {
+        List<String> usernameList = getRelationUsernames(username);
 
-        return null;
+        List<PersonalRelationship> personalRelationships = new ArrayList<>();
+        for(String name : usernameList) {
+            PersonalRelationship relationship = getPersonalRelationship(name);
+            personalRelationships.add(relationship);
+        }
+        return personalRelationships;
+    }
+    // 得到相关人员的用户名
+    private List<String> getRelationUsernames(String username) {
+        List<User> userList = (List<User>)userRepository.findAll();
+        int i = 0;
+        while(i < userList.size()) {
+            String name = userList.get(i).getUsername();
+            if(name.equals(username) || name.toLowerCase().equals("admin")) {
+                userList.remove(i);
+            }else {
+                i++;
+            }
+        }
+
+        int j = userList.size();
+        j = j<5 ? j : 5;
+        List<String> usernameList = new ArrayList<>();
+        if(j == 0) {
+            return new ArrayList<>();
+        }
+        ArrayList<Integer> indexs = new ArrayList<>();
+        for(i = 0 ; i < j; i++) {
+            int index = (int)Math.random()*userList.size();
+            if(indexs.contains(index)) {
+                continue;
+            }
+            String name = userList.get(index).getUsername();
+            usernameList.add(name);
+            indexs.add(index);
+        }
+        return usernameList;
+    }
+    private PersonalRelationship getPersonalRelationship(String username) {
+        PersonalRelationship relationship = new PersonalRelationship();
+        relationship.setUsername(username);
+        relationship.setOthersName(getRelationUsernames(username));
+
+        relationship.setCreditScore(getCreditScore(username));
+        relationship.setFinancialScore(getFinancialScore());
+        relationship.setCampusPerformanceScore(getCampusPerformanceScore(username));
+        relationship.setRelationship("同学");
+        CreditChange creditChange = getCreditChange(username);
+        relationship.setCreditChange(creditChange.getStr());
+
+        return relationship;
+    }
+    // 信用得分
+    private double getCreditScore(String username) {
+        User user = userRepository.findByUsername(username).get();
+        return user.getCreditScore();
+    }
+    // 经济得分
+    private double getFinancialScore() {
+        double score = Math.random()*30 + 70;
+        return toForm(score);
+    }
+    // 校园表现得分
+    private double getCampusPerformanceScore(String username) {
+        List<UnstructuredData> unstructuredDataList = unstructuredDataRepository.findDistinctByUserUsername(username);
+        double score = 0;
+        if(unstructuredDataList == null) {
+            return score;
+        }
+        for(UnstructuredData data : unstructuredDataList) {
+            if(data.getDataType().equals(UnstructuredDataType.VIOLATION) || data.getDataType().equals(UnstructuredDataType.FAILED_SUBJECTS) || data.getDataType().equals(UnstructuredDataType.CHEATING)) {
+                score = score - data.getScore();
+            }else {
+                score = score + data.getScore();
+            }
+        }
+        if(score < 0) {
+            return 0;
+        }else {
+            return score/7;
+        }
+    }
+    // 信用变化情况
+    public CreditChange getCreditChange(String username) {
+        User user = userRepository.findByUsername(username).get();
+        if(user.getUserLevel() != null && user.getUserLevel().equals(UserLevel.DISCREDIT)) {
+            return CreditChange.FROZEN;
+        }
+        return CreditChange.getCreditChange();
     }
 }

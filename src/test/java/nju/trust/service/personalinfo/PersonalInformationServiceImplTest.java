@@ -3,6 +3,7 @@ package nju.trust.service.personalinfo;
 import nju.trust.payloads.personalinfomation.CampusPerformance;
 import nju.trust.payloads.personalinfomation.InvestAndLoan;
 import nju.trust.payloads.personalinfomation.PersonalDetailInfomation;
+import nju.trust.payloads.personalinfomation.PersonalRelationship;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.xml.ws.soap.Addressing;
+
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -87,5 +90,26 @@ public class PersonalInformationServiceImplTest {
 
     @Test
     public void getPersonalRelationships() {
+        System.out.println("test getPersonalRelationships");
+        String username = "test";
+        System.out.println("username:"+username);
+        List<PersonalRelationship> result = test.getPersonalRelationships(username);
+        print(result);
+    }
+    private void print(List<PersonalRelationship> relationships) {
+        System.out.println("relationships:");
+        for(PersonalRelationship relationship : relationships) {
+            print(relationship);
+            System.out.println();
+        }
+    }
+    private void print(PersonalRelationship relationship) {
+        System.out.println("username:"+relationship.getUsername());
+        System.out.println("othersName:"+relationship.getOthersName());
+        System.out.println("creditScore:"+relationship.getCreditScore());
+        System.out.println("financialScore:"+relationship.getFinancialScore());
+        System.out.println("campusPerformanceScore:"+relationship.getCampusPerformanceScore());
+        System.out.println("relationship:"+relationship.getRelationship());
+        System.out.println("creditChange:"+relationship.getCreditChange());
     }
 }
