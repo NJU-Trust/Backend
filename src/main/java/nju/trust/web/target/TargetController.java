@@ -41,7 +41,7 @@ public class TargetController {
     }
 
     @PostMapping("/new/small")
-    public ApiResponse createSmallTarget(SmallTargetRequest smallTargetRequest, Principal principal) {
+    public ApiResponse createSmallTarget(@RequestBody SmallTargetRequest smallTargetRequest, Principal principal) {
         return targetService.applySmallTarget(smallTargetRequest, principal.getName());
     }
 
@@ -61,10 +61,9 @@ public class TargetController {
     }
 
     @RequestMapping("/smallTargetList")
-    public List<TargetInfo> getSmallTargets(Pageable pageable, @Valid @RequestBody SmallTargetFilterRequest filter) {
-        System.out.println(pageable);
+    public List<TargetInfo> getSmallTargets(@Valid @RequestBody SmallTargetFilterRequest filter) {
         System.out.println(filter);
-        return targetService.filterSmallTargets(pageable, filter);
+        return targetService.filterSmallTargets(filter);
     }
 
     @RequestMapping("/recommendSmall")
@@ -94,7 +93,7 @@ public class TargetController {
     }
 
     @RequestMapping("/repayment/ep")
-    public RepaymentTotalInfo getEPRepaymentInfo(Principal principal, RepaymentRequest repaymentRequest) {
+    public RepaymentTotalInfo getEPRepaymentInfo(Principal principal,@RequestBody RepaymentRequest repaymentRequest) {
         return targetService.getRepaymentInfo(principal.getName(), RepaymentType.EQUAL_PRINCIPAL,
                 repaymentRequest.getMoney(), repaymentRequest.getDuration(), repaymentRequest.getInterestRate());
     }

@@ -82,4 +82,116 @@ public class TargetDetails {
                 ", username='" + username + '\'' +
                 '}';
     }
+
+    public Double getProgress() {
+        return progress;
+    }
+
+    public void setProgress(Double progress) {
+        this.progress = progress;
+    }
+
+    public Long getLeftDays() {
+        return leftDays;
+    }
+
+    public void setLeftDays(Long leftDays) {
+        this.leftDays = leftDays;
+    }
+
+    public Double getLeftNeeds() {
+        return leftNeeds;
+    }
+
+    public void setLeftNeeds(Double leftNeeds) {
+        this.leftNeeds = leftNeeds;
+    }
+
+    public Integer getLifeOfLoan() {
+        return lifeOfLoan;
+    }
+
+    public void setLifeOfLoan(Integer lifeOfLoan) {
+        this.lifeOfLoan = lifeOfLoan;
+    }
+
+    public Double getTotalLoan() {
+        return totalLoan;
+    }
+
+    public void setTotalLoan(Double totalLoan) {
+        this.totalLoan = totalLoan;
+    }
+
+    public String getPicPath() {
+        return picPath;
+    }
+
+    public void setPicPath(String picPath) {
+        this.picPath = picPath;
+    }
+
+    public RepaymentType getPayWay() {
+        return payWay;
+    }
+
+    public void setPayWay(RepaymentType payWay) {
+        this.payWay = payWay;
+    }
+
+    public String getUseWay() {
+        return useWay;
+    }
+
+    public void setUseWay(String useWay) {
+        this.useWay = useWay;
+    }
+
+    public Double getMonthInterest() {
+        return monthInterest;
+    }
+
+    public void setMonthInterest(Double monthInterest) {
+        this.monthInterest = monthInterest;
+    }
+
+    public Double getPayAll() {
+        return payAll;
+    }
+
+    public void setPayAll(Double payAll) {
+        this.payAll = payAll;
+    }
+
+    public String getPS() {
+        return PS;
+    }
+
+    public void setPS(String PS) {
+        this.PS = PS;
+    }
+
+    public UserLevel getUserLevel() {
+        return userLevel;
+    }
+
+    public void setUserLevel(UserLevel userLevel) {
+        this.userLevel = userLevel;
+    }
+
+    public TargetRating getProjectLevel() {
+        return projectLevel;
+    }
+
+    public void setProjectLevel(TargetRating projectLevel) {
+        this.projectLevel = projectLevel;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
 }

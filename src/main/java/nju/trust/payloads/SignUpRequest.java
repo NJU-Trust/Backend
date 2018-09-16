@@ -22,6 +22,7 @@ public class SignUpRequest {
     @Email
     private String email;
 
+    @NotBlank
     private String phoneNumber;
 
     public String getUsername() {
