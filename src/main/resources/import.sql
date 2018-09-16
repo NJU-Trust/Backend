@@ -29,4 +29,4 @@ INSERT INTO base_user_evidence(data_type, id, evidence, state, time, item, usern
 INSERT INTO volunteer_evidence(length, id) VALUES ('1', '1');
 INSERT INTO volunteer_evidence(length, id) VALUES ('2', '2');
 INSERT INTO unstructured_data(id, data_type, score, username) VALUES (1, 0, 100, 'test');
-INSERT INTO repayment(id, difficulty, duration, interest_rate, remaining_amount, start_date, total_interest, type, target_id, username) VALUES (1, 50.0, 1, 0.5, 100, '2018-09-10', 10, 'EQUAL_PRINCIPAL', 1, 'test');
+INSERT INTO repayment(id, difficulty, duration, interest_rate, remaining_amount, start_date, total_interest, type, target_id, username) VALUES (2, 50.0, 1, 0.5, 100, '2018-09-10', 10, 'EQUAL_PRINCIPAL', 1, 'test');
