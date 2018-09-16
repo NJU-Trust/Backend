@@ -34,6 +34,9 @@ public class RepaymentRecord extends BaseRecord {
 
     private Integer period;
 
+    public RepaymentRecord() {
+    }
+
     public RepaymentRecord(User user, BaseTarget target, Double sum, Double principal, Integer period,
                            Double interest, Double remainingPrincipal, LocalDate returnDate) {
         super(user);
