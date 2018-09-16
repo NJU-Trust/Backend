@@ -26,7 +26,7 @@ public class BaseInfoController {
         return baseInfoService.getBaseInfo(username);
     }
 
-    @PostMapping(value = "changeInformation")
+    @PostMapping(value = "/changeInformation")
     public ApiResponse changeBaseInformation(ChangedPersonalInfo changedPersonalInfo){
         return baseInfoService.changeBaseInfo(changedPersonalInfo);
     }

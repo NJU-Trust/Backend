@@ -41,6 +41,17 @@ public class BaseInfoServiceImpl implements BaseInfoService {
 
     @Override
     public ApiResponse changeBaseInfo(ChangedPersonalInfo changedPersonalInfo) {
-        return null;
+        String username = changedPersonalInfo.getUsername();
+        if(userRepository.existsByUsername(username)){
+            User user = userRepository.findByUsername(username).get();
+            user.setGender(changedPersonalInfo.getGender());
+            user.setAge(changedPersonalInfo.getAge());
+            user.setInstitution(changedPersonalInfo.getInstitution());
+            user.setLivingPlace(changedPersonalInfo.getLivingPlace());
+            userRepository.save(user);
+            return ApiResponse.successResponse();
+        }else{
+            return new ApiResponse(false, "该任务不存在");
+        }
     }
 }
