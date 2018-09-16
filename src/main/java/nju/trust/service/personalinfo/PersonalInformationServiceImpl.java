@@ -24,6 +24,7 @@ import nju.trust.payloads.personalinfomation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -232,12 +233,58 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
     }
 
     /**
+     * 待办列表
      * TODO code
      * @param username 用户名
      */
     @Override
     public List<EventsInfo> getAllEventsInfo(String username) {
+        List<EventsInfo> events1 = getToPay(username);
+        List<EventsInfo> events2 = getHasReceivrd(username);
+        events1.addAll(events2);
+        return events1;
+    }
+    // TODO code 得到未来一周要付款的信息
+    private List<EventsInfo> getToPay(String username) {
+        List<Repayment> repayments = repaymentRepository.findAllByUserUsername(username);
+        List<EventsInfo> eventsInfos = new ArrayList<>();
+        if(repayments == null) {
+            return eventsInfos;
+        }
+        for(Repayment repayment : repayments) {
+            if(isToPay(repayment)) {
+                EventsInfo info = new EventsInfo();
+
+            }
+        }
+        return eventsInfos;
+    }
+    // TODO code判断是否一周内需要还款
+    private boolean isToPay(Repayment repayment) {
+        if(repayment.getRemainingAmount() <= 0) {
+            return false;
+        }
+        LocalDate payDate = repayment.getStartDate();
+        int duration = repayment.getDuration();
+        LocalDate now = LocalDate.now();
+        for(int i = 0 ; i < duration ; i++) {
+
+        }
+        return false;
+    }
+
+    // TODO code 得到收款信息
+    private List<EventsInfo> getHasReceivrd(String username) {
         return null;
+    }
+
+    // TODO test 日期格式：2018/9/8
+    private String toDateForm(LocalDate date) {
+        String seperator = "/";
+        int day = date.getDayOfMonth();
+        int month = date.getMonthValue();
+        int year = date.getYear();
+        return year+seperator+month+seperator+day;
     }
 
     /**
@@ -427,15 +474,25 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
      * @param username 用户名
      */
     @Override
-    public List<PersonalRelationship> getPersonalRelationships(String username) {
+    public PersonalRelationship getPersonalRelationships(String username) {
         List<String> usernameList = getRelationUsernames(username);
 
-        List<PersonalRelationship> personalRelationships = new ArrayList<>();
+        List<People> peoples = new ArrayList<>();
+        List<Relation> relations = new ArrayList<>();
+
+        peoples.add(getPeople(username));
         for(String name : usernameList) {
-            PersonalRelationship relationship = getPersonalRelationship(name);
-            personalRelationships.add(relationship);
+            People people = getPeople(name);
+            Relation relation = getRelation(username, name);
+            peoples.add(people);
+            relations.add(relation);
         }
-        return personalRelationships;
+
+        PersonalRelationship personalRelationship = new PersonalRelationship();
+        personalRelationship.setPeople(peoples);
+        personalRelationship.setRelations(relations);
+
+        return personalRelationship;
     }
     // 得到相关人员的用户名
     private List<String> getRelationUsernames(String username) {
@@ -468,19 +525,23 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
         }
         return usernameList;
     }
-    private PersonalRelationship getPersonalRelationship(String username) {
-        PersonalRelationship relationship = new PersonalRelationship();
-        relationship.setUsername(username);
-        relationship.setOthersName(getRelationUsernames(username));
+    private People getPeople(String username) {
+        People people = new People();
+        people.setName(username);
+        people.setCreditPts(getCreditScore(username));
+        people.setFinancialPts(toForm(getFinancialScore()));
+        people.setSchoolPts(toForm(getCampusPerformanceScore(username)));
 
-        relationship.setCreditScore(getCreditScore(username));
-        relationship.setFinancialScore(getFinancialScore());
-        relationship.setCampusPerformanceScore(getCampusPerformanceScore(username));
-        relationship.setRelationship("同学");
-        CreditChange creditChange = getCreditChange(username);
-        relationship.setCreditChange(creditChange.getStr());
-
-        return relationship;
+        return people;
+    }
+    private Relation getRelation(String source, String target) {
+        Relation relation = new Relation();
+        relation.setSource(source);
+        relation.setTarget(target);
+        relation.setName("同学");
+        CreditChange creditChange = getCreditChange(target);
+        relation.setCreditChange(creditChange.getStr());
+        return relation;
     }
     // 信用得分
     private double getCreditScore(String username) {
@@ -513,7 +574,7 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
         }
     }
     // 信用变化情况
-    public CreditChange getCreditChange(String username) {
+    private CreditChange getCreditChange(String username) {
         User user = userRepository.findByUsername(username).get();
         if(user.getUserLevel() != null && user.getUserLevel().equals(UserLevel.DISCREDIT)) {
             return CreditChange.FROZEN;

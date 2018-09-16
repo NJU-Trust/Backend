@@ -6,7 +6,7 @@ package nju.trust.payloads.personalinfomation;
  * @Date: 2018/9/15
  */
 public enum EventType {
-    HAVEPAY("已还款"),
+    HAVEPAY("待还款"),
     HAVEGOT("已收款");
 
     private String str;

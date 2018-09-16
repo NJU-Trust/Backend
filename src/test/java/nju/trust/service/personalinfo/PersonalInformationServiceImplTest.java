@@ -102,23 +102,32 @@ public class PersonalInformationServiceImplTest {
         System.out.println("test getPersonalRelationships");
         String username = "test";
         System.out.println("username:"+username);
-        List<PersonalRelationship> result = test.getPersonalRelationships(username);
+        PersonalRelationship result = test.getPersonalRelationships(username);
         print(result);
     }
-    private void print(List<PersonalRelationship> relationships) {
-        System.out.println("relationships:");
-        for(PersonalRelationship relationship : relationships) {
-            print(relationship);
-            System.out.println();
+    private void print(PersonalRelationship relationship) {
+        System.out.println("peoples:");
+        List<People> peoples = relationship.getPeople();
+        for(People people : peoples) {
+            print(people);
+        }
+        System.out.println();
+        System.out.println("relations:");
+        List<Relation> relations = relationship.getRelations();
+        for(Relation relation : relations) {
+            print(relation);
         }
     }
-    private void print(PersonalRelationship relationship) {
-        System.out.println("username:"+relationship.getUsername());
-        System.out.println("othersName:"+relationship.getOthersName());
-        System.out.println("creditScore:"+relationship.getCreditScore());
-        System.out.println("financialScore:"+relationship.getFinancialScore());
-        System.out.println("campusPerformanceScore:"+relationship.getCampusPerformanceScore());
-        System.out.println("relationship:"+relationship.getRelationship());
-        System.out.println("creditChange:"+relationship.getCreditChange());
+    private void print(Relation relation) {
+        System.out.println("source:"+relation.getSource());
+        System.out.println("target:"+relation.getTarget());
+        System.out.println("name:"+relation.getName());
+        System.out.println("creditChange:"+relation.getCreditChange());
+    }
+    private void print(People people) {
+        System.out.println("name:"+people.getName());
+        System.out.println("creditPts:"+people.getCreditPts());
+        System.out.println("financialPts:"+people.getFinancialPts());
+        System.out.println("schoolPts:"+people.getSchoolPts());
     }
 }
