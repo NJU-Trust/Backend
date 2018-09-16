@@ -31,6 +31,7 @@ public class BaseInfoController {
         return baseInfoService.changeBaseInfo(changedPersonalInfo);
     }
 
+
     @Autowired
     public BaseInfoController(BaseInfoService baseInfoService){
         this.baseInfoService = baseInfoService;
