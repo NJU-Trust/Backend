@@ -1,5 +1,6 @@
 package nju.trust.service.personalinfo;
 
+import nju.trust.payloads.ApiResponse;
 import nju.trust.payloads.personalinfomation.PersonalBaseInfo;
 
 /**
@@ -10,4 +11,6 @@ import nju.trust.payloads.personalinfomation.PersonalBaseInfo;
 public interface BaseInfoService {
 
     PersonalBaseInfo getBaseInfo(String username);
+
+    ApiResponse changeBaseInfo(String username);
 }

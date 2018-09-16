@@ -3,6 +3,7 @@ package nju.trust.service.personalinfo;
 import nju.trust.dao.user.UserRepository;
 import nju.trust.entity.user.User;
 import nju.trust.exception.ResourceNotFoundException;
+import nju.trust.payloads.ApiResponse;
 import nju.trust.payloads.personalinfomation.PersonalBaseInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,5 +36,10 @@ public class BaseInfoServiceImpl implements BaseInfoService {
         personalBaseInfo.setUsername(username);
         return personalBaseInfo;
 
+    }
+
+    @Override
+    public ApiResponse changeBaseInfo(String username) {
+        return null;
     }
 }
