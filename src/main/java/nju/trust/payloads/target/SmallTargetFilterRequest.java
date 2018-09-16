@@ -62,6 +62,10 @@ public class SmallTargetFilterRequest {
                 '}';
     }
 
+    public void setTargetRating(List<TargetRating> targetRating) {
+        this.targetRating = targetRating;
+    }
+
     public List<TargetRating> getTargetRating() {
         return targetRating;
     }

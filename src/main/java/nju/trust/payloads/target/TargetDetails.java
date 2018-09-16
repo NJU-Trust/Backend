@@ -43,7 +43,10 @@ public class TargetDetails {
 
     private TargetRating projectLevel;
 
+    private String username;
+
     public TargetDetails(BaseTarget target, RepaymentRecord repaymentRecord) {
+        username = target.getUser().getUsername();
         progress = target.currentProgress();
         Repayment repayment = target.getRepayment();
         leftDays = repayment.nextDue();
@@ -76,6 +79,7 @@ public class TargetDetails {
                 ", PS='" + PS + '\'' +
                 ", userLevel=" + userLevel +
                 ", projectLevel=" + projectLevel +
+                ", username='" + username + '\'' +
                 '}';
     }
 }
