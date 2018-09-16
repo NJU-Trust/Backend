@@ -18,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 
 /**
  * All rights Reserved, Designed by Popping Lim
@@ -59,21 +60,20 @@ public class UserController {
 
 
     @PostMapping(value = "/signin")
-    public ResponseEntity<JwtAuthenticationResponse> authenticateUser(@Valid LoginRequest loginRequest) {
+    public ResponseEntity<JwtAuthenticationResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getUsername(),
                         loginRequest.getPassword()
                 )
         );
-
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = tokenProvider.generateToken(authentication);
-        return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
+        return ResponseEntity.ok(new JwtAuthenticationResponse(jwt, loginRequest.getUsername(), userService.getRoles(loginRequest.getUsername())));
     }
 
     @PostMapping(value = "/signup")
-    public ApiResponse registerUser(@Valid SignUpRequest signUpRequest) {
+    public ApiResponse registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
         return userService.addUser(signUpRequest);
     }
 }
