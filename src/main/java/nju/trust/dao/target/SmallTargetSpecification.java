@@ -10,9 +10,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Author: J.D. Liao
@@ -62,19 +60,37 @@ public class SmallTargetSpecification implements Specification<SmallTarget> {
         Optional.ofNullable(filter.getTime()[1])
                 .ifPresent(t -> predicates.add(builder.lessThanOrEqualTo(timeExpression, t)));
 
-        Predicate[] p = new Predicate[predicates.size()];
-        Predicate result = builder.and(predicates.toArray(p));
+        Predicate result = builder.and(toPredicateArray(predicates));
 
-        for (CreditRating creditRating : filter.getUserCreditRating())
-            result = builder.or(result, builder.equal(root.get("user").get("creditRating"), creditRating));
-//        for (SmallProjectClassification classification : filter.getClassifications())
-//            result = builder.or(result, builder.equal(root.get("classification"), classification));
-        for (String usage : filter.getUseOfFunds())
-            result = builder.or(result, builder.equal(root.get("useOfFunds"), usage));
-        for (TargetRating targetRating : filter.getTargetRating())
-            result = builder.or(result, builder.equal(root.get("targetRating"), targetRating));
+        // CreditRating constraints
+        if (filter.getUserCreditRating().length != 0) {
+            predicates.clear();
+            for (CreditRating creditRating : filter.getUserCreditRating()) {
+                predicates.add(builder.equal(root.get("user").get("creditRating"), creditRating));
+            }
+            result = builder.and(result, builder.or(toPredicateArray(predicates)));
+        }
 
+        // Use of funds constraints
+        if (!filter.getUseOfFunds().isEmpty()) {
+            predicates.clear();
+            for (String usage : filter.getUseOfFunds())
+                predicates.add(builder.equal(root.get("useOfFunds"), usage));
+            result = builder.and(result, builder.or(toPredicateArray(predicates)));
+        }
+
+        // TargetRating constraints
+        if (!filter.getTargetRating().isEmpty()) {
+            predicates.clear();
+            for (TargetRating targetRating : filter.getTargetRating())
+                predicates.add(builder.equal(root.get("targetRating"), targetRating));
+            result = builder.and(result, builder.or(toPredicateArray(predicates)));
+        }
         return result;
+    }
 
+    private Predicate[] toPredicateArray(List<Predicate> predicates) {
+        Predicate[] p = new Predicate[predicates.size()];
+        return predicates.toArray(p);
     }
 }

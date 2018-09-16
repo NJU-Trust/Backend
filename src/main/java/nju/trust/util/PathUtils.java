@@ -19,15 +19,19 @@ public class PathUtils {
 
     public static final String IMAGE_FOLDER_PATH;
 
+    public static final String CSV_FOLDER_PATH;
+
     static {
         try {
             File path = new File(ResourceUtils.getURL("classpath:").getPath());
             if (!path.exists()) path = new File("");
 
             File upload = new File(path.getAbsolutePath(), "static/images/upload/");
-            if (!upload.exists() && !upload.mkdirs())
+            File csvFolder = new File(path.getAbsolutePath(), "static/csv");
+            if (!upload.exists() && !upload.mkdirs() || (!csvFolder.exists() && !upload.mkdirs()))
                 log.error("Create image directory failed");
             IMAGE_FOLDER_PATH = upload.getAbsolutePath();
+            CSV_FOLDER_PATH = csvFolder.getAbsolutePath();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             throw new ResourceNotFoundException("Upload file not found");

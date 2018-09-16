@@ -77,13 +77,35 @@ public class LargeTargetSpecification implements Specification<LargeTarget> {
         Predicate[] p = new Predicate[predicates.size()];
         Predicate result = builder.and(predicates.toArray(p));
 
-        for (CreditRating creditRating : filter.getUserCreditRating())
-            result = builder.or(result, builder.equal(root.get("user").get("creditRating"), creditRating));
-        for (String usage : filter.getUseOfFunds())
-            result = builder.or(result, builder.equal(root.get("useOfFunds"), usage));
-        for (TargetRating targetRating : filter.getTargetRating())
-            result = builder.or(result, builder.equal(root.get("targetRating"), targetRating));
+        // CreditRating constraints
+        if (filter.getUserCreditRating().length != 0) {
+            predicates.clear();
+            for (CreditRating creditRating : filter.getUserCreditRating()) {
+                predicates.add(builder.equal(root.get("user").get("creditRating"), creditRating));
+            }
+            result = builder.and(result, builder.or(toPredicateArray(predicates)));
+        }
 
+        // Use of funds constraints
+        if (!filter.getUseOfFunds().isEmpty()) {
+            predicates.clear();
+            for (String usage : filter.getUseOfFunds())
+                predicates.add(builder.equal(root.get("useOfFunds"), usage));
+            result = builder.and(result, builder.or(toPredicateArray(predicates)));
+        }
+
+        // TargetRating constraints
+        if (!filter.getTargetRating().isEmpty()) {
+            predicates.clear();
+            for (TargetRating targetRating : filter.getTargetRating())
+                predicates.add(builder.equal(root.get("targetRating"), targetRating));
+            result = builder.and(result, builder.or(toPredicateArray(predicates)));
+        }
         return result;
     }
+
+    private Predicate[] toPredicateArray(List<Predicate> predicates) {
+        Predicate[] p = new Predicate[predicates.size()];
+        return predicates.toArray(p);
+}
 }
