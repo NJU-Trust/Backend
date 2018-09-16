@@ -2,6 +2,7 @@ package nju.trust.payloads.personalinfomation;
 
 import nju.trust.entity.UserLevel;
 import nju.trust.entity.user.Gender;
+import nju.trust.entity.user.User;
 
 /**
  * @Author: 161250127
@@ -33,6 +34,20 @@ public class PersonalBaseInfo {
     private String institution;     //学院 or 工作单位
 
     private String livingPlace;     //现居地
+
+    public PersonalBaseInfo(User user){
+        this.gender = user.getGender();
+        this.age = user.getAge();
+        this.userLevel = user.getUserLevel();
+        this.studentId = user.getStudentId();
+        this.grade = user.getGrade();
+        this.major = user.getMajor();
+        this.phoneNumber = user.getPhoneNumber();
+        this.alipay = user.getAlipay();
+        this.email = user.getEmail();
+        this.institution = user.getInstitution();
+        this.livingPlace = user.getLivingPlace();
+    }
 
     public String getUsername() {
         return username;
