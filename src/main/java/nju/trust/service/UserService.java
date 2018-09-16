@@ -1,11 +1,15 @@
 package nju.trust.service;
 
 import nju.trust.entity.user.IdentityOption;
+import nju.trust.entity.user.RoleName;
 import nju.trust.payloads.ApiResponse;
 import nju.trust.payloads.Range;
 import nju.trust.payloads.SignUpRequest;
 import nju.trust.payloads.user.*;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Set;
 
 @Service
 public interface UserService {
@@ -51,4 +55,6 @@ public interface UserService {
     ApiResponse addUser(SignUpRequest request);
 
     Range<Double> getInterestRange(String username);
+
+    Set<RoleName> getRoles(String username);
 }

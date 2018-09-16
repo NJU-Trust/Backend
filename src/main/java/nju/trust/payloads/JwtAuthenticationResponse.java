@@ -1,5 +1,10 @@
 package nju.trust.payloads;
 
+import nju.trust.entity.user.RoleName;
+
+import java.util.ArrayList;
+import java.util.Set;
+
 /**
  * All rights Reserved, Designed by Popping Lim
  *
@@ -10,9 +15,18 @@ package nju.trust.payloads;
 public class JwtAuthenticationResponse {
     private String accessToken;
     private String tokenType = "Bearer";
+    private ArrayList<String> roles;
+    private String username;
 
-    public JwtAuthenticationResponse(String accessToken) {
+
+    public JwtAuthenticationResponse(String accessToken, String username, Set<RoleName> rolesSet) {
         this.accessToken = accessToken;
+        this.username = username;
+        this.roles = new ArrayList<String>();
+        for(RoleName roleName: rolesSet) {
+            roles.add(roleName.toString());
+        }
+        roles.add(RoleName.ROLE_ADMIN.toString());
     }
 
     public String getAccessToken() {
@@ -29,5 +43,22 @@ public class JwtAuthenticationResponse {
 
     public void setTokenType(String tokenType) {
         this.tokenType = tokenType;
+    }
+
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public ArrayList<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(ArrayList<String> roles) {
+        this.roles = roles;
     }
 }

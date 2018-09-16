@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Set;
 
 /**
  * Author: J.D. Liao
@@ -83,6 +84,13 @@ public class UserServiceImpl implements UserService {
                 user.getCreditScore() / 100 * (Constant.BENCHMARK_INTEREST_RATE - Constant.INTEREST_RATE_LOWER_BOUND);
 
         return new Range<>(lower, upper);
+    }
+
+    @Override
+    public Set<RoleName> getRoles(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        return user.getRoles();
     }
 
     private void initAndSaveUser(SignUpRequest request) {
