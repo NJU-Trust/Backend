@@ -297,7 +297,6 @@ public class AdminServiceImpl implements AdminService {
 
     /**
      * 统计基础数据
-     * TODO
      * @return 当日
      * 总额：交易总额、交易总笔数、借款人数量、投资人数量
      * 人均统计：人均累计借款额度、笔均借款额度、人均累计投资额度
@@ -310,7 +309,6 @@ public class AdminServiceImpl implements AdminService {
 
     /**
      * 统计违约信息
-     * TODO
      * @return 当月
      * 累计违约率、逾期项目数、项目逾期率、近三月项目逾期率、借款逾期金额
      * 待偿金额、借贷金额逾期率、借贷坏账率、客户投诉情况
