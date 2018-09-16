@@ -20,13 +20,16 @@ insert into user_month_statistics(id, income, disc, surplus, username, debt) val
 insert into user_month_statistics(id, income, disc, surplus, username, debt) values (19, 1200, 500, 400, 'test', 100);
 insert into user_month_statistics(id, income, disc, surplus, username, debt) values (60, 1000, 500, 501, 'test', 100);
 insert into user (username, password, credit_score, roles) values ('admin', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS', 0, 'ADMIN');
-insert into base_target(id, username, target_type, collected_money, money, project_description, start_time, target_state, target_rating) values (1, 'test', 'SMALL', 200, 500, 'description', '2018-09-10', 'ON_GOING', 'A');
-insert into repayment(id, username, interest_rate, target_id, duration, type) values (1, 'test', 0.5, 1, 2, 'EQUAL_PRINCIPAL');
+insert into base_target(id, username, target_type, collected_money, money, project_description, start_time, target_state, target_rating, completion_rate, identity_option, use_of_funds, proof, target_rating_score) values(1, 'test', 'SMALL', 1440, 1800, 'target 1 description', '2018-06-10', 'ON_GOING', 'A', 80, 0, '买鞋', 'proof path', 0.95);
 insert into small_target(id, classification) VALUES (1, 0);
 INSERT INTO user_info_check_record(id, check_item, check_state, description, message, time, username) VALUES ('1', 'VOLUNTEERTIME', 'UPDATE', 'description', 'message', '2018-09-13', 'test');
 INSERT INTO base_user_evidence(data_type, id, evidence, state, time, item, username) VALUES ('VOLUNTEERTIME', '1', 'evidence1', 'UPDATE', '2018-09-13', '1', 'test');
 INSERT INTO base_user_evidence(data_type, id, evidence, state, time, item, username) VALUES ('VOLUNTEERTIME', '2', 'evidence2', 'ONGING', '2018-09-13', '1', 'test');
 INSERT INTO volunteer_evidence(length, id) VALUES ('1', '1');
 INSERT INTO volunteer_evidence(length, id) VALUES ('2', '2');
-INSERT INTO unstructured_data(id, data_type, score, username) VALUES (1, 0, 100, 'test');
+INSERT INTO unstructured_data(id, data_type, score, username) VALUES(1, 0, 100, 'test');
+INSERT INTO repayment(id, difficulty, duration, interest_rate, remaining_amount, start_date, total_interest, type, target_id, username) VALUES(1, 80.0, 3, 5.55, 1800, '2018-10-08', 24.98, 'PRE_INTEREST', 1, 'test');
+INSERT INTO repayment(id, difficulty, duration, interest_rate, remaining_amount, start_date, total_interest, type, target_id, username) VALUES(2, 50.0, 24, 5.85, 8000, '2018-10-25', 936, 'PRE_INTEREST', 2, 'test');
+insert into base_target(id, username, target_type, collected_money, money, project_description, start_time, target_state, target_rating, completion_rate, identity_option, use_of_funds, proof, target_rating_score) values (2, 'test', 'LARGE', 6400, 8000, 'target 2 description', '2018-06-10', 'ON_GOING', 'A', 80, 0, '托福培训', 'proof path', 0.95);
+insert into large_target(id, classification) VALUES (2, 0);
 

@@ -31,7 +31,7 @@ import java.util.UUID;
 @Component
 public class TransferHelper {
 
-    private static final Logger log = LoggerFactory.getLogger("PathUtils");
+    private static final Logger log = LoggerFactory.getLogger("TransferHelper");
 
     private String client_id = "550778b2-5ac4-476c-ac5e-526050ec6c50";
 

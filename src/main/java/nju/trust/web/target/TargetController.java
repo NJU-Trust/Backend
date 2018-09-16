@@ -55,19 +55,19 @@ public class TargetController {
     }
 
     @RequestMapping("/largeTargetList")
-    public List<TargetInfo> getLargeTargets(Pageable pageable, @Valid LargeTargetFilterRequest filter) {
+    public List<TargetInfo> getLargeTargets(Pageable pageable, @Valid @RequestBody LargeTargetFilterRequest filter) {
         return targetService.filterLargeTargets(pageable, filter);
     }
 
     @RequestMapping("/smallTargetList")
-    public List<TargetInfo> getSmallTargets(Pageable pageable, SmallTargetFilterRequest filter) {
+    public List<TargetInfo> getSmallTargets(Pageable pageable,@Valid @RequestBody SmallTargetFilterRequest filter) {
         System.out.println(pageable);
         System.out.println(filter);
         return targetService.filterSmallTargets(pageable, filter);
     }
 
     @RequestMapping("/recommendSmall")
-    public List<TargetInfo> smallTargetRecommendation(@Valid SmallTargetFilterRequest filterRequest) {
+    public List<TargetInfo> smallTargetRecommendation(@Valid @RequestBody SmallTargetFilterRequest filterRequest) {
         return targetService.recommendSmallTargets(filterRequest);
     }
 

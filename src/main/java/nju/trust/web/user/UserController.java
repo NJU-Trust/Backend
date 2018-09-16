@@ -18,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 
 /**
  * All rights Reserved, Designed by Popping Lim
@@ -66,13 +67,12 @@ public class UserController {
                         loginRequest.getPassword()
                 )
         );
-
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = tokenProvider.generateToken(authentication);
-        return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
+        return ResponseEntity.ok(new JwtAuthenticationResponse(jwt, loginRequest.getUsername(), userService.getRoles(loginRequest.getUsername())));
     }
 
-    @PostMapping(value = "/signup", consumes = "application/json", produces = "application/json")
+    @PostMapping(value = "/signup")
     public ApiResponse registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
         return userService.addUser(signUpRequest);
     }

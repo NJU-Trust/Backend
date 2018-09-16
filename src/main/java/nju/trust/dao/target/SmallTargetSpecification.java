@@ -4,6 +4,8 @@ import nju.trust.entity.CreditRating;
 import nju.trust.entity.target.SmallTarget;
 import nju.trust.entity.target.TargetRating;
 import nju.trust.payloads.target.SmallTargetFilterRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.*;
@@ -19,6 +21,8 @@ import java.util.Optional;
  */
 public class SmallTargetSpecification implements Specification<SmallTarget> {
 
+    private static final Logger log = LoggerFactory.getLogger("SmallTargetSpecification");
+
     private SmallTargetFilterRequest filter;
 
     public SmallTargetSpecification(SmallTargetFilterRequest filter) {
@@ -29,7 +33,7 @@ public class SmallTargetSpecification implements Specification<SmallTarget> {
     public Predicate toPredicate(Root<SmallTarget> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
 
         List<Predicate> predicates = new ArrayList<>();
-
+        log.info(filter.toString());
         // Money
         Expression<Double> moneyExpression = root.get("money");
         Optional.ofNullable(filter.getMoney()[0])
