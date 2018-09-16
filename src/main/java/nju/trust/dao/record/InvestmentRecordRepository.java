@@ -14,4 +14,6 @@ public interface InvestmentRecordRepository extends CrudRepository<InvestmentRec
     List<InvestmentRecord> findAllByTargetId(Long targetId);
 
     List<InvestmentRecord> findAllByUserUsername(String username);
+
+    List<InvestmentRecord> findDistinctByUserUsername(String username);
 }

@@ -1,4 +1,4 @@
-insert into user (username, password, credit_score) values ('test', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS', 85);
+insert into user (username, password, credit_score, credit_rating) values ('test', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS', 85, 'A');
 insert into user_month_statistics(id, income, disc, surplus, username, debt) values (1, 1000, 500, 500, 'test', 100);
 insert into user_month_statistics(id, income, disc, surplus, username, debt) values (2, 1050, 500, 500, 'test', 100);
 insert into user_month_statistics(id, income, disc, surplus, username, debt) values (3, 1010, 500, 500, 'test', 100);

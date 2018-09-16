@@ -1,6 +1,7 @@
 package nju.trust.service.personalinfo;
 
 import nju.trust.payloads.personalinfomation.CampusPerformance;
+import nju.trust.payloads.personalinfomation.InvestAndLoan;
 import nju.trust.payloads.personalinfomation.PersonalDetailInfomation;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,6 +28,21 @@ public class PersonalInformationServiceImplTest {
 
     @Test
     public void getInvestAndLoanInfo() {
+        System.out.println("test getInvestAndLoanInfo:");
+        String username = "test";
+        System.out.println("username:"+username);
+        InvestAndLoan result = test.getInvestAndLoanInfo(username);
+        print(result);
+    }
+    private void print(InvestAndLoan record) {
+        System.out.println("totalInvestment:"+record.getTotalInvestment());
+        System.out.println("totalLoan:"+record.getTotalLoan());
+        System.out.println("getMoney:"+record.getGetMoney());
+        System.out.println("getMoneyProgress:"+record.getGetMoneyProgress());
+        System.out.println("payMoney:"+record.getPayMoney());
+        System.out.println("payMoneyProgress:"+record.getPayMoneyProgress());
+        System.out.println("creditRatingScore:"+record.getCreditRatingScore());
+        System.out.println("creditRating:"+record.getCreditRating());
     }
 
     @Test
