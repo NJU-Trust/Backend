@@ -1,6 +1,7 @@
 package nju.trust.web.personalinfo;
 
 import nju.trust.payloads.ApiResponse;
+import nju.trust.payloads.personalinfomation.ChangedPersonalInfo;
 import nju.trust.payloads.personalinfomation.PersonalBaseInfo;
 import nju.trust.service.personalinfo.BaseInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +27,8 @@ public class BaseInfoController {
     }
 
     @PostMapping(value = "changeInformation")
-    public ApiResponse changeBaseInformation(String username){
-        return null;
+    public ApiResponse changeBaseInformation(ChangedPersonalInfo changedPersonalInfo){
+        return baseInfoService.changeBaseInfo(changedPersonalInfo);
     }
 
     @Autowired
