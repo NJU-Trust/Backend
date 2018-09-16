@@ -14,6 +14,8 @@ import nju.trust.entity.record.InvestmentRecord;
 import nju.trust.entity.record.UserEvidence.*;
 import nju.trust.entity.record.UserInfoCheckRecord;
 import nju.trust.entity.target.BaseTarget;
+import nju.trust.entity.target.TargetState;
+import nju.trust.entity.target.TargetType;
 import nju.trust.entity.user.Repayment;
 import nju.trust.entity.user.UnstructuredData;
 import nju.trust.entity.user.UnstructuredDataType;
@@ -54,7 +56,7 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
         this.repaymentRepository = repaymentRepository;
     }
 
-    // 账户总览 投资借款部分
+    // 投资借款部分
     @Override
     public InvestAndLoan getInvestAndLoanInfo(String username) {
         User user = userRepository.findByUsername(username).get();
@@ -69,7 +71,7 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
         double getMoney = calGetMoney(username);
         info.setGetMoney(toForm(getMoney));
         // 本息收回进度
-        double totalMoney = calTotalMoney(username);  // 本息
+        double totalMoney = calPI(username);  // 本息
         double getMoneyRrogress = 100;
         if(totalMoney != 0) {
             getMoneyRrogress = getMoney / totalMoney * 100;
@@ -91,7 +93,7 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
         return info;
     }
     // 本息
-    private double calTotalMoney(String username) {
+    private double calPI(String username) {
         double sum = 0;
 
         List<InvestmentRecord> investmentRecords = investmentRecordRepository.findAllByUserUsername(username);
@@ -171,12 +173,62 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
 
 
     /**
-     * TODO code
+     * 账户总额
      * @param username 用户名
      */
     @Override
     public TotalAccountInfo getTotalAccountInfo(String username) {
-        return null;
+        TotalAccountInfo info = new TotalAccountInfo();
+
+        double balance = 0;
+        double frozenAmount = calFrozenAmount(username);
+        double pendingPI = calPendingPI(username);
+        double investmentInBidding = calInvestmentInBidding(username);
+        double totalAccount = balance + frozenAmount + pendingPI + investmentInBidding;
+
+        info.setTotalAccount(totalAccount);
+        info.setBalance(balance);
+        info.setFrozenAmount(frozenAmount);
+        info.setPendingPI(pendingPI);
+        info.setInvestmentInBidding(investmentInBidding);
+
+        return info;
+    }
+    // 冻结金额:投资出去还没成交的部分（投资人视角，成交后转入待回收本息）
+    private double calFrozenAmount(String username) {
+        double sum = 0;
+
+        List<InvestmentRecord> investmentRecords = investmentRecordRepository.findAllByUserUsername(username);
+        if(investmentRecords == null) {
+            return sum;
+        }
+        for(InvestmentRecord investment : investmentRecords) {
+            if(investment.getTarget().getTargetState().equals(TargetState.ON_GOING)) { // 招标中
+                sum = sum + investment.getInvestedMoney();
+            }
+        }
+
+        return sum;
+    }
+    // 待回收本息:成交后的冻结金额（投资人视角）
+    private double calPendingPI(String username) {
+        return calGetMoney(username);
+    }
+    // 招标中投资:借款有人投进来但标的还没成交的
+    private double calInvestmentInBidding(String username) {
+        double sum = 0;
+
+        List<BaseTarget> targets = baseTargetRepository.findDistinctByUserUsername(username);
+        if(targets == null) {
+            return sum;
+        }
+        for(BaseTarget target : targets) {
+            if(target.getTargetState().equals(TargetState.ON_GOING)) {
+                sum = sum + target.getCollectedMoney();
+            }
+        }
+
+        return sum;
     }
 
     /**

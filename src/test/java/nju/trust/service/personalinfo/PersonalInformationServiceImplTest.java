@@ -1,9 +1,6 @@
 package nju.trust.service.personalinfo;
 
-import nju.trust.payloads.personalinfomation.CampusPerformance;
-import nju.trust.payloads.personalinfomation.InvestAndLoan;
-import nju.trust.payloads.personalinfomation.PersonalDetailInfomation;
-import nju.trust.payloads.personalinfomation.PersonalRelationship;
+import nju.trust.payloads.personalinfomation.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +47,18 @@ public class PersonalInformationServiceImplTest {
 
     @Test
     public void getTotalAccountInfo() {
+        System.out.println("test getTotalAccountInfo");
+        String username = "test";
+        System.out.println("username:"+username);
+        TotalAccountInfo result = test.getTotalAccountInfo(username);
+        print(result);
+    }
+    private void print(TotalAccountInfo info) {
+        System.out.println("totalAccount:" + info.getTotalAccount());
+        System.out.println("balance:" + info.getBalance());
+        System.out.println("frozenAmount:" + info.getFrozenAmount());
+        System.out.println("pendingPI:" + info.getPendingPI());
+        System.out.println("investmentInBidding:" + info.getInvestmentInBidding());
     }
 
     @Test

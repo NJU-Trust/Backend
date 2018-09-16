@@ -1,9 +1,6 @@
 package nju.trust.web.personalinfo;
 
-import nju.trust.payloads.personalinfomation.CampusPerformance;
-import nju.trust.payloads.personalinfomation.InvestAndLoan;
-import nju.trust.payloads.personalinfomation.PersonalDetailInfomation;
-import nju.trust.payloads.personalinfomation.PersonalRelationship;
+import nju.trust.payloads.personalinfomation.*;
 import nju.trust.service.personalinfo.PersonalInformationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -48,5 +45,11 @@ public class PersonalInfoController {
     @GetMapping(value = "/relationship")
     public List<PersonalRelationship> getPersonalRelationships(String username) {
         return personalInformationService.getPersonalRelationships(username);
+    }
+
+    // 账户总额
+    @GetMapping(value = "/totalAccount")
+    public TotalAccountInfo getTotalAccountInfo(String username) {
+        return personalInformationService.getTotalAccountInfo(username);
     }
 }
