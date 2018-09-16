@@ -12,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.security.Principal;
 import java.util.List;
 
@@ -24,6 +23,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/loan")
 public class TargetController {
+
+    private static final double RECOMMEND_INTEREST = 12.;
 
     private TargetService targetService;
 
@@ -60,7 +61,7 @@ public class TargetController {
     }
 
     @RequestMapping("/smallTargetList")
-    public List<TargetInfo> getSmallTargets(Pageable pageable,@Valid @RequestBody SmallTargetFilterRequest filter) {
+    public List<TargetInfo> getSmallTargets(Pageable pageable, @Valid @RequestBody SmallTargetFilterRequest filter) {
         System.out.println(pageable);
         System.out.println(filter);
         return targetService.filterSmallTargets(pageable, filter);
@@ -120,5 +121,10 @@ public class TargetController {
     @RequestMapping("/repayment/consumptionCorrection")
     public ConsumptionCorrection getConsumptionCorrection(Principal principal, Long targetId) {
         return targetService.getConsumptionCorrection(principal.getName(), targetId);
+    }
+
+    @RequestMapping("/rate")
+    public Double getRate(Principal principal) {
+        return RECOMMEND_INTEREST;
     }
 }
