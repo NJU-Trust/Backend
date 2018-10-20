@@ -78,7 +78,7 @@ public interface AdminService {
      * 人均统计：人均累计借款额度、笔均借款额度、人均累计投资额度
      * 其他统计：最大单户借款余额占比、最大10户借款余额占比、平均满标时间
      */
-    List<BaseStatistics> getBaseStatistics();
+    BaseStatistics getBaseStatistics();
 
     /**
      * 统计违约信息
@@ -86,7 +86,7 @@ public interface AdminService {
      * 累计违约率、逾期项目数、项目逾期率、近三月项目逾期率、借款逾期金额
      * 待偿金额、借贷金额逾期率、借贷坏账率、客户投诉情况
      */
-    List<BreakContractStatistics> getBreakContractStatistics();
+    BreakContractStatistics getBreakContractStatistics();
 
     // 管理审核
     /**

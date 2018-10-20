@@ -2,12 +2,13 @@ package nju.trust.service.admin;
 
 import nju.trust.dao.admin.*;
 import nju.trust.dao.admin.UserEvidenceDao.UserEvidenceRepository;
+import nju.trust.dao.record.InvestmentRecordRepository;
 import nju.trust.dao.target.LargeTargetRepository;
 import nju.trust.dao.target.SmallTargetRepository;
 import nju.trust.dao.target.TargetRepository;
-import nju.trust.entity.CheckItem;
 import nju.trust.entity.CheckState;
 import nju.trust.entity.record.ApproveResult;
+import nju.trust.entity.record.InvestmentRecord;
 import nju.trust.entity.record.UserEvidence.BaseUserEvidence;
 import nju.trust.entity.record.UserInfoCheckRecord;
 import nju.trust.entity.target.*;
@@ -16,16 +17,15 @@ import nju.trust.entity.user.Repayment;
 import nju.trust.entity.user.User;
 import nju.trust.payloads.ApiResponse;
 import nju.trust.payloads.admin.*;
-import nju.trust.payloads.target.LargeTargetInfo;
-import nju.trust.payloads.target.SmallTargetInfo;
-import nju.trust.payloads.target.TargetInfo;
 import nju.trust.payloads.user.UserSimpleInfo;
-import nju.trust.service.target.TargetService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -48,19 +48,10 @@ public class AdminServiceImpl implements AdminService {
     private UserInfoCheckRecordRepository userInfoCheckRecordRepository;
     private RepaymentRepository repaymentRepository;
     private UserEvidenceRepository userEvidenceRecordRepository;
+    private InvestmentRecordRepository investmentRecordRepository;
     private ScoreCalUtil scoreCalUtil;
     @Autowired
-    public AdminServiceImpl(LoanStateCheckUtil calUtil,
-                            AdminUserRepository adminUserRepository,
-                            BaseTargetRepository baseTargetRepository,
-                            AdminInvestmentRecordRepository adminInvestmentRecordRepository,
-                            SmallTargetRepository smallTargetRepository,
-                            LargeTargetRepository largeTargetRepository,
-                            TargetRepository targetRepository,
-                            UserInfoCheckRecordRepository userInfoCheckRecordRepository,
-                            RepaymentRepository repaymentRepository,
-                            UserEvidenceRepository userEvidenceRecordRepository,
-                            ScoreCalUtil scoreCalUtil) {
+    public AdminServiceImpl(LoanStateCheckUtil calUtil, AdminUserRepository adminUserRepository, BaseTargetRepository baseTargetRepository, AdminInvestmentRecordRepository adminInvestmentRecordRepository, SmallTargetRepository smallTargetRepository, LargeTargetRepository largeTargetRepository, TargetRepository targetRepository, UserInfoCheckRecordRepository userInfoCheckRecordRepository, RepaymentRepository repaymentRepository, UserEvidenceRepository userEvidenceRecordRepository, InvestmentRecordRepository investmentRecordRepository, ScoreCalUtil scoreCalUtil) {
         this.calUtil = calUtil;
         this.adminUserRepository = adminUserRepository;
         this.baseTargetRepository = baseTargetRepository;
@@ -71,6 +62,7 @@ public class AdminServiceImpl implements AdminService {
         this.userInfoCheckRecordRepository = userInfoCheckRecordRepository;
         this.repaymentRepository = repaymentRepository;
         this.userEvidenceRecordRepository = userEvidenceRecordRepository;
+        this.investmentRecordRepository = investmentRecordRepository;
         this.scoreCalUtil = scoreCalUtil;
     }
 
@@ -301,10 +293,151 @@ public class AdminServiceImpl implements AdminService {
      * 总额：交易总额、交易总笔数、借款人数量、投资人数量
      * 人均统计：人均累计借款额度、笔均借款额度、人均累计投资额度
      * 其他统计：最大单户借款余额占比、最大10户借款余额占比、平均满标时间
+     * TODO 最大单户借款余额占比、最大10户借款余额占比的计算方式等商业组通知
      */
     @Override
-    public List<BaseStatistics> getBaseStatistics() {
-        return null;
+    public BaseStatistics getBaseStatistics() {
+        LocalDate date = LocalDate.now();
+        List<BaseTarget> targets = baseTargetRepository.findDistinctByStartTime(date);
+
+        BaseStatistics baseStatistics = new BaseStatistics();
+
+        double dealMoneySum = getDealMoneySum(targets);
+        baseStatistics.setDealMoneySum(dealMoneySum);
+        int dealNum = getDealNum(targets);
+        baseStatistics.setDealNum(dealNum);
+        int borrowerNum = getBorrowerNum(targets);
+        baseStatistics.setBorrowerNum(borrowerNum);
+
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String s = date.toString();
+        LocalDateTime time1 = LocalDateTime.parse(s + " 00:00:00", df);
+        LocalDateTime time2 = LocalDateTime.parse(s + " 23:59:59", df);
+        List<InvestmentRecord> investmentRecords = investmentRecordRepository.findDistinctByTimeBetween(time1, time2);
+
+        int investorNum = getInvestorNum(investmentRecords);
+        baseStatistics.setInvestorNum(investorNum);
+
+        double loanPerPerson = getLoanPerPerson(targets, borrowerNum);
+        baseStatistics.setLoanPerPerson(loanPerPerson);
+
+        double loanPerTarget = getLoanPerTarget(targets);
+        baseStatistics.setLoanPerTarget(loanPerTarget);
+
+        double investmentPerPerson = getInvestmentPerPerson(investmentRecords, investorNum);
+        baseStatistics.setInvestmentPerPerson(investmentPerPerson);
+
+        targets = (List<BaseTarget>)baseTargetRepository.findAll();
+
+        double mostLoanPersonRate = getMostLoanPersonRate();
+        baseStatistics.setMostLoanPersonRate(mostLoanPersonRate);
+
+        double most10LoanPersonRate = getMost10LoanPersonRate();
+        baseStatistics.setMost10LoanPersonRate(most10LoanPersonRate);
+
+        double averageGoingTime = getAverageGoingTime(targets);
+        baseStatistics.setAverageGoingTime(averageGoingTime);
+
+        return baseStatistics;
+    }
+
+    // 交易总额
+    private double getDealMoneySum(List<BaseTarget> targets) {
+        double sum = 0;
+        for(BaseTarget target : targets) {
+            sum = sum + target.getMoney();
+        }
+        return sum;
+    }
+    // 交易总笔数
+    private int getDealNum(List<BaseTarget> targets) {
+        return targets.size();
+    }
+    // 借款人数量
+    private int getBorrowerNum(List<BaseTarget> targets) {
+        List<String> names = new ArrayList<>();
+        for(BaseTarget target : targets) {
+            String name = target.getUser().getUsername();
+            if(!names.contains(name)) {
+                names.add(name);
+            }
+        }
+        return names.size();
+    }
+    // 投资人数量
+    private int getInvestorNum(List<InvestmentRecord> investmentRecords) {
+        List<String> names = new ArrayList<>();
+        for(InvestmentRecord investmentRecord : investmentRecords) {
+            String username = investmentRecord.getUser().getUsername();
+            if(!names.contains(username)) {
+                names.add(username);
+            }
+        }
+        return names.size();
+    }
+    // 人均累计借款额度
+    private double getLoanPerPerson(List<BaseTarget> targets, int borrowerNum) {
+        if(borrowerNum <= 0) {
+            return -1;
+        }
+        double money = 0;
+        for(BaseTarget target : targets) {
+            money = money + target.getMoney();
+        }
+        return money/borrowerNum;
+    }
+    // 笔均借款额度
+    private double getLoanPerTarget(List<BaseTarget> targets) {
+        if(targets == null || targets.size() == 0) {
+            return -1;
+        }
+        double money = 0;
+        for(BaseTarget target : targets) {
+            money = money + target.getMoney();
+        }
+        return money/targets.size();
+    }
+    // 人均累计投资额度
+    private double getInvestmentPerPerson(List<InvestmentRecord> investmentRecords, int investorNum) {
+        if(investorNum <= 0) {
+            return -1;
+        }
+        double money = 0;
+        for(InvestmentRecord investmentRecord : investmentRecords) {
+            money = money + investmentRecord.getInvestedMoney();
+        }
+        return money/investorNum;
+    }
+    // TODO 最大单户借款余额占比
+    private double getMostLoanPersonRate() {
+        return -1;
+    }
+    // TODO 最大10户借款余额占比
+    private double getMost10LoanPersonRate() {
+        return -1;
+    }
+    // 平均满标时间（以天为单位）
+    private double getAverageGoingTime(List<BaseTarget> targets) {
+        double sum = 0;
+        int num = 0;
+
+        for(BaseTarget target : targets) {
+            Long id = target.getId();
+            if(repaymentRepository.existsByTargetId(id)) {
+                num++;
+                Repayment repayment = repaymentRepository.findFirstByTargetId(id);
+                LocalDate startDate = target.getStartTime();
+                LocalDate endDate = repayment.getStartDate();
+                Period period = Period.between(startDate, endDate);
+                sum = sum + period.getDays();
+            }
+        }
+
+        if(num <= 0) {
+            return -1;
+        }else {
+            return sum/num;
+        }
     }
 
     /**
@@ -314,7 +447,7 @@ public class AdminServiceImpl implements AdminService {
      * 待偿金额、借贷金额逾期率、借贷坏账率、客户投诉情况
      */
     @Override
-    public List<BreakContractStatistics> getBreakContractStatistics() {
+    public BreakContractStatistics getBreakContractStatistics() {
         return null;
     }
 

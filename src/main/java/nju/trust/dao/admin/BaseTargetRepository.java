@@ -5,6 +5,7 @@ import nju.trust.entity.target.TargetState;
 import nju.trust.entity.target.TargetType;
 import org.springframework.data.repository.CrudRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -29,4 +30,6 @@ public interface BaseTargetRepository extends CrudRepository<BaseTarget, Long> {
     List<BaseTarget> findDistinctByTargetStateAndTargetType(TargetState targetState, TargetType targetType);
 
     List<BaseTarget> findDistinctByUserUsername(String username);
+
+    List<BaseTarget> findDistinctByStartTime(LocalDate date);
 }

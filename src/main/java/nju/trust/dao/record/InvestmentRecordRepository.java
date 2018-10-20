@@ -3,6 +3,7 @@ package nju.trust.dao.record;
 import nju.trust.entity.record.InvestmentRecord;
 import org.springframework.data.repository.CrudRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -16,4 +17,6 @@ public interface InvestmentRecordRepository extends CrudRepository<InvestmentRec
     List<InvestmentRecord> findAllByUserUsername(String username);
 
     List<InvestmentRecord> findDistinctByUserUsername(String username);
+
+    List<InvestmentRecord> findDistinctByTimeBetween(LocalDateTime time1, LocalDateTime time2);
 }

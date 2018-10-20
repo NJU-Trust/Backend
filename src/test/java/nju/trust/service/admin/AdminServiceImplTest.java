@@ -3,6 +3,7 @@ package nju.trust.service.admin;
 import nju.trust.entity.UserType;
 import nju.trust.entity.record.ApproveResult;
 import nju.trust.payloads.ApiResponse;
+import nju.trust.payloads.admin.BaseStatistics;
 import nju.trust.payloads.admin.UserCheckItem;
 import nju.trust.payloads.admin.UserCheckResponse;
 import nju.trust.payloads.admin.UserStateList;
@@ -68,6 +69,21 @@ public class AdminServiceImplTest {
 
     @Test
     public void getBaseStatistics() {
+        BaseStatistics baseStatistics = test.getBaseStatistics();
+        print(baseStatistics);
+    }
+    private void print(BaseStatistics baseStatistics) {
+        System.out.println("BaseStatistics:");
+        System.out.println("dealMoneySum:"+baseStatistics.getDealMoneySum());
+        System.out.println("dealNum:"+baseStatistics.getDealNum());
+        System.out.println("borrowerNum:"+baseStatistics.getBorrowerNum());
+        System.out.println("investorNum:"+baseStatistics.getInvestorNum());
+        System.out.println("loanPerPerson:"+baseStatistics.getLoanPerPerson());
+        System.out.println("loanPerTarget:"+baseStatistics.getLoanPerTarget());
+        System.out.println("investmentPerPerson:"+baseStatistics.getInvestmentPerPerson());
+        System.out.println("mostLoanPersonRate:"+baseStatistics.getMostLoanPersonRate());
+        System.out.println("most10LoanPersonRate:"+baseStatistics.getMost10LoanPersonRate());
+        System.out.println("averageGoingTime:"+baseStatistics.getAverageGoingTime());
     }
 
     @Test
@@ -155,4 +171,5 @@ public class AdminServiceImplTest {
     @Test
     public void approveTarget() {
     }
+
 }
