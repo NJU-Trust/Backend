@@ -43,7 +43,7 @@ public class PersonalInfoController {
 
     // 校园关系图
     @GetMapping(value = "/relationship")
-    public List<PersonalRelationship> getPersonalRelationships(String username) {
+    public PersonalRelationship getPersonalRelationships(String username) {
         return personalInformationService.getPersonalRelationships(username);
     }
 
@@ -51,5 +51,11 @@ public class PersonalInfoController {
     @GetMapping(value = "/totalAccount")
     public TotalAccountInfo getTotalAccountInfo(String username) {
         return personalInformationService.getTotalAccountInfo(username);
+    }
+
+    // 待办事项
+    @GetMapping(value = "/todo")
+    public List<EventsInfo> getAllEventsInfo(String username) {
+        return personalInformationService.getAllEventsInfo(username);
     }
 }

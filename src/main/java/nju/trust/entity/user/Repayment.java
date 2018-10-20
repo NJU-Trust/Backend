@@ -80,8 +80,8 @@ public class Repayment {
      * 还未开始还款，则返回-1
      */
     public long nextDue() {
-        if (LocalDate.now().isBefore(startDate))
-            return -1L;
+//        if (LocalDate.now().isBefore(startDate))
+//            return -1L;
 
         LocalDate now = LocalDate.now();
         LocalDate pointer = startDate;

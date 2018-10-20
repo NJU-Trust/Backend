@@ -49,6 +49,17 @@ public class SmallTargetFilterRequest {
     @NotNull
     private List<TargetRating> targetRating;
 
+    @NotNull
+    private int size;
+
+    @NotNull
+    private int page;
+
+    @NotNull
+    private String properties;
+
+
+
     @Override
     public String toString() {
         return "SmallTargetFilterRequest{" +
@@ -118,4 +129,27 @@ public class SmallTargetFilterRequest {
         this.userCreditRating = userCreditRating;
     }
 
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    public int getPage() {
+        return page;
+    }
+
+    public void setPage(int page) {
+        this.page = page;
+    }
+
+    public String getProperties() {
+        return properties;
+    }
+
+    public void setProperties(String properties) {
+        this.properties = properties;
+    }
 }

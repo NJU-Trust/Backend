@@ -6,8 +6,6 @@ package nju.trust.payloads.admin;
  * 逾期项目：未按时还清所有款项的项目（逾期金额不为0）
  * @Date: 2018/8/28
  */
-// TODO 数据格式string改double或int
-// TODO comlaints的格式改为list
 public class BreakContractStatistics {
     private String DefaultRate = "";            // 累计违约率
     private String overdueProgramNum = "";      // 逾期项目数

@@ -27,7 +27,7 @@ public interface TargetService {
 
     List<TargetInfo> filterLargeTargets(Pageable pageable, LargeTargetFilterRequest filterRequest);
 
-    List<TargetInfo> filterSmallTargets(Pageable pageable, SmallTargetFilterRequest filterRequest);
+    List<TargetInfo> filterSmallTargets(SmallTargetFilterRequest filterRequest);
 
     List<TargetInfo> recommendSmallTargets(SmallTargetFilterRequest filterRequest);
 

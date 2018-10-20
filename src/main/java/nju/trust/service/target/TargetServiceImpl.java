@@ -107,6 +107,7 @@ public class TargetServiceImpl implements TargetService {
         BaseTarget target = targetRepository.findById(targetId)
                 .orElseThrow(() -> new ResourceNotFoundException("Target not found"));
         Repayment repayment = target.getRepayment();
+        log.info(repayment.nextDueDate().toString());
         RepaymentRecord record = repaymentRecordRepository
                 .findByReturnDateAndTargetId(repayment.nextDueDate(), targetId)
                 .orElseThrow(() -> new ResourceNotFoundException("Repayment records not found"));
@@ -188,10 +189,11 @@ public class TargetServiceImpl implements TargetService {
     }
 
     @Override
-    public List<TargetInfo> filterSmallTargets(Pageable pageable, SmallTargetFilterRequest filterRequest) {
+    public List<TargetInfo> filterSmallTargets(SmallTargetFilterRequest filterRequest) {
         Specification<SmallTarget> specification = new SmallTargetSpecification(filterRequest);
+        Pageable pageable = PageRequest.of(filterRequest.getPage(), filterRequest.getSize(),new Sort(Sort.Direction.ASC, filterRequest.getProperties()));
         Page<SmallTarget> targets = smallTargetRepository.findAll(specification, pageable);
-
+        System.out.println(pageable);
         return targets.stream().map(SmallTargetInfo::new).collect(Collectors.toList());
     }
 
@@ -389,7 +391,7 @@ public class TargetServiceImpl implements TargetService {
     private List<RepaymentRecord> getRepaymentRecords(BaseTarget target, BasicTargetRequest request, List<RepaymentMonthInfo> monthlyInfo) {
         LocalDate startRepayingTime = request.getStartTime();
         List<RepaymentRecord> records = new ArrayList<>();
-        for (int i = 0; i < request.getDuration(); i++) {
+        for (int i = 0; i < monthlyInfo.size(); i++) {
             RepaymentMonthInfo monthInfo = monthlyInfo.get(i);
             RepaymentRecord record = new RepaymentRecord(target.getUser(), target,
                     monthInfo.getSum(), monthInfo.getPrincipal(), i + 1, monthInfo.getInterest(),
