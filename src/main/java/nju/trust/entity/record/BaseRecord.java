@@ -13,7 +13,7 @@ public class BaseRecord {
 
     private LocalDateTime time;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "username")
     private User user;
 

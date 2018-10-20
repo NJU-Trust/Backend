@@ -95,6 +95,14 @@ public class TargetServiceImpl implements TargetService {
     }
 
     @Override
+    public List<InvestmentHistory> getInvestmentHistory(Long targetId) {
+        List<InvestmentRecord> records = investmentRecordRepository.findAllByTargetId(targetId);
+        return records.stream()
+                .map(r -> new InvestmentHistory(r.getTime(), r.getUser().getUsername(), r.getInvestedMoney()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public TargetDetails getTargetDetails(Long targetId) {
         BaseTarget target = targetRepository.findById(targetId)
                 .orElseThrow(() -> new ResourceNotFoundException("Target not found"));

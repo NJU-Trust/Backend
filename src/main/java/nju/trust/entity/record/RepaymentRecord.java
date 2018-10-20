@@ -68,6 +68,10 @@ public class RepaymentRecord extends BaseRecord {
             return 0L;
     }
 
+    public LocalDate getActualRepayDate() {
+        return actualRepayDate;
+    }
+
     public void makeRepaid() {
         actualRepayDate = LocalDate.now();
     }

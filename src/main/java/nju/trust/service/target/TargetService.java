@@ -15,6 +15,8 @@ import java.util.List;
  */
 public interface TargetService {
 
+    List<InvestmentHistory> getInvestmentHistory(Long targetId);
+
     TargetDetails getTargetDetails(Long targetId);
 
     TargetInfo getTargetInfo(Long targetId);

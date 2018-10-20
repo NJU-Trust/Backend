@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.security.Principal;
 import java.util.List;
 
@@ -33,6 +34,12 @@ public class TargetController {
     public TargetController(TargetService targetService, UserService userService) {
         this.targetService = targetService;
         this.userService = userService;
+    }
+
+
+    @GetMapping("/investmentRecord")
+    public List<InvestmentHistory> getInvestmentRecords(@NotNull Long targetId) {
+        return targetService.getInvestmentHistory(targetId);
     }
 
     @RequestMapping("/details")
