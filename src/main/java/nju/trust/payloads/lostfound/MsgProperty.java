@@ -18,4 +18,14 @@ public enum MsgProperty {
     public String getStr() {
         return str;
     }
+
+    public static MsgProperty getMsgProperty(String str) {
+        MsgProperty[] msgProperties = MsgProperty.values();
+        for(MsgProperty property : msgProperties) {
+            if(str.equals(property.getStr())) {
+                return property;
+            }
+        }
+        return null;
+    }
 }

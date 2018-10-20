@@ -18,4 +18,14 @@ public enum ProcessState {
     public String getStr() {
         return str;
     }
+
+    public static ProcessState getProcessState(String str){
+        ProcessState[] processStates = ProcessState.values();
+        for(ProcessState state : processStates){
+            if(str.equals(state.getStr())){
+                return state;
+            }
+        }
+        return null;
+    }
 }

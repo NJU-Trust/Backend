@@ -26,4 +26,16 @@ public enum LostPlace {
     public String getStr() {
         return str;
     }
+
+
+    public static LostPlace getLostPlace(String str){
+        LostPlace[] lostPlaces = LostPlace.values();
+        for(LostPlace property : lostPlaces){
+            if(str.equals(property.getStr())){
+                return property;
+            }
+        }
+
+        return LostPlace.OTHER;
+    }
 }

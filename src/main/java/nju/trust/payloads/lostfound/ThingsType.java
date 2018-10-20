@@ -21,4 +21,14 @@ public enum ThingsType {
     public String getStr() {
         return str;
     }
+
+    public static ThingsType getThingsType(String str){
+        ThingsType[] thingsTypes = ThingsType.values();
+        for(ThingsType type: thingsTypes){
+            if(str.equals(type.getStr())){
+                return type;
+            }
+        }
+        return ThingsType.OTHER;
+    }
 }

@@ -1,36 +1,21 @@
+package nju.trust.payloads.lostfound;
 
-package nju.trust.entity.lostfound;
-
-import nju.trust.entity.user.User;
-import nju.trust.payloads.lostfound.*;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-
 
 /**
  * @Author: 161250127
  * @Description:
  * @Date: 2018/10/20
  */
-@Entity
-public class LostAndFound {
-    @Id
-    @GeneratedValue
-    private Long id;
-
-    @ManyToOne(targetEntity = User.class)
-    private User user;
+public class TaskInfo {
+    private String username;
 
     private ProcessState state;
 
     private LocalDate date;
 
-    @Enumerated(EnumType.STRING)
     private MsgProperty property;
 
-    @Enumerated(EnumType.STRING)
     private ThingsType thingsType;
 
     private String thingsName;
@@ -41,53 +26,29 @@ public class LostAndFound {
 
     private String description;
 
-    @Enumerated(EnumType.STRING)
     private LostPlace lostPlace;
 
-    public LostAndFound() {
+    public TaskInfo() {
 
     }
 
-    public LostAndFound(User user, ProcessState state, LocalDate date, MsgProperty property, ThingsType thingsType, String thingsName, String phone, String picPath, String description,LostPlace lostPlace) {
-        this.user = user;
-        this.state = state;
-        this.date = date;
-        this.property = property;
-        this.thingsType = thingsType;
+    public TaskInfo(String username,String property, String thingsType, String thingsName, String phone, String picPath, String description, String lostPlace) {
+        this.username = username;
+        this.property = MsgProperty.getMsgProperty(property);
+        this.thingsType = ThingsType.getThingsType(thingsType);
         this.thingsName = thingsName;
         this.phone = phone;
         this.picPath = picPath;
         this.description = description;
-        this.lostPlace = lostPlace;
+        this.lostPlace = LostPlace.getLostPlace(lostPlace);
     }
 
-    public LostAndFound(@NotNull TaskInfo taskInfo, User user){
-        this.user = user;
-        this.state = taskInfo.getState();
-        this.date = taskInfo.getDate();
-        this.property = taskInfo.getProperty();
-        this.thingsType = taskInfo.getThingsType();
-        this.thingsName = taskInfo.getThingsName();
-        this.phone = taskInfo.getPhone();
-        this.picPath = taskInfo.getPicPath();
-        this.description = taskInfo.getDescription();
-        this.lostPlace =taskInfo.getLostPlace();
+    public String getUsername() {
+        return username;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public ProcessState getState() {
@@ -162,4 +123,3 @@ public class LostAndFound {
         this.lostPlace = lostPlace;
     }
 }
-
