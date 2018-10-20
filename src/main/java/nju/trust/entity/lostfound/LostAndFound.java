@@ -6,7 +6,7 @@ import nju.trust.payloads.lostfound.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 
 /**
@@ -23,9 +23,10 @@ public class LostAndFound {
     @ManyToOne(targetEntity = User.class)
     private User user;
 
+    @Enumerated(EnumType.STRING)
     private ProcessState state;
 
-    private LocalDate date;
+    private LocalDateTime date;
 
     @Enumerated(EnumType.STRING)
     private MsgProperty property;
@@ -48,7 +49,7 @@ public class LostAndFound {
 
     }
 
-    public LostAndFound(User user, ProcessState state, LocalDate date, MsgProperty property, ThingsType thingsType, String thingsName, String phone, String picPath, String description,LostPlace lostPlace) {
+    public LostAndFound(User user, ProcessState state, LocalDateTime date, MsgProperty property, ThingsType thingsType, String thingsName, String phone, String picPath, String description,LostPlace lostPlace) {
         this.user = user;
         this.state = state;
         this.date = date;
@@ -98,11 +99,11 @@ public class LostAndFound {
         this.state = state;
     }
 
-    public LocalDate getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 

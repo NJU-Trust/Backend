@@ -28,7 +28,7 @@ public interface LostAndFoundService {
      * @return:
      * @exception:
      */
-    public List<TaskInfo> getMyTask(MsgProperty msgProperty, ProcessState processState);
+    public List<TaskInfo> getMyTask(String username, MsgProperty msgProperty, ProcessState processState);
 
     /**
      * @author: 唐佳未

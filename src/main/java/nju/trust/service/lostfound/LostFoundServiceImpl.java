@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,7 +34,7 @@ public class LostFoundServiceImpl implements LostAndFoundService {
 
     @Override
     public ApiResponse launchTask(TaskInfo taskInfo) {
-        taskInfo.setDate(LocalDate.now());
+        taskInfo.setDate(LocalDateTime.now());
         taskInfo.setState(ProcessState.DOING);
         Optional<User> userList = userRepository.findByUsername(taskInfo.getUsername());
         User user = userList.get();
@@ -42,8 +44,13 @@ public class LostFoundServiceImpl implements LostAndFoundService {
     }
 
     @Override
-    public List<TaskInfo> getMyTask(MsgProperty msgProperty, ProcessState processState) {
-        return null;
+    public List<TaskInfo> getMyTask(String username, MsgProperty msgProperty, ProcessState processState) {
+        List<LostAndFound> lostAndFounds = lostAndFoundRepository.findDistinctByUserUsernameAndPropertyAndState(username,msgProperty,processState);
+        List<TaskInfo> taskInfos = new ArrayList<>();
+        for(int i=0;i<lostAndFounds.size();i++){
+            taskInfos.add(new TaskInfo(lostAndFounds.get(i)));
+        }
+        return taskInfos;
     }
 
     @Override

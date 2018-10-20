@@ -1,6 +1,8 @@
 package nju.trust.payloads.lostfound;
 
-import java.time.LocalDate;
+import nju.trust.entity.lostfound.LostAndFound;
+
+import java.time.LocalDateTime;
 
 /**
  * @Author: 161250127
@@ -12,7 +14,7 @@ public class TaskInfo {
 
     private ProcessState state;
 
-    private LocalDate date;
+    private LocalDateTime date;
 
     private MsgProperty property;
 
@@ -43,6 +45,19 @@ public class TaskInfo {
         this.lostPlace = LostPlace.getLostPlace(lostPlace);
     }
 
+    public TaskInfo(LostAndFound lostAndFound){
+        this.username = lostAndFound.getUser().getUsername();
+        this.state = lostAndFound.getState();
+        this.date = lostAndFound.getDate();
+        this.property = lostAndFound.getProperty();
+        this.thingsType = lostAndFound.getThingsType();
+        this.thingsName = lostAndFound.getThingsName();
+        this.phone = lostAndFound.getPhone();
+        this.picPath = lostAndFound.getPicPath();
+        this.description = lostAndFound.getDescription();
+        this.lostPlace = lostAndFound.getLostPlace();
+    }
+
     public String getUsername() {
         return username;
     }
@@ -59,11 +74,11 @@ public class TaskInfo {
         this.state = state;
     }
 
-    public LocalDate getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 
@@ -121,5 +136,11 @@ public class TaskInfo {
 
     public void setLostPlace(LostPlace lostPlace) {
         this.lostPlace = lostPlace;
+    }
+
+    public void print(){
+        System.out.println("username:"+this.username);
+        System.out.println("description:"+this.description);
+        System.out.println("lostPlace:"+this.lostPlace);
     }
 }
