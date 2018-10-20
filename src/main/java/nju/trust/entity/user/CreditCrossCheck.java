@@ -15,9 +15,9 @@ public class CreditCrossCheck {
     private Long id;
 
     @ManyToOne(targetEntity = User.class)
-    @JoinColumn(name = "username", nullable = false)
     private User user;
 
+    @ManyToOne(targetEntity = User.class)
     private User relatedPerson;
 
     private int q1;
