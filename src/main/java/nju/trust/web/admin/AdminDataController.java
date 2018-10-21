@@ -27,7 +27,7 @@ public class AdminDataController {
 
     // 统计当天的基础数据
     @GetMapping(value = "/base")
-    //@PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public BaseStatistics getBaseStatistics() {
         return adminService.getBaseStatistics();
     }

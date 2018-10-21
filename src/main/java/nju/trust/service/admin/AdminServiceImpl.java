@@ -293,7 +293,6 @@ public class AdminServiceImpl implements AdminService {
      * 总额：交易总额、交易总笔数、借款人数量、投资人数量
      * 人均统计：人均累计借款额度、笔均借款额度、人均累计投资额度
      * 其他统计：最大单户借款余额占比、最大10户借款余额占比、平均满标时间
-     * TODO 最大单户借款余额占比、最大10户借款余额占比的计算方式等商业组通知
      */
     @Override
     public BaseStatistics getBaseStatistics() {
@@ -318,6 +317,11 @@ public class AdminServiceImpl implements AdminService {
         int investorNum = getInvestorNum(investmentRecords);
         baseStatistics.setInvestorNum(investorNum);
 
+        targets = (List<BaseTarget>)baseTargetRepository.findAll();
+        borrowerNum = getBorrowerNum(targets);
+        investmentRecords = (List<InvestmentRecord>)investmentRecordRepository.findAll();
+        investorNum = getInvestorNum(investmentRecords);
+
         double loanPerPerson = getLoanPerPerson(targets, borrowerNum);
         baseStatistics.setLoanPerPerson(loanPerPerson);
 
@@ -327,20 +331,23 @@ public class AdminServiceImpl implements AdminService {
         double investmentPerPerson = getInvestmentPerPerson(investmentRecords, investorNum);
         baseStatistics.setInvestmentPerPerson(investmentPerPerson);
 
-        targets = (List<BaseTarget>)baseTargetRepository.findAll();
+        ArrayList<String> top10 = getMost10Loan();
 
-        double mostLoanPersonRate = getMostLoanPersonRate();
-        baseStatistics.setMostLoanPersonRate(mostLoanPersonRate);
+        if(top10 != null && top10.size() > 0) {
+            double mostLoanPersonRate = getLoanPersonRate(top10.get(0));
+            baseStatistics.setMostLoanPersonRate(mostLoanPersonRate);
 
-        double most10LoanPersonRate = getMost10LoanPersonRate();
-        baseStatistics.setMost10LoanPersonRate(most10LoanPersonRate);
+            if(top10.size() >= 10) {
+                double most10LoanPersonRate = getMost10LoanPersonRate(top10.subList(0, 10));
+                baseStatistics.setMost10LoanPersonRate(most10LoanPersonRate);
+            }
+        }
 
         double averageGoingTime = getAverageGoingTime(targets);
         baseStatistics.setAverageGoingTime(averageGoingTime);
 
         return baseStatistics;
     }
-
     // 交易总额
     private double getDealMoneySum(List<BaseTarget> targets) {
         double sum = 0;
@@ -408,13 +415,48 @@ public class AdminServiceImpl implements AdminService {
         }
         return money/investorNum;
     }
-    // TODO 最大单户借款余额占比
-    private double getMostLoanPersonRate() {
-        return -1;
+    // 计算借款余额占比  借款余额比=当前应还但还未偿还的总额 / 他总共借的钱
+    private double getLoanPersonRate(String username) {
+        double toRepay = getToRepay(username);
+        double totalLoan = getTotalLoan(username);
+
+        if(totalLoan > 0) {
+            return toRepay/totalLoan;
+        }else {
+            return -1;
+        }
     }
-    // TODO 最大10户借款余额占比
-    private double getMost10LoanPersonRate() {
-        return -1;
+    // 当前应还但还未偿还的总额
+    private double getToRepay(String username) {
+        List<Repayment> repayments = repaymentRepository.findAllByUserUsername(username);
+        double sum = 0;
+        for(Repayment repayment : repayments) {
+            sum = sum + repayment.getRemainingAmount();
+        }
+        return sum;
+    }
+    // 总共借的钱
+    private double getTotalLoan(String username) {
+        List<BaseTarget> targets = baseTargetRepository.findDistinctByUserUsername(username);
+        double sum = 0;
+        for(BaseTarget target : targets) {
+            sum = sum + target.getMoney();
+        }
+        return sum;
+    }
+    // 最大10户借款余额占比
+    private double getMost10LoanPersonRate(List<String> top10) {
+        double toRepay = 0, totalLoan = 0;
+        for(String name : top10) {
+            toRepay = toRepay + getToRepay(name);
+            totalLoan = totalLoan + getTotalLoan(name);
+        }
+
+        if(totalLoan > 0) {
+            return toRepay/totalLoan;
+        }else {
+            return -1;
+        }
     }
     // 平均满标时间（以天为单位）
     private double getAverageGoingTime(List<BaseTarget> targets) {
@@ -439,12 +481,44 @@ public class AdminServiceImpl implements AdminService {
             return sum/num;
         }
     }
+    // 得到最大n户用户名（n<=10） 最大用户就是在平台上借款总额最多的用户
+    private ArrayList<String> getMost10Loan() {
+        List<BaseTarget> allTargets = (List<BaseTarget>)targetRepository.findAll();
+
+        List<UserLoanRelation> relations = new ArrayList<>();
+        for(BaseTarget target : allTargets) {
+            String username = target.getUser().getUsername();
+            double money = target.getMoney();
+            UserLoanRelation relation = new UserLoanRelation(username, money);
+
+            int index = relations.indexOf(relation);
+            if(index < 0) {
+                relations.add(relation);
+            }else {
+                relations.get(index).plus(relation);
+            }
+        }
+
+        return getTop10(relations);
+    }
+    // 得到最大10户username（若不足10户则全部返回）
+    private ArrayList<String> getTop10(List<UserLoanRelation> relations) {
+        ArrayList<String> top10 = new ArrayList<>();
+        final int NUM = 10;
+        Collections.sort(relations);
+        int len = relations.size() < NUM ? relations.size() : NUM;
+        for(int i = 0 ; i < len ; i++) {
+            top10.add(relations.get(i).getUsername());
+        }
+        return top10;
+    }
 
     /**
      * 统计违约信息
      * @return 当月
      * 累计违约率、逾期项目数、项目逾期率、近三月项目逾期率、借款逾期金额
      * 待偿金额、借贷金额逾期率、借贷坏账率、客户投诉情况
+     * TODO code
      */
     @Override
     public BreakContractStatistics getBreakContractStatistics() {
