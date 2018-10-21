@@ -4,6 +4,7 @@ import nju.trust.payloads.ApiResponse;
 import nju.trust.payloads.lostfound.*;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -38,4 +39,13 @@ public interface LostAndFoundService {
      * @exception:
      */
     public List<TaskInfo> findTask(MsgProperty msgProperty, ThingsType thingsType, LostPlace lostPlace);
+
+    /**
+     * @author: 唐佳未
+     * @description: 确认领取，修改信用频评分
+     * @param: 用户名称，ID，对方名称
+     * @return: ApiResponse
+     * @exception:
+     */
+    public ApiResponse submitResult(String username, long taskID, String involvedPerson);
 }

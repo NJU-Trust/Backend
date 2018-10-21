@@ -10,6 +10,9 @@ import java.time.LocalDateTime;
  * @Date: 2018/10/20
  */
 public class TaskInfo {
+
+    private long taskID;
+
     private String username;
 
     private ProcessState state;
@@ -46,6 +49,7 @@ public class TaskInfo {
     }
 
     public TaskInfo(LostAndFound lostAndFound){
+        this.taskID = lostAndFound.getId();
         this.username = lostAndFound.getUser().getUsername();
         this.state = lostAndFound.getState();
         this.date = lostAndFound.getDate();
@@ -139,6 +143,7 @@ public class TaskInfo {
     }
 
     public void print(){
+        System.out.println("taskID:"+this.taskID);
         System.out.println("username:"+this.username);
         System.out.println("description:"+this.description);
         System.out.println("lostPlace:"+this.lostPlace);

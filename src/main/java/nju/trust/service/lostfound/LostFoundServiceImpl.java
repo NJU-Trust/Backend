@@ -57,4 +57,9 @@ public class LostFoundServiceImpl implements LostAndFoundService {
     public List<TaskInfo> findTask(MsgProperty msgProperty, ThingsType thingsType, LostPlace lostPlace) {
         return null;
     }
+
+    @Override
+    public ApiResponse submitResult(String username, long taskID, String involvedPerson) {
+        return null;
+    }
 }
