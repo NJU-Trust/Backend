@@ -1,6 +1,9 @@
 package nju.trust.entity.user;
 
+import javafx.util.converter.LocalDateStringConverter;
+
 import javax.persistence.*;
+import java.time.LocalDate;
 
 /**
  * @Author: 161250127
@@ -19,6 +22,9 @@ public class CreditCrossCheck {
 
     @ManyToOne(targetEntity = User.class)
     private User relatedPerson;
+
+    //应该结算的时间
+    private LocalDate endDate;
 
     private int q1;
 
