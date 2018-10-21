@@ -28,6 +28,8 @@ public class VerifyServiceImpl implements VerifyService {
     private VolunteerEvidenceRepository volunteerEvidenceRepository;
     private RewardEvidenceRepository rewardEvidenceRepository;
 
+
+    @Autowired
     public VerifyServiceImpl(UserRepository userRepository, FailEvidenceRepository failEvidenceRepository, MatchEvidenceRepository matchEvidenceRepository, VolunteerEvidenceRepository volunteerEvidenceRepository, RewardEvidenceRepository rewardEvidenceRepository) {
         this.userRepository = userRepository;
         this.failEvidenceRepository = failEvidenceRepository;
@@ -35,9 +37,6 @@ public class VerifyServiceImpl implements VerifyService {
         this.volunteerEvidenceRepository = volunteerEvidenceRepository;
         this.rewardEvidenceRepository = rewardEvidenceRepository;
     }
-
-    @Autowired
-
 
     /**
      * 保存校园验证
