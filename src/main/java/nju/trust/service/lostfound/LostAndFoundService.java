@@ -14,13 +14,13 @@ import java.util.List;
  */
 public interface LostAndFoundService {
     /**
-     * @author: 唐佳未
+     * @author:
      * @description: 发布信息
      * @param: 界面所填信息
      * @return:
      * @exception:
      */
-    public ApiResponse launchTask(TaskInfo lostAndFound);
+    public ApiResponse launchTask(UploadLostAndFoundRequest uploadLostAndFoundRequest, String username);
 
     /**
      * @author: 唐佳未
@@ -38,14 +38,14 @@ public interface LostAndFoundService {
      * @return:
      * @exception:
      */
-    public List<TaskInfo> findTask(MsgProperty msgProperty, ThingsType thingsType, LostPlace lostPlace);
+    public TaskInfoPage findTask(LostAndFoundFilterRequest filter);
 
     /**
      * @author: 唐佳未
-     * @description: 确认领取，修改信用频评分
+     * @description: 确认领取，修改信用评分
      * @param: 用户名称，ID，对方名称
      * @return: ApiResponse
      * @exception:
      */
-    public ApiResponse submitResult(String username, long taskID, String involvedPerson);
+    public ApiResponse submitResult(long taskID, String involvedPerson);
 }

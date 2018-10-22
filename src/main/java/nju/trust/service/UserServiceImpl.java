@@ -104,11 +104,8 @@ public class UserServiceImpl implements UserService {
         user.setRoles(roles);
         user.setUserLevel(UserLevel.PRIMARY);
 
-        // Generate credit rating score randomly
-        Random random = new Random();
-        double creditScore = random.nextDouble() * 100.;
-        user.setCreditScore(creditScore);
-        user.setCreditRating(CreditRating.of(creditScore));
+        user.setCreditScore(0.0);
+        user.setCreditRating(CreditRating.of(0.0));
         userRepository.save(user);
     }
 }

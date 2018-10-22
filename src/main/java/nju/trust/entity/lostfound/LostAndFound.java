@@ -20,8 +20,7 @@ public class LostAndFound {
     @GeneratedValue
     private Long id;
 
-    @ManyToOne(targetEntity = User.class)
-    private User user;
+    private String username;
 
     @Enumerated(EnumType.STRING)
     private ProcessState state;
@@ -45,12 +44,15 @@ public class LostAndFound {
     @Enumerated(EnumType.STRING)
     private LostPlace lostPlace;
 
+    private String toUsername;
+
+
     public LostAndFound() {
 
     }
 
-    public LostAndFound(User user, ProcessState state, LocalDateTime date, MsgProperty property, ThingsType thingsType, String thingsName, String phone, String picPath, String description,LostPlace lostPlace) {
-        this.user = user;
+    public LostAndFound(String username, ProcessState state, LocalDateTime date, MsgProperty property, ThingsType thingsType, String thingsName, String phone, String picPath, String description,LostPlace lostPlace) {
+        this.username = username;
         this.state = state;
         this.date = date;
         this.property = property;
@@ -62,8 +64,8 @@ public class LostAndFound {
         this.lostPlace = lostPlace;
     }
 
-    public LostAndFound(@NotNull TaskInfo taskInfo, User user){
-        this.user = user;
+    public LostAndFound(@NotNull TaskInfo taskInfo, String username){
+        this.username = username;
         this.state = taskInfo.getState();
         this.date = taskInfo.getDate();
         this.property = taskInfo.getProperty();
@@ -75,6 +77,15 @@ public class LostAndFound {
         this.lostPlace =taskInfo.getLostPlace();
     }
 
+
+    public String getToUsername() {
+        return toUsername;
+    }
+
+    public void setToUsername(String toUsername) {
+        this.toUsername = toUsername;
+    }
+
     public Long getId() {
         return id;
     }
@@ -83,12 +94,12 @@ public class LostAndFound {
         this.id = id;
     }
 
-    public User getUser() {
-        return user;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public ProcessState getState() {

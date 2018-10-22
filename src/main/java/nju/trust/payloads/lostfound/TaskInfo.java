@@ -50,7 +50,7 @@ public class TaskInfo {
 
     public TaskInfo(LostAndFound lostAndFound){
         this.taskID = lostAndFound.getId();
-        this.username = lostAndFound.getUser().getUsername();
+        this.username = lostAndFound.getUsername();
         this.state = lostAndFound.getState();
         this.date = lostAndFound.getDate();
         this.property = lostAndFound.getProperty();
@@ -61,6 +61,17 @@ public class TaskInfo {
         this.description = lostAndFound.getDescription();
         this.lostPlace = lostAndFound.getLostPlace();
     }
+    public TaskInfo(UploadLostAndFoundRequest lostAndFound){
+        this.property = lostAndFound.getProperty();
+        this.thingsType = lostAndFound.getThingsType();
+        this.thingsName = lostAndFound.getThingsName();
+        this.phone = lostAndFound.getPhone();
+        this.picPath = lostAndFound.getPicPath();
+        this.description = lostAndFound.getDescription();
+        this.lostPlace = lostAndFound.getLostPlace();
+    }
+
+
 
     public String getUsername() {
         return username;
