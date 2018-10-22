@@ -55,6 +55,13 @@ public class CreditCrossCheck {
 
     }
 
+    public CreditCrossCheck(User user, User relatedPerson, LocalDate endDate, boolean random) {
+        this.user = user;
+        this.relatedPerson = relatedPerson;
+        this.endDate = endDate;
+        this.random = random;
+    }
+
     public CreditCrossCheck(User user, User relatedPerson, LocalDate endDate, int q1, int q2, int q3, int q4, int q5, int q6, int q7, int q8, int q9, boolean done, boolean random, boolean valid) {
         this.user = user;
         this.relatedPerson = relatedPerson;
