@@ -1,7 +1,9 @@
 package nju.trust.payloads.lostfound;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import nju.trust.entity.lostfound.LostAndFound;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -15,13 +17,13 @@ public class TaskInfo {
 
     private String username;
 
-    private ProcessState state;
+    private String state;
 
-    private LocalDateTime date;
+    private LocalDate date;
 
-    private MsgProperty property;
+    private String property;
 
-    private ThingsType thingsType;
+    private String thingsType;
 
     private String thingsName;
 
@@ -31,7 +33,7 @@ public class TaskInfo {
 
     private String description;
 
-    private LostPlace lostPlace;
+    private String lostPlace;
 
     public TaskInfo() {
 
@@ -39,36 +41,36 @@ public class TaskInfo {
 
     public TaskInfo(String username,String property, String thingsType, String thingsName, String phone, String picPath, String description, String lostPlace) {
         this.username = username;
-        this.property = MsgProperty.getMsgProperty(property);
-        this.thingsType = ThingsType.getThingsType(thingsType);
+        this.property = property;
+        this.thingsType = thingsType;
         this.thingsName = thingsName;
         this.phone = phone;
         this.picPath = picPath;
         this.description = description;
-        this.lostPlace = LostPlace.getLostPlace(lostPlace);
+        this.lostPlace = lostPlace;
     }
 
     public TaskInfo(LostAndFound lostAndFound){
         this.taskID = lostAndFound.getId();
         this.username = lostAndFound.getUsername();
-        this.state = lostAndFound.getState();
+        this.state = lostAndFound.getState().getStr();
         this.date = lostAndFound.getDate();
-        this.property = lostAndFound.getProperty();
-        this.thingsType = lostAndFound.getThingsType();
+        this.property = lostAndFound.getProperty().getStr();
+        this.thingsType = lostAndFound.getThingsType().getStr();
         this.thingsName = lostAndFound.getThingsName();
         this.phone = lostAndFound.getPhone();
         this.picPath = lostAndFound.getPicPath();
         this.description = lostAndFound.getDescription();
-        this.lostPlace = lostAndFound.getLostPlace();
+        this.lostPlace = lostAndFound.getLostPlace().getStr();
     }
     public TaskInfo(UploadLostAndFoundRequest lostAndFound){
-        this.property = lostAndFound.getProperty();
-        this.thingsType = lostAndFound.getThingsType();
+        this.property = MsgProperty.getMsgProperty(lostAndFound.getProperty()).getStr();
+        this.thingsType = ThingsType.getThingsType(lostAndFound.getThingsType()).getStr();
         this.thingsName = lostAndFound.getThingsName();
         this.phone = lostAndFound.getPhone();
         this.picPath = lostAndFound.getPicPath();
         this.description = lostAndFound.getDescription();
-        this.lostPlace = lostAndFound.getLostPlace();
+        this.lostPlace = LostPlace.getLostPlace(lostAndFound.getLostPlace()).getStr();
     }
 
 
@@ -81,37 +83,24 @@ public class TaskInfo {
         this.username = username;
     }
 
-    public ProcessState getState() {
-        return state;
+
+
+    public long getTaskID() {
+        return taskID;
     }
 
-    public void setState(ProcessState state) {
-        this.state = state;
+    public void setTaskID(long taskID) {
+        this.taskID = taskID;
     }
 
-    public LocalDateTime getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(LocalDateTime date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 
-    public MsgProperty getProperty() {
-        return property;
-    }
-
-    public void setProperty(MsgProperty property) {
-        this.property = property;
-    }
-
-    public ThingsType getThingsType() {
-        return thingsType;
-    }
-
-    public void setThingsType(ThingsType thingsType) {
-        this.thingsType = thingsType;
-    }
 
     public String getThingsName() {
         return thingsName;
@@ -145,11 +134,35 @@ public class TaskInfo {
         this.description = description;
     }
 
-    public LostPlace getLostPlace() {
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getProperty() {
+        return property;
+    }
+
+    public void setProperty(String property) {
+        this.property = property;
+    }
+
+    public String getThingsType() {
+        return thingsType;
+    }
+
+    public void setThingsType(String thingsType) {
+        this.thingsType = thingsType;
+    }
+
+    public String getLostPlace() {
         return lostPlace;
     }
 
-    public void setLostPlace(LostPlace lostPlace) {
+    public void setLostPlace(String lostPlace) {
         this.lostPlace = lostPlace;
     }
 

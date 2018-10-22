@@ -361,6 +361,14 @@ public class User {
         this.schoolCardImage = schoolCardImage;
     }
 
+    public Double getAccount() {
+        return account;
+    }
+
+    public void setAccount(Double account) {
+        this.account = account;
+    }
+
     public String getLivingPlace() {
         return livingPlace;
     }

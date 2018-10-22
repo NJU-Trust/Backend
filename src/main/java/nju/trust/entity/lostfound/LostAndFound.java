@@ -6,6 +6,7 @@ import nju.trust.payloads.lostfound.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 
@@ -25,7 +26,7 @@ public class LostAndFound {
     @Enumerated(EnumType.STRING)
     private ProcessState state;
 
-    private LocalDateTime date;
+    private LocalDate date;
 
     @Enumerated(EnumType.STRING)
     private MsgProperty property;
@@ -51,7 +52,7 @@ public class LostAndFound {
 
     }
 
-    public LostAndFound(String username, ProcessState state, LocalDateTime date, MsgProperty property, ThingsType thingsType, String thingsName, String phone, String picPath, String description,LostPlace lostPlace) {
+    public LostAndFound(String username, ProcessState state, LocalDate date, MsgProperty property, ThingsType thingsType, String thingsName, String phone, String picPath, String description,LostPlace lostPlace) {
         this.username = username;
         this.state = state;
         this.date = date;
@@ -66,15 +67,15 @@ public class LostAndFound {
 
     public LostAndFound(@NotNull TaskInfo taskInfo, String username){
         this.username = username;
-        this.state = taskInfo.getState();
+        this.state = ProcessState.getProcessState(taskInfo.getState());
         this.date = taskInfo.getDate();
-        this.property = taskInfo.getProperty();
-        this.thingsType = taskInfo.getThingsType();
+        this.property = MsgProperty.getMsgProperty(taskInfo.getProperty());
+        this.thingsType = ThingsType.getThingsType(taskInfo.getThingsType());
         this.thingsName = taskInfo.getThingsName();
         this.phone = taskInfo.getPhone();
         this.picPath = taskInfo.getPicPath();
         this.description = taskInfo.getDescription();
-        this.lostPlace =taskInfo.getLostPlace();
+        this.lostPlace = LostPlace.getLostPlace(taskInfo.getLostPlace());
     }
 
 
@@ -110,11 +111,11 @@ public class LostAndFound {
         this.state = state;
     }
 
-    public LocalDateTime getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(LocalDateTime date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 

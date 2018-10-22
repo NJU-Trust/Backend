@@ -42,7 +42,7 @@ public class LostAndFoundController {
     }
 
     @GetMapping(value = "/finish")
-    public ApiResponse rating(Long id, String toUsername) {
+    public ApiResponse finish(Long id, String toUsername) {
         return lostAndFoundService.submitResult(id, toUsername);
     }
 

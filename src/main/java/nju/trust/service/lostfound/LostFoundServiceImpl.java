@@ -5,6 +5,7 @@ import nju.trust.dao.lostfound.LostAndFoundSpecification;
 import nju.trust.dao.user.UserRepository;
 import nju.trust.entity.lostfound.LostAndFound;
 import nju.trust.entity.user.User;
+import nju.trust.exception.ResourceNotFoundException;
 import nju.trust.payloads.ApiResponse;
 import nju.trust.payloads.lostfound.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,8 +43,8 @@ public class LostFoundServiceImpl implements LostAndFoundService {
     @Override
     public ApiResponse launchTask(UploadLostAndFoundRequest uploadLostAndFoundRequest, String username) {
         TaskInfo taskInfo = new TaskInfo(uploadLostAndFoundRequest);
-        taskInfo.setDate(LocalDateTime.now());
-        taskInfo.setState(ProcessState.DOING);
+        taskInfo.setDate(LocalDate.now());
+        taskInfo.setState(ProcessState.DOING.getStr());
         taskInfo.setUsername(username);
         LostAndFound lostAndFound = new LostAndFound(taskInfo, username);
         lostAndFoundRepository.save(lostAndFound);
@@ -52,7 +53,7 @@ public class LostFoundServiceImpl implements LostAndFoundService {
 
     @Override
     public List<TaskInfo> getMyTask(String username, MsgProperty msgProperty, ProcessState processState) {
-        List<LostAndFound> lostAndFounds = lostAndFoundRepository.findDistinctByUserUsernameAndPropertyAndState(username,msgProperty,processState);
+        List<LostAndFound> lostAndFounds = lostAndFoundRepository.findDistinctByUsernameAndPropertyAndState(username,msgProperty,processState);
         List<TaskInfo> taskInfos = new ArrayList<>();
         for(int i=0;i<lostAndFounds.size();i++){
             taskInfos.add(new TaskInfo(lostAndFounds.get(i)));
@@ -71,6 +72,11 @@ public class LostFoundServiceImpl implements LostAndFoundService {
     @Override
     public ApiResponse submitResult(long taskID, String involvedPerson) {
         LostAndFound lostAndFound = lostAndFoundRepository.findById(taskID).get();
+        userRepository.findByUsername(involvedPerson).orElseThrow(
+                () -> new ResourceNotFoundException("username not found")
+        );
+
+
         lostAndFound.setToUsername(involvedPerson);
         lostAndFound.setState(ProcessState.DONE);
         lostAndFoundRepository.save(lostAndFound);

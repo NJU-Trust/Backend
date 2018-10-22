@@ -14,13 +14,13 @@ import java.util.List;
  */
 public class LostAndFoundFilterRequest {
     @JsonProperty("thingsTypes")
-    private List<ThingsType> thingsTypes;
+    private List<String> thingsTypes;
 
     @JsonProperty("lostPlaces")
-    private List<LostPlace> lostPlaces;
+    private List<String> lostPlaces;
 
     @JsonProperty("msgProperties")
-    private List<MsgProperty> msgProperties;
+    private List<String> msgProperties;
 
     @NotNull
     private int size;
@@ -34,27 +34,28 @@ public class LostAndFoundFilterRequest {
     @NotNull
     private String sort;
 
-    public List<ThingsType> getThingsTypes() {
+
+    public List<String> getThingsTypes() {
         return thingsTypes;
     }
 
-    public void setThingsTypes(List<ThingsType> thingsTypes) {
+    public void setThingsTypes(List<String> thingsTypes) {
         this.thingsTypes = thingsTypes;
     }
 
-    public List<LostPlace> getLostPlaces() {
+    public List<String> getLostPlaces() {
         return lostPlaces;
     }
 
-    public void setLostPlaces(List<LostPlace> lostPlaces) {
+    public void setLostPlaces(List<String> lostPlaces) {
         this.lostPlaces = lostPlaces;
     }
 
-    public List<MsgProperty> getMsgProperties() {
+    public List<String> getMsgProperties() {
         return msgProperties;
     }
 
-    public void setMsgProperties(List<MsgProperty> msgProperties) {
+    public void setMsgProperties(List<String> msgProperties) {
         this.msgProperties = msgProperties;
     }
 

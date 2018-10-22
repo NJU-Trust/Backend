@@ -35,20 +35,20 @@ public class LostAndFoundSpecification implements Specification<LostAndFound> {
         Predicate result = criteriaBuilder.and(predicates.toArray(p));
         if (!filter.getThingsTypes().isEmpty()) {
             predicates.clear();
-            for (ThingsType types : filter.getThingsTypes())
-                predicates.add(criteriaBuilder.equal(root.get("thingsType"), types));
+            for (String types : filter.getThingsTypes())
+                predicates.add(criteriaBuilder.equal(root.get("thingsType"), ThingsType.getThingsType(types)));
             result = criteriaBuilder.and(result, criteriaBuilder.or(toPredicateArray(predicates)));
         }
         if (!filter.getLostPlaces().isEmpty()) {
             predicates.clear();
-            for (LostPlace types : filter.getLostPlaces())
-                predicates.add(criteriaBuilder.equal(root.get("lostPlace"), types));
+            for (String types : filter.getLostPlaces())
+                predicates.add(criteriaBuilder.equal(root.get("lostPlace"), LostPlace.getLostPlace(types)));
             result = criteriaBuilder.and(result, criteriaBuilder.or(toPredicateArray(predicates)));
         }
         if (!filter.getMsgProperties().isEmpty()) {
             predicates.clear();
-            for (MsgProperty types : filter.getMsgProperties())
-                predicates.add(criteriaBuilder.equal(root.get("msgProperty"), types));
+            for (String types : filter.getMsgProperties())
+                predicates.add(criteriaBuilder.equal(root.get("msgProperty"), MsgProperty.getMsgProperty(types)));
             result = criteriaBuilder.and(result, criteriaBuilder.or(toPredicateArray(predicates)));
         }
         return result;

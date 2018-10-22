@@ -2,7 +2,9 @@ package nju.trust.service.flea;
 
 import nju.trust.dao.flea.TradeRepository;
 import nju.trust.dao.flea.TradeSpecification;
+import nju.trust.dao.user.UserRepository;
 import nju.trust.entity.flea.Trade;
+import nju.trust.exception.ResourceNotFoundException;
 import nju.trust.payloads.ApiResponse;
 import nju.trust.payloads.flea.TradeFilterRequest;
 import nju.trust.payloads.flea.TradeInfo;
@@ -32,6 +34,8 @@ public class TradeServiceImpl implements TradeService {
     @Autowired
     TradeRepository tradeRepository;
 
+    @Autowired
+    UserRepository userRepository;
     public TradeServiceImpl() {
     }
 
@@ -71,6 +75,10 @@ public class TradeServiceImpl implements TradeService {
     @Override
     public ApiResponse finishTrade(Long id, String toUsername) {
         Trade trade = tradeRepository.findById(id).get();
+        userRepository.findByUsername(toUsername).orElseThrow(
+                () -> new ResourceNotFoundException("username not found")
+        );
+
         trade.setToUsername(toUsername);
         trade.setSelling(false);
         tradeRepository.save(trade);

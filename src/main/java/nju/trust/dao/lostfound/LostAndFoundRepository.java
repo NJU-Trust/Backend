@@ -17,6 +17,6 @@ import java.util.Optional;
  * @Date: 2018/10/20
  */
 public interface LostAndFoundRepository extends CrudRepository<LostAndFound, Long>, JpaSpecificationExecutor<LostAndFound> {
-    List<LostAndFound> findDistinctByUserUsernameAndPropertyAndState(String username, MsgProperty property, ProcessState state);
+    List<LostAndFound> findDistinctByUsernameAndPropertyAndState(String username, MsgProperty property, ProcessState state);
     Optional<LostAndFound> findById(Long id);
 }

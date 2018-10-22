@@ -30,16 +30,6 @@ public class LostAndFoundServiceTest {
     }
 
     @Test
-    public void launchTask() {
-        lostAndFoundService.launchTask(new TaskInfo("test", "失物招领","雨伞","红色雨伞","13899900129","mypicpath","拾到一把红色的雨伞","四五六食堂"));
-    }
-
-    @Test
-    public void launchTask2() {
-        lostAndFoundService.launchTask(new TaskInfo("test", "寻物启事","校园卡","校园卡","13866900129","mypicpath2","丢失了自己的校园卡","操场"));
-    }
-
-    @Test
     public void getMyTask() {
         List<TaskInfo> list =
                 lostAndFoundService.getMyTask("test",MsgProperty.FOUND, ProcessState.DOING);

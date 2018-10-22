@@ -9,9 +9,9 @@ package nju.trust.payloads.lostfound;
  */
 public class UploadLostAndFoundRequest {
 
-    private MsgProperty property;
+    private String property;
 
-    private ThingsType thingsType;
+    private String thingsType;
 
     private String thingsName;
 
@@ -21,24 +21,9 @@ public class UploadLostAndFoundRequest {
 
     private String description;
 
-    private LostPlace lostPlace;
+    private String lostPlace;
 
 
-    public MsgProperty getProperty() {
-        return property;
-    }
-
-    public void setProperty(MsgProperty property) {
-        this.property = property;
-    }
-
-    public ThingsType getThingsType() {
-        return thingsType;
-    }
-
-    public void setThingsType(ThingsType thingsType) {
-        this.thingsType = thingsType;
-    }
 
     public String getThingsName() {
         return thingsName;
@@ -72,11 +57,27 @@ public class UploadLostAndFoundRequest {
         this.description = description;
     }
 
-    public LostPlace getLostPlace() {
+    public String getProperty() {
+        return property;
+    }
+
+    public void setProperty(String property) {
+        this.property = property;
+    }
+
+    public String getThingsType() {
+        return thingsType;
+    }
+
+    public void setThingsType(String thingsType) {
+        this.thingsType = thingsType;
+    }
+
+    public String getLostPlace() {
         return lostPlace;
     }
 
-    public void setLostPlace(LostPlace lostPlace) {
+    public void setLostPlace(String lostPlace) {
         this.lostPlace = lostPlace;
     }
 }
