@@ -53,7 +53,7 @@ public class CrossCheckServiceImpl implements CrossCheckService {
                 userCrossCheckRepository.save(new CreditCrossCheck(user, userRepository.findByStudentId(studentId3).get(), endDate, false));
                 //random 7
                 Collections.shuffle(users);
-                for(int i=0;i<=11;i++){
+                for(int i=0;i<=10;i++){
                     if(users.get(i).getUsername().equals(username)||users.get(i).getStudentId().equals(studentId1)
                             ||users.get(i).getStudentId().equals(studentId2)||users.get(i).getStudentId().equals(studentId3)){
                         continue;
@@ -65,7 +65,7 @@ public class CrossCheckServiceImpl implements CrossCheckService {
         }else {
             return new ApiResponse(false,"studentId not exist!");
         }
-        return null;
+        return new ApiResponse(true,"success!");
     }
 
     @Override
