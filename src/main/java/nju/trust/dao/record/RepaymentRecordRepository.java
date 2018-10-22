@@ -1,6 +1,7 @@
 package nju.trust.dao.record;
 
 import nju.trust.entity.record.RepaymentRecord;
+import nju.trust.entity.target.BaseTarget;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -24,4 +25,10 @@ public interface RepaymentRecordRepository extends JpaRepository<RepaymentRecord
     Optional<RepaymentRecord> findByReturnDateAndTargetId(LocalDate returnDate, Long targetId);
 
     List<RepaymentRecord> findAllByReturnDate(LocalDate returnDate);
+
+    List<RepaymentRecord> findDistinctByReturnDateBetween(LocalDate start, LocalDate end);
+
+    List<RepaymentRecord> findDistinctByTargetIdAndReturnDateBetween(Long targetId, LocalDate start, LocalDate end);
+
+    List<RepaymentRecord> findDistinctByReturnDateLessThan(LocalDate date);
 }

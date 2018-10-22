@@ -3,12 +3,14 @@ package nju.trust.service.admin;
 import nju.trust.dao.admin.*;
 import nju.trust.dao.admin.UserEvidenceDao.UserEvidenceRepository;
 import nju.trust.dao.record.InvestmentRecordRepository;
+import nju.trust.dao.record.RepaymentRecordRepository;
 import nju.trust.dao.target.LargeTargetRepository;
 import nju.trust.dao.target.SmallTargetRepository;
 import nju.trust.dao.target.TargetRepository;
 import nju.trust.entity.CheckState;
 import nju.trust.entity.record.ApproveResult;
 import nju.trust.entity.record.InvestmentRecord;
+import nju.trust.entity.record.RepaymentRecord;
 import nju.trust.entity.record.UserEvidence.BaseUserEvidence;
 import nju.trust.entity.record.UserInfoCheckRecord;
 import nju.trust.entity.target.*;
@@ -26,10 +28,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @Author: 161250127
@@ -49,9 +51,10 @@ public class AdminServiceImpl implements AdminService {
     private RepaymentRepository repaymentRepository;
     private UserEvidenceRepository userEvidenceRecordRepository;
     private InvestmentRecordRepository investmentRecordRepository;
+    private RepaymentRecordRepository repaymentRecordRepository;
     private ScoreCalUtil scoreCalUtil;
     @Autowired
-    public AdminServiceImpl(LoanStateCheckUtil calUtil, AdminUserRepository adminUserRepository, BaseTargetRepository baseTargetRepository, AdminInvestmentRecordRepository adminInvestmentRecordRepository, SmallTargetRepository smallTargetRepository, LargeTargetRepository largeTargetRepository, TargetRepository targetRepository, UserInfoCheckRecordRepository userInfoCheckRecordRepository, RepaymentRepository repaymentRepository, UserEvidenceRepository userEvidenceRecordRepository, InvestmentRecordRepository investmentRecordRepository, ScoreCalUtil scoreCalUtil) {
+    public AdminServiceImpl(LoanStateCheckUtil calUtil, AdminUserRepository adminUserRepository, BaseTargetRepository baseTargetRepository, AdminInvestmentRecordRepository adminInvestmentRecordRepository, SmallTargetRepository smallTargetRepository, LargeTargetRepository largeTargetRepository, TargetRepository targetRepository, UserInfoCheckRecordRepository userInfoCheckRecordRepository, RepaymentRepository repaymentRepository, UserEvidenceRepository userEvidenceRecordRepository, InvestmentRecordRepository investmentRecordRepository, RepaymentRecordRepository repaymentRecordRepository, ScoreCalUtil scoreCalUtil) {
         this.calUtil = calUtil;
         this.adminUserRepository = adminUserRepository;
         this.baseTargetRepository = baseTargetRepository;
@@ -63,6 +66,7 @@ public class AdminServiceImpl implements AdminService {
         this.repaymentRepository = repaymentRepository;
         this.userEvidenceRecordRepository = userEvidenceRecordRepository;
         this.investmentRecordRepository = investmentRecordRepository;
+        this.repaymentRecordRepository = repaymentRecordRepository;
         this.scoreCalUtil = scoreCalUtil;
     }
 
@@ -518,11 +522,246 @@ public class AdminServiceImpl implements AdminService {
      * @return 当月
      * 累计违约率、逾期项目数、项目逾期率、近三月项目逾期率、借款逾期金额
      * 待偿金额、借贷金额逾期率、借贷坏账率、客户投诉情况
-     * TODO code
      */
     @Override
     public BreakContractStatistics getBreakContractStatistics() {
-        return null;
+        BreakContractStatistics breakContractStatistics = new BreakContractStatistics();
+
+        LocalDate now = LocalDate.now();
+
+        LocalDate start = now.with(TemporalAdjusters.firstDayOfMonth());
+        LocalDate end = now.minusDays(1);
+        List<Long> overdueProjects = getOverdueProjects(start, end);
+        List<Long> toRepayProjects = getToRepayProjects(start, end);
+
+        // 累计违约率
+        double defaultRate = getDefaultRate();
+        breakContractStatistics.setDefaultRate(defaultRate);
+
+        // 逾期项目数
+        int overdueProgramNum = overdueProjects.size();
+        breakContractStatistics.setOverdueProgramNum(overdueProgramNum);
+
+        // 项目逾期率
+        double overdueProgramRate = getOverdueProgramRate(overdueProjects, toRepayProjects);//overdueProjects.size()/(double)toRepayProjects.size();
+        breakContractStatistics.setOverdueProgramRate(overdueProgramRate);
+
+        // 近三月项目逾期率
+        LocalDate start3 = start.minusMonths(2);
+        List<Long> overdueProjects3 = getOverdueProjects(start3, end);
+        List<Long> toRepayProjects3 = getToRepayProjects(start3, end);
+        double overdueProgramRate3 = getOverdueProgramRate(overdueProjects3, toRepayProjects3);
+        breakContractStatistics.setOverdueProgramRate3(overdueProgramRate3);
+
+        // 借款逾期金额
+        double overdueMoneySum = getOverdueMoneySum(overdueProjects, start, end);
+        breakContractStatistics.setOverdueMoneySum(overdueMoneySum);
+
+        // 待偿金额
+        double toPay = getToPay();
+        breakContractStatistics.setToPay(toPay);
+
+        // 借贷金额逾期率
+        double overdueMoneyRate = getOverdueMoneyRate(overdueMoneySum);
+        breakContractStatistics.setOverdueMoneyRate(overdueMoneyRate);
+
+        // 借贷坏账率
+        double badDebtRate = getBadDebtRate();
+        breakContractStatistics.setBadDebtRate(badDebtRate);
+
+        return breakContractStatistics;
+    }
+    // 借贷坏账率
+    private double getBadDebtRate() {
+        double violateSum = getTotalViolateSum();
+        double totalSum = getTotalSum();
+
+        if(totalSum > 0) {
+            return violateSum/totalSum;
+        }else {
+            return -1;
+        }
+    }
+    // 自平台开始运营后30天未还款的还款额
+    private double getTotalViolateSum() {
+        List<RepaymentRecord> repaymentRecords = repaymentRecordRepository.findAll();
+        double sum = 0;
+
+        for(RepaymentRecord repaymentRecord : repaymentRecords) {
+            if(isViolate(repaymentRecord)) {
+                sum = sum + repaymentRecord.getSum();
+            }
+        }
+
+        return sum;
+    }
+    // 自平台开始运营后的项目总金额
+    private double getTotalSum() {
+        List<RepaymentRecord> repaymentRecords = repaymentRecordRepository.findAll();
+        double sum = 0;
+
+        for(RepaymentRecord repaymentRecord : repaymentRecords) {
+            sum = sum + repaymentRecord.getSum();
+        }
+
+        return sum;
+    }
+    // 累计违约率
+    private double getDefaultRate() {
+        LocalDate now = LocalDate.now();
+        LocalDate start = now.with(TemporalAdjusters.firstDayOfMonth());
+        LocalDate end = now.with(TemporalAdjusters.lastDayOfMonth());
+        List<Long> goingTargets = getToRepayProjects(start, end);
+
+        int violateNum = getViolateNum();
+        int goingNum = goingTargets.size();
+
+        if(goingNum != 0) {
+            return violateNum/(double)goingNum;
+        }else {
+            return -1;
+        }
+    }
+    // 得到本月违约项目数量
+    private int getViolateNum() {
+        List<Long> violateTargets = new ArrayList<>();
+
+        LocalDate now = LocalDate.now();
+        LocalDate start = now.with(TemporalAdjusters.firstDayOfMonth()).minusDays(30);
+        LocalDate end = now.minusDays(30);
+
+        List<RepaymentRecord> repaymentRecords = repaymentRecordRepository.findDistinctByReturnDateBetween(start, end);
+        for(RepaymentRecord repaymentRecord : repaymentRecords) {
+            if(isViolate(repaymentRecord)) {
+                long id = repaymentRecord.getTarget().getId();
+                if(!violateTargets.contains(id)) {
+                    violateTargets.add(id);
+                }
+            }
+        }
+
+        return violateTargets.size();
+    }
+    private boolean isViolate(RepaymentRecord repaymentRecord) {
+        LocalDate returnDate = repaymentRecord.getReturnDate();
+        LocalDate actualReturnDate = repaymentRecord.getActualRepayDate();
+
+        if(actualReturnDate == null) {
+            actualReturnDate = LocalDate.now();
+        }
+
+        return actualReturnDate.minusDays(30).isAfter(returnDate);
+    }
+    // 借贷金额逾期率
+    private double getOverdueMoneyRate(double overdueMoneySum) {
+        double repaySum = getRepaySum();
+        if(repaySum > 0) {
+            return overdueMoneySum/repaySum;
+        }
+        return -1;
+    }
+    // 本月总借款金额
+    private double getRepaySum() {
+        LocalDate now = LocalDate.now();
+        LocalDate start = now.with(TemporalAdjusters.firstDayOfMonth());
+        LocalDate end = now.with(TemporalAdjusters.lastDayOfMonth());
+
+        List<RepaymentRecord> repaymentRecords = repaymentRecordRepository.findDistinctByReturnDateBetween(start, end);
+        double sum = 0;
+        for(RepaymentRecord repaymentRecord : repaymentRecords) {
+            sum = sum + repaymentRecord.getSum();
+        }
+        return sum;
+    }
+    // 待偿金额
+    private double getToPay() {
+        LocalDate now = LocalDate.now();
+        LocalDate start = now.with(TemporalAdjusters.firstDayOfMonth());
+        LocalDate end = now.with(TemporalAdjusters.lastDayOfMonth());
+
+        List<Long> toRepayProjects = getToRepayProjects(start, end);
+
+        if(toRepayProjects == null) {
+            return -1;
+        }
+
+        double sum = 0;
+        for(Long targetId : toRepayProjects) {
+            List<RepaymentRecord> repaymentRecords = repaymentRecordRepository.findDistinctByTargetIdAndReturnDateBetween(targetId, start, end);
+            for(RepaymentRecord repaymentRecord : repaymentRecords) {
+                if(repaymentRecord.getReturnDate().isBefore(now) && repaymentRecord.getActualRepayDate()==null) {
+                    sum = sum + repaymentRecord.getSum();
+                }
+            }
+        }
+        return sum;
+    }
+    // 项目逾期率
+    private double getOverdueProgramRate(List<Long> overdueProjects, List<Long> toRepayProjects) {
+        if(toRepayProjects == null || toRepayProjects.size() == 0) {
+            return -1;
+        }else {
+            return overdueProjects.size() / (double)toRepayProjects.size();
+        }
+    }
+    // 借款逾期金额
+    private double getOverdueMoneySum(List<Long> overdueProjects, LocalDate start, LocalDate end) {
+        if(overdueProjects != null) {
+            double sum = 0;
+            for(int i = 0 ; i < overdueProjects.size() ; i++) {
+                long targetId = overdueProjects.get(i);
+                List<RepaymentRecord> repaymentRecords = repaymentRecordRepository.findDistinctByTargetIdAndReturnDateBetween(targetId, start, end);
+                for(RepaymentRecord record : repaymentRecords) {
+                    if(record.isOverdue()) {
+                        sum = sum + record.getSum();
+                    }
+                }
+            }
+            return sum;
+        }
+        return -1;
+    }
+    // 得到某一时间段内的逾期项目（闭区间）
+    private List<Long> getOverdueProjects(LocalDate start, LocalDate end) {
+        List<Long> targets = new ArrayList<>();
+
+        List<RepaymentRecord> repaymentRecords = repaymentRecordRepository.findDistinctByReturnDateBetween(start, end);
+        for(RepaymentRecord repaymentRecord : repaymentRecords) {
+            LocalDate returnDate = repaymentRecord.getReturnDate();
+            LocalDate actualDate = repaymentRecord.getActualRepayDate();
+            if(actualDate == null || actualDate.isAfter(returnDate)) {
+                Long targetId = repaymentRecord.getTarget().getId();
+                if(!targets.contains(targetId)) {
+                    targets.add(targetId);
+                }
+            }
+        }
+
+        return targets;
+    }
+    // 得到某一时间段内需还款的项目编号（闭区间）
+    private List<Long> getToRepayProjects(LocalDate start, LocalDate end) {
+        List<Long> targets = new ArrayList<>();
+
+        List<RepaymentRecord> records = repaymentRecordRepository.findDistinctByReturnDateBetween(start, end);
+
+        for(RepaymentRecord record : records) {
+            long targetsId = record.getTarget().getId();
+            if(!targets.contains(targetsId)) {
+                targets.add(targetsId);
+            }
+        }
+
+        // 很久以前应该还款，直到现在仍未还款的项目
+        List<RepaymentRecord> records1 = repaymentRecordRepository.findDistinctByReturnDateLessThan(start);
+        for(RepaymentRecord record : records1) {
+            long targetId = record.getTarget().getId();
+            if(record.getActualRepayDate() == null && !targets.contains(targetId)) {
+                targets.add(targetId);
+            }
+        }
+
+        return targets;
     }
 
     /**

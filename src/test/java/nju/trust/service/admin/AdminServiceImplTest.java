@@ -3,10 +3,7 @@ package nju.trust.service.admin;
 import nju.trust.entity.UserType;
 import nju.trust.entity.record.ApproveResult;
 import nju.trust.payloads.ApiResponse;
-import nju.trust.payloads.admin.BaseStatistics;
-import nju.trust.payloads.admin.UserCheckItem;
-import nju.trust.payloads.admin.UserCheckResponse;
-import nju.trust.payloads.admin.UserStateList;
+import nju.trust.payloads.admin.*;
 import nju.trust.payloads.user.UserSimpleInfo;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -88,6 +85,21 @@ public class AdminServiceImplTest {
 
     @Test
     public void getBreakContractStatistics() {
+        BreakContractStatistics breakContractStatistics = test.getBreakContractStatistics();
+        print(breakContractStatistics);
+    }
+    private void print(BreakContractStatistics breakContractStatistics) {
+        System.out.println();
+        System.out.println("breakContractStatistics:");
+        System.out.println("累计违约率 defaultRate = "+breakContractStatistics.getDefaultRate());
+        System.out.println("逾期项目数 overdueProgramNum = "+breakContractStatistics.getOverdueProgramNum());
+        System.out.println("项目逾期率 overdueProgramRate = "+breakContractStatistics.getOverdueProgramRate());
+        System.out.println("近三月项目逾期率 overdueProgramRate3 = "+breakContractStatistics.getOverdueProgramRate3());
+        System.out.println("借款逾期金额 overdueMoneySum = "+breakContractStatistics.getOverdueMoneySum());
+        System.out.println("待偿金额 toPay = "+breakContractStatistics.getToPay());
+        System.out.println("借贷金额逾期率 overdueMoneyRate = "+breakContractStatistics.getOverdueMoneyRate());
+        System.out.println("借贷坏账率 badDebtRate = "+breakContractStatistics.getBadDebtRate());
+        System.out.println("客户投诉情况 complaints = "+breakContractStatistics.getComplaints());
     }
 
     @Test

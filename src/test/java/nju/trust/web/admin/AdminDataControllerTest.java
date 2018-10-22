@@ -1,3 +1,4 @@
+/*
 package nju.trust.web.admin;
 
 import org.junit.Test;
@@ -15,11 +16,13 @@ import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+*/
 /**
  * @Author: 许杨
  * @Description: AdminDataController的测试
  * @Date: 2018/10/20
- */
+ *//*
+
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
@@ -43,5 +46,15 @@ public class AdminDataControllerTest {
 
     @Test
     public void getBreakContractStatistics() {
+        try {
+            MvcResult result = mvc.perform(
+                    get("/adminData/breakContract")
+                            .contentType(MediaType.APPLICATION_JSON_VALUE))
+                    .andExpect(status().isOk())
+                    .andDo(MockMvcResultHandlers.print())
+                    .andReturn();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-}
+}*/
