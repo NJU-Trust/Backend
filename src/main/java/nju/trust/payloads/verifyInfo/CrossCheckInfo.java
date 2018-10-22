@@ -1,5 +1,7 @@
 package nju.trust.payloads.verifyInfo;
 
+import nju.trust.entity.user.CreditCrossCheck;
+
 /**
  * @Author: 161250127
  * @Description:
@@ -24,6 +26,17 @@ public class CrossCheckInfo {
         this.studentId = studentId;
         this.institution = institution;
         this.type = type;
+    }
+
+    public CrossCheckInfo(CreditCrossCheck creditCrossCheck){
+        this.id = creditCrossCheck.getId();
+        this.studentId = creditCrossCheck.getUser().getStudentId();
+        this.institution =creditCrossCheck.getUser().getInstitution();
+        if(creditCrossCheck.isRandom()){
+            type="系统随机";
+        }else{
+            type="用户选择";
+        }
     }
 
     public String getStudentId() {

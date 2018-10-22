@@ -9,6 +9,7 @@ import nju.trust.payloads.verifyInfo.CrossCheckInfo;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -37,7 +38,7 @@ public class CrossCheckServiceImpl implements CrossCheckService {
         if(userRepository.existsByStudentId(studentId1)&&userRepository.existsByStudentId(studentId2)&&userRepository.existsByStudentId(studentId3)){
             //1.find users having the same institution
             User user = userRepository.findByUsername(username).get();
-            List<User> users = userRepository.findByInstitution(user.getInstitution());
+            List<User> users = userRepository.findAllByInstitution(user.getInstitution());
             //2.find random 7 person and set up network
             if(users.size()<11){
                 return new ApiResponse(false,"the users are not enough to verify!");
@@ -67,7 +68,12 @@ public class CrossCheckServiceImpl implements CrossCheckService {
 
     @Override
     public List<CrossCheckInfo> getQuestionnaireList(String username) {
-        return null;
+        List<CreditCrossCheck> creditCrossChecks = userCrossCheckRepository.findAllByRelatedPersonUsernameAndValid(username,true);
+        List<CrossCheckInfo> crossCheckInfos = new ArrayList<>();
+        for(int i=0;i<creditCrossChecks.size();i++){
+            crossCheckInfos.add(new CrossCheckInfo(creditCrossChecks.get(i)));
+        }
+        return crossCheckInfos;
     }
 
     @Override

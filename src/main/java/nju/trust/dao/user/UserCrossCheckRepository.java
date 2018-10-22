@@ -13,6 +13,6 @@ import java.util.List;
  */
 public interface UserCrossCheckRepository extends CrudRepository<CreditCrossCheck, Long> {
 
-    List<CreditCrossCheck> findAllByRelatedPersonUsername(String username);
+    List<CreditCrossCheck> findAllByRelatedPersonUsernameAndValid(String username,boolean valid);
 
 }
