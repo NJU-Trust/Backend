@@ -78,6 +78,25 @@ public class CrossCheckServiceImpl implements CrossCheckService {
 
     @Override
     public ApiResponse submitQuestionnaire(long id, int q1, int q2, int q3, int q4, int q5, int q6, int q7, int q8, int q9) {
+        if(q1==0||q2==0||q3==0||q4==0||q5==0||q6==0||q7==0||q8==0||q9==0){
+            return new ApiResponse(false,"not finish!");
+        }
+        if(userCrossCheckRepository.existsById(id)){
+            CreditCrossCheck creditCrossCheck = userCrossCheckRepository.findById(id).get();
+            creditCrossCheck.setQ1(q1);
+            creditCrossCheck.setQ2(q2);
+            creditCrossCheck.setQ3(q3);
+            creditCrossCheck.setQ4(q4);
+            creditCrossCheck.setQ5(q5);
+            creditCrossCheck.setQ6(q6);
+            creditCrossCheck.setQ7(q7);
+            creditCrossCheck.setQ8(q8);
+            creditCrossCheck.setQ9(q9);
+            creditCrossCheck.setDone(true);
+            userCrossCheckRepository.save(creditCrossCheck);
+        }else{
+            return new ApiResponse(false,"invalid questionnaire id!");
+        }
         return null;
     }
 }

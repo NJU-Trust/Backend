@@ -5,6 +5,7 @@ import nju.trust.entity.user.User;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @Author: 161250127
@@ -14,5 +15,9 @@ import java.util.List;
 public interface UserCrossCheckRepository extends CrudRepository<CreditCrossCheck, Long> {
 
     List<CreditCrossCheck> findAllByRelatedPersonUsernameAndValid(String username,boolean valid);
+
+    Optional<CreditCrossCheck> findById(long id);
+
+    boolean existsById(long id);
 
 }
