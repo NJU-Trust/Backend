@@ -19,5 +19,5 @@ public interface UserRepository extends CrudRepository<User, String> {
 
     Optional<User> findByStudentId(String studentId);
 
-    List<User> findByInstitution(String institution);
+    List<User> findAllByInstitution(String institution);
 }
