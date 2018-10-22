@@ -4,6 +4,7 @@ import nju.trust.entity.user.CreditCrossCheck;
 import nju.trust.entity.user.User;
 import org.springframework.data.repository.CrudRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,5 +20,9 @@ public interface UserCrossCheckRepository extends CrudRepository<CreditCrossChec
     Optional<CreditCrossCheck> findById(long id);
 
     boolean existsById(long id);
+
+    List<User> findDistinctByEndDate(LocalDate date);
+
+    List<CreditCrossCheck> findAllByUserUsernameAndEndDate(String username, LocalDate date);
 
 }

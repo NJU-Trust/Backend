@@ -6,6 +6,7 @@ import nju.trust.entity.user.CreditCrossCheck;
 import nju.trust.entity.user.User;
 import nju.trust.payloads.ApiResponse;
 import nju.trust.payloads.verifyInfo.CrossCheckInfo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -25,6 +26,7 @@ public class CrossCheckServiceImpl implements CrossCheckService {
     private UserRepository userRepository;
     private UserCrossCheckRepository userCrossCheckRepository;
 
+    @Autowired
     public CrossCheckServiceImpl(UserRepository userRepository, UserCrossCheckRepository userCrossCheckRepository) {
         this.userRepository = userRepository;
         this.userCrossCheckRepository = userCrossCheckRepository;
