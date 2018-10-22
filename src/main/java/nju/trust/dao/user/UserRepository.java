@@ -17,4 +17,6 @@ public interface UserRepository extends CrudRepository<User, String> {
     Boolean existsByStudentId(String studentId);
 
     Optional<User> findByStudentId(String studentId);
+
+    Optional<User> findByInstitution(String institution);
 }
