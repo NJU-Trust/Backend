@@ -3,6 +3,7 @@ package nju.trust.dao.user;
 import nju.trust.entity.user.User;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends CrudRepository<User, String> {
@@ -18,5 +19,5 @@ public interface UserRepository extends CrudRepository<User, String> {
 
     Optional<User> findByStudentId(String studentId);
 
-    Optional<User> findByInstitution(String institution);
+    List<User> findByInstitution(String institution);
 }
