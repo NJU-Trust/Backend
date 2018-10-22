@@ -130,6 +130,10 @@ public class CrossCheckConfig {
                 user.setCrossScore(score);
                 userRepository.save(user);
 
+            }else{
+                //回归未填写状态
+                user.setCrossScore(-1.0);
+                userRepository.save(user);
             }
 
         }

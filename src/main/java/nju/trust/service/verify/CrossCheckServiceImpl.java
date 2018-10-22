@@ -61,6 +61,9 @@ public class CrossCheckServiceImpl implements CrossCheckService {
                         userCrossCheckRepository.save(new CreditCrossCheck(user, users.get(i), endDate, true));
                     }
                 }
+                //0.0表示正在填写
+                user.setCrossScore(0.0);
+                userRepository.save(user);
             }
         }else {
             return new ApiResponse(false,"studentId not exist!");
