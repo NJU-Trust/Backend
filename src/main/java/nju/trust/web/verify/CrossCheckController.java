@@ -33,7 +33,7 @@ public class CrossCheckController {
         return crossCheckService.getQuestionnaireList(principal.getName());
     }
 
-    @PostMapping(value = "/submit")
+    @GetMapping(value = "/submit")
     public ApiResponse submitQuestionnaire(Long id, Integer q1, Integer q2, Integer q3, Integer q4, Integer q5,
                                            Integer q6, Integer q7, Integer q8, Integer q9){
         return crossCheckService.submitQuestionnaire(id, q1, q2, q3, q4, q5, q6, q7, q8, q9);
