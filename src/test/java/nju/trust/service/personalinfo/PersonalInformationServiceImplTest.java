@@ -201,4 +201,48 @@ public class PersonalInformationServiceImplTest {
                 +"saving_ratio:"+trendAnalysis.getSaving_ratio()+"  ");
         System.out.println();
     }
+
+    @Test
+    public void getProportionAnalysis() {
+        System.out.println();
+        System.out.println("test getProportionAnalysis:");
+
+        String username = "test";
+        String month = "2018-9";
+
+        ProportionAnalysis proportionAnalysis = test.getProportionAnalysis(username, month);
+
+        System.out.println("result:");
+        print(proportionAnalysis);
+    }
+    private void print(ProportionAnalysis proportionAnalysis) {
+        System.out.println("月支出:"+proportionAnalysis.getOutcome());
+        System.out.println("月可调支出:"+proportionAnalysis.getAdjust());
+        System.out.println("月饮食支出:"+proportionAnalysis.getFood());
+        System.out.println("支出模块:");
+        print(proportionAnalysis.getData1());
+        System.out.println("可调支出:");
+        print(proportionAnalysis.getData2());
+        System.out.println("饮食支出:");
+        print(proportionAnalysis.getData3());
+    }
+    private void print(ProportionOutcome proportionOutcome) {
+        System.out.println("日常:"+proportionOutcome.getDaily());
+        System.out.println("学习:"+proportionOutcome.getLearning());
+        System.out.println("饮食:"+proportionOutcome.getFood());
+        System.out.println("出行:"+proportionOutcome.getTravel());
+        System.out.println("娱乐:"+proportionOutcome.getFun());
+    }
+    private void print(ProportionAdjust proportionAdjust) {
+        System.out.println("衣物:"+proportionAdjust.getDress());
+        System.out.println("饮食:"+proportionAdjust.getFood());
+        System.out.println("住宿:"+proportionAdjust.getHotel());
+        System.out.println("娱乐:"+proportionAdjust.getFun());
+    }
+    private void print(ProportionFood proportionFood) {
+        System.out.println("食堂:"+proportionFood.getSchoolCanteen());
+        System.out.println("外卖:"+proportionFood.getTakeOut());
+        System.out.println("外出:"+proportionFood.getEatingOut());
+        System.out.println("零食:"+proportionFood.getSnackAndFruit());
+    }
 }

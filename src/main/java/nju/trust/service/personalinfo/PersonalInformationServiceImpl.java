@@ -807,4 +807,97 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
 
         return trendAnalysisList;
     }
+
+    /**
+     * 比例分析
+     * @param username 用户名
+     * @param month    月份
+     */
+    @Override
+    public ProportionAnalysis getProportionAnalysis(String username, String month) {
+        LocalDate start = getStart(month);
+        LocalDate end = getEnd(month);
+        UserMonthStatistics userMonthStatistics = userMonthlyStatisticsRepository.findTopByUserUsernameAndDateBetween(username, start, end);
+
+        double outcome = 0, adjust = 0, food = 0 ;
+        if(userMonthStatistics.getExpense() != null) {
+            outcome = userMonthStatistics.getExpense();
+        }
+        if(userMonthStatistics.getDisc() != null) {
+            adjust = userMonthStatistics.getDisc();
+        }
+        if(userMonthStatistics.getFood() != null) {
+            food = userMonthStatistics.getFood();
+        }
+        ProportionOutcome data1 = getProportionOutcome(userMonthStatistics);
+        ProportionAdjust data2 = getProportionAdjust(userMonthStatistics);
+        ProportionFood data3 = getProportionFood(userMonthStatistics);
+
+        return new ProportionAnalysis(outcome, adjust, food, data1, data2, data3);
+    }
+    // 比例分析的支出模块
+    private ProportionOutcome getProportionOutcome(UserMonthStatistics userMonthStatistics) {
+        double daily = 0, learning = 0, food = 0, travel = 0, fun = 0;
+
+        if(userMonthStatistics.getDaily() != null) {
+            daily = userMonthStatistics.getDaily();
+        }
+        if(userMonthStatistics.getLearning() != null) {
+            learning = userMonthStatistics.getLearning();
+        }
+        if(userMonthStatistics.getFood() != null) {
+            food = userMonthStatistics.getFood();
+        }
+        if(userMonthStatistics.getTravel() != null) {
+            travel = userMonthStatistics.getTravel();
+        }
+        if(userMonthStatistics.getFun() != null) {
+            fun = userMonthStatistics.getFun();
+        }
+
+        return new ProportionOutcome(daily, learning, food, travel, fun);
+    }
+    // 比例分析的可调支出模块
+    private ProportionAdjust getProportionAdjust(UserMonthStatistics userMonthStatistics) {
+        double dress = 0, food = 0, hotel = 0, fun = 0;
+
+        if(userMonthStatistics.getDress() != null) {
+            dress = userMonthStatistics.getDress();
+        }
+        if(userMonthStatistics.getTakeOut() != null) {
+            food = food + userMonthStatistics.getTakeOut();
+        }
+        if(userMonthStatistics.getEatingOut() != null) {
+            food = food + userMonthStatistics.getEatingOut();
+        }
+        if(userMonthStatistics.getSnackAndFruit() != null) {
+            food = food + userMonthStatistics.getSnackAndFruit();
+        }
+        if(userMonthStatistics.getHotel() != null) {
+            hotel = userMonthStatistics.getHotel();
+        }
+        if(userMonthStatistics.getFun() != null) {
+            fun = userMonthStatistics.getFun();
+        }
+        return new ProportionAdjust(dress, food, hotel, fun);
+    }
+    // 比例分析饮食模块
+    private ProportionFood getProportionFood(UserMonthStatistics userMonthStatistics) {
+        double schoolCanteen = 0, takeOut = 0, eatingOut = 0, snackAndFruit = 0;
+
+        if(userMonthStatistics.getSchoolCanteen() != null) {
+            schoolCanteen = userMonthStatistics.getSchoolCanteen();
+        }
+        if(userMonthStatistics.getTakeOut() != null) {
+            takeOut = userMonthStatistics.getTakeOut();
+        }
+        if(userMonthStatistics.getEatingOut() != null) {
+            eatingOut = userMonthStatistics.getEatingOut();
+        }
+        if(userMonthStatistics.getSnackAndFruit() != null) {
+            snackAndFruit = userMonthStatistics.getSnackAndFruit();
+        }
+
+        return new ProportionFood(schoolCanteen, takeOut, eatingOut, snackAndFruit);
+    }
 }

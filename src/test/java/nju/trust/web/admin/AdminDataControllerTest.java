@@ -1,4 +1,4 @@
-/*
+
 package nju.trust.web.admin;
 
 import org.junit.Test;
@@ -16,12 +16,11 @@ import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-*/
 /**
  * @Author: 许杨
  * @Description: AdminDataController的测试
  * @Date: 2018/10/20
- *//*
+ */
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -57,4 +56,4 @@ public class AdminDataControllerTest {
             e.printStackTrace();
         }
     }
-}*/
+}

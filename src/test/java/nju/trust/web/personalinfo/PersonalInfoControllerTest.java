@@ -122,4 +122,16 @@
 //                .andDo(MockMvcResultHandlers.print())
 //                .andReturn();
 //    }
+//
+//    @Test
+//    public void getProportionAnalysis() throws Exception{
+//        MvcResult result = mvc.perform(
+//                get("/profile/proportionAnalysis")
+//                        .param("username", "test")
+//                        .param("month", "2018-9")
+//                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+//                .andExpect(status().isOk())
+//                .andDo(MockMvcResultHandlers.print())
+//                .andReturn();
+//    }
 //}
