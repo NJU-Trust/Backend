@@ -3,22 +3,28 @@ package nju.trust.service.target;
 import nju.trust.dao.record.DefaultRecordRepository;
 import nju.trust.dao.record.RepaymentRecordRepository;
 import nju.trust.dao.target.TargetRepository;
+import nju.trust.dao.user.UserMonthlyStatisticsRepository;
+import nju.trust.dao.user.UserTotalStatisticsRepository;
 import nju.trust.entity.record.DefaultRecord;
 import nju.trust.entity.record.DefaultState;
 import nju.trust.entity.record.RepaymentRecord;
 import nju.trust.entity.target.BaseTarget;
+import nju.trust.entity.target.TargetState;
 import nju.trust.entity.user.Repayment;
+import nju.trust.entity.user.UserMonthStatistics;
+import nju.trust.entity.user.UserTotalStatistics;
 import nju.trust.exception.ResourceNotFoundException;
 import nju.trust.payloads.target.Default;
 import nju.trust.payloads.target.ProjectInformation;
 import nju.trust.payloads.target.RepaymentAnalysis;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Author: J.D. Liao
@@ -33,6 +39,10 @@ public class RepaymentService {
     private DefaultRecordRepository defaultRecordRepository;
 
     private TargetRepository targetRepository;
+
+    private UserMonthlyStatisticsRepository userMonthlyStatisticsRepository;
+
+    private UserTotalStatisticsRepository userTotalStatisticsRepository;
 
     public void checkForDefault() {
         final LocalDate today = LocalDate.now();
@@ -92,6 +102,92 @@ public class RepaymentService {
         return new RepaymentAnalysis(repayment.getType(), repayment.getDifficulty(), records);
     }
 
+    public ConsumptionAnalysis consumptionAnalysis(String username) {
+        // Find user information firstly
+        UserDataItem userDataItem = getUserDataItem(username);
+
+        List<RepaymentRecord> records = repaymentRecordRepository.findAllByUserUsername(username);
+        // find latest repayment record
+
+        RepaymentRecord latestRecord = findLatestRepaymentRecord(records);
+        long nextPaymentDay = LocalDate.now().until(latestRecord.getReturnDate(), ChronoUnit.DAYS);
+
+        List<BaseTarget> targets = targetRepository.findAllByUserUsername(username)
+                .stream().filter(t -> t.getTargetState() == TargetState.IN_THE_PAYMENT)
+                .collect(Collectors.toList());
+
+        List<PayItem> nextPayList = new ArrayList<>();
+        for (BaseTarget target : targets) {
+            // Generate PayItem for each target
+            Optional.ofNullable(getPayItemForTarget(target)).ifPresent(nextPayList::add);
+        }
+
+        return new ConsumptionAnalysis(latestRecord.getSum(), nextPaymentDay, nextPayList, userDataItem);
+    }
+
+    private UserDataItem getUserDataItem(String username) {
+        // Find latest month data for this user
+        List<UserMonthStatistics> monthStatistics = userMonthlyStatisticsRepository
+                .findAllByUserUsername(username, Sort.by(Sort.Direction.DESC, "date"));
+        if (monthStatistics.isEmpty())
+            return new UserDataItem(0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0);
+
+        UserMonthStatistics latestMonthStatistics = monthStatistics.get(0);
+
+        // Get total statistics
+        UserTotalStatistics totalStatistics = userTotalStatisticsRepository.findByUserUsername(username);
+
+        return new UserDataItem(totalStatistics.getSurplus(), totalStatistics.getSurplus(),
+                latestMonthStatistics.getEngel(), totalStatistics.getRigid(),
+                latestMonthStatistics.getDebtToAssetRatio(), totalStatistics.getDebt(),
+                totalStatistics.getDaily(), latestMonthStatistics.getLeverage(),
+                latestMonthStatistics.getConsumptionRatio(), latestMonthStatistics.getSavingRatio());
+    }
+
+    private RepaymentRecord findLatestRepaymentRecord(List<RepaymentRecord> records) {
+        return records.stream()
+                .filter(RepaymentRecord::isBeforeSettlementDay)
+                .min(Comparator.comparing(RepaymentRecord::remainingDays))
+                .orElseThrow(NoSuchElementException::new);
+    }
+
+    private PayItem getPayItemForTarget(BaseTarget target) {
+        List<RepaymentRecord> records = repaymentRecordRepository
+                .findAllByTargetId(target.getId(), Sort.by(Sort.Direction.ASC, "returnDate"));
+        // Find latest three record
+        if (records.isEmpty())
+            return null;
+
+        List<RepaymentRecord> latestThreeRecords = new ArrayList<>(3);
+        for (RepaymentRecord r : records) {
+            if (!r.hasPaidOff()) {
+                latestThreeRecords.add(r);
+                if (latestThreeRecords.size() == 3)
+                    break;
+            }
+        }
+
+        // Initialize pay item
+        Repayment repayment = target.getRepayment();
+        double interestPlus = repayment.getTotalInterest() + target.getCollectedMoney();
+        PayItem payItem = new PayItem(target.getName(), target.getStartTime(), target.getRepaymentDuration(),
+                interestPlus);
+
+        // Set latest three period repayment information for pay item
+        if (latestThreeRecords.size() >= 1)
+            payItem.setA(latestThreeRecords.get(0));
+
+        if (latestThreeRecords.size() >= 2)
+            payItem.setB(latestThreeRecords.get(1));
+
+        if (latestThreeRecords.size() == 3)
+            payItem.setC(latestThreeRecords.get(2));
+
+        return payItem;
+    }
+
+
     @Autowired
     public void setRepaymentRecordRepository(RepaymentRecordRepository repaymentRecordRepository) {
         this.repaymentRecordRepository = repaymentRecordRepository;
@@ -100,6 +196,16 @@ public class RepaymentService {
     @Autowired
     public void setDefaultRecordRepository(DefaultRecordRepository defaultRecordRepository) {
         this.defaultRecordRepository = defaultRecordRepository;
+    }
+
+    @Autowired
+    public void setUserMonthlyStatisticsRepository(UserMonthlyStatisticsRepository userMonthlyStatisticsRepository) {
+        this.userMonthlyStatisticsRepository = userMonthlyStatisticsRepository;
+    }
+
+    @Autowired
+    public void setUserTotalStatisticsRepository(UserTotalStatisticsRepository userTotalStatisticsRepository) {
+        this.userTotalStatisticsRepository = userTotalStatisticsRepository;
     }
 
     @Autowired

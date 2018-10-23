@@ -1,13 +1,17 @@
 package nju.trust.service.target;
 
 import nju.trust.dao.record.DefaultRecordRepository;
+import nju.trust.dao.record.InvestmentRecordRepository;
 import nju.trust.dao.record.RepaymentRecordRepository;
 import nju.trust.dao.target.TargetRepository;
+import nju.trust.entity.record.InvestmentRecord;
 import nju.trust.entity.record.RepaymentRecord;
 import nju.trust.entity.target.BaseTarget;
 import nju.trust.entity.target.TargetState;
 import nju.trust.entity.user.Repayment;
 import nju.trust.exception.ResourceNotFoundException;
+import nju.trust.payloads.investment.CompletedTarget;
+import nju.trust.payloads.investment.InvestmentTarget;
 import nju.trust.payloads.target.DefaultRecord;
 import nju.trust.payloads.target.OnGoingTarget;
 import nju.trust.payloads.target.ReleasedTarget;
@@ -15,6 +19,7 @@ import nju.trust.payloads.target.TargetFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,6 +35,8 @@ public class TargetManagementService {
     private TargetRepository targetRepository;
 
     private RepaymentRecordRepository repaymentRecordRepository;
+
+    private InvestmentRecordRepository investmentRecordRepository;
 
     private DefaultRecordRepository defaultRecordRepository;
 
@@ -62,6 +69,60 @@ public class TargetManagementService {
                 .stream().map(ReleasedTarget::new).collect(Collectors.toList());
     }
 
+    public List<InvestmentTarget> investedOngoingTargets(String username, TargetFilter filter) {
+        // Apply filter to all ongoing task this user invested
+        List<InvestmentRecord> records = investmentRecordRepository.findAllByUserUsername(username)
+                .stream()
+                .filter(r -> r.getTarget().getTargetState() == TargetState.ON_GOING
+                        && filter.toPredicate().test(r.getTarget()))
+                .collect(Collectors.toList());
+
+        List<InvestmentTarget> result = new ArrayList<>();
+
+        for (InvestmentRecord record : records) {
+            BaseTarget target = record.getTarget();
+            // Find latest repayment record
+            Repayment repayment = target.getRepayment();
+            RepaymentRecord repaymentRecord = repaymentRecordRepository
+                    .findByReturnDateAndTargetId(repayment.nextDueDate(), target.getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Repayment record not found"));
+
+            // Add the vo to result list
+            result.add(new InvestmentTarget(target.getName(), target.getUser().getUsername(),
+                    target.getStartTime(), record.getInvestedMoney(), repayment.getDuration(),
+                    repayment.getInterestRate(), repaymentRecord.getSum(), repaymentRecord.getReturnDate(),
+                    repayment.getRemainingAmount(), target.getTargetState()));
+        }
+
+        return result;
+    }
+
+    public List<CompletedTarget> investedCompletedTargets(String username, TargetFilter filter) {
+        List<InvestmentRecord> records = investmentRecordRepository.findAllByUserUsername(username)
+                .stream()
+                .filter(r -> r.getTarget().getTargetState() == TargetState.PAY_OFF
+                        && filter.toPredicate().test(r.getTarget()))
+                .collect(Collectors.toList());
+
+        List<CompletedTarget> result = new ArrayList<>();
+
+        for (InvestmentRecord record : records) {
+            BaseTarget target = record.getTarget();
+            Repayment repayment = target.getRepayment();
+
+            // Calculate the end date of this target
+            LocalDate startDate = target.getStartTime();
+            LocalDate endDate = startDate.plusMonths(target.getRepaymentDuration());
+
+            // Just ues total interest to represent investor's profit
+            result.add(new CompletedTarget(target.getName(), target.getUser().getUsername(),
+                    startDate, endDate, record.getInvestedMoney(), repayment.getInterestRate(),
+                    target.getTargetState(), repayment.getTotalInterest()));
+        }
+
+        return result;
+    }
+
     public List<DefaultRecord> defaultRecords(String username) {
         // TODO: 2018/9/11 等有空再实现吧 orz
         return new ArrayList<>();
@@ -80,5 +141,10 @@ public class TargetManagementService {
     @Autowired
     public void setDefaultRecordRepository(DefaultRecordRepository defaultRecordRepository) {
         this.defaultRecordRepository = defaultRecordRepository;
+    }
+
+    @Autowired
+    public void setInvestmentRecordRepository(InvestmentRecordRepository investmentRecordRepository) {
+        this.investmentRecordRepository = investmentRecordRepository;
     }
 }

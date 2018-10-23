@@ -22,6 +22,8 @@ import java.util.List;
 public interface TargetRepository
         extends PagingAndSortingRepository<BaseTarget, Long>, JpaSpecificationExecutor<BaseTarget> {
 
+    List<BaseTarget> findAllByUserUsername(String username);
+
     List<BaseTarget> findByTargetState(TargetState targetState, Pageable pageable);
 
     List<BaseTarget> findByTargetTypeAndTargetState(TargetType targetType, TargetState targetState, Pageable pageable);

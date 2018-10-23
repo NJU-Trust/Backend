@@ -50,6 +50,10 @@ public class RepaymentRecord extends BaseRecord {
         actualRepayDate = null;
     }
 
+    public long remainingDays() {
+        return LocalDate.now().until(returnDate, ChronoUnit.DAYS);
+    }
+
     public boolean isOverdue() {
         return overdueAndNotRepaid() || overdueButRepaid();
     }

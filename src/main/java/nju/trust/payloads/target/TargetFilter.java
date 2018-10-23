@@ -4,10 +4,7 @@ import nju.trust.entity.target.BaseTarget;
 import nju.trust.entity.target.TargetType;
 import org.springframework.data.jpa.domain.Specification;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +49,17 @@ public class TargetFilter {
             Predicate[] result = new Predicate[predicates.size()];
             return criteriaBuilder.and(result);
         };
+    }
+
+    public java.util.function.Predicate<BaseTarget> toPredicate() {
+        java.util.function.Predicate<BaseTarget> result =
+                t -> Optional.ofNullable(t.getMoney())
+                        .map(m -> m <= moneyUpper && m >= moneyLower).orElse(true);
+        result = result.and(t -> Optional.ofNullable(t.getTargetType()).map(m -> m == targetType).orElse(true))
+                .and(t -> Optional.ofNullable(t.getStartTime())
+                        .map(d -> d.isBefore(endDate) && d.isAfter(startDate)).orElse(true));
+
+        return result;
     }
 
     public void setMoneyUpper(Double moneyUpper) {

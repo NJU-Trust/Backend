@@ -14,4 +14,6 @@ import java.util.List;
 public interface UserMonthlyStatisticsRepository extends PagingAndSortingRepository<UserMonthStatistics, Long> {
 
     List<UserMonthStatistics> findAllByUserUsername(String username, Sort sort);
+
+    List<UserMonthStatistics> findAllByUserUsername(String username);
 }

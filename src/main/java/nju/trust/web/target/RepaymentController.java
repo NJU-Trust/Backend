@@ -4,6 +4,7 @@ import nju.trust.payloads.ApiResponse;
 import nju.trust.payloads.target.Default;
 import nju.trust.payloads.target.ProjectInformation;
 import nju.trust.payloads.target.RepaymentAnalysis;
+import nju.trust.service.target.ConsumptionAnalysis;
 import nju.trust.service.target.RepaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -47,6 +48,15 @@ public class RepaymentController {
     public RepaymentAnalysis getRepaymentAnalysis(@NotNull Long targetId) {
         return repaymentService.getRepaymentAnalysis(targetId);
     }
+
+    // 消费修正建议，这里采用消费分析是因为 url 和之前的定义的重复了
+    @RequestMapping("/consumptionAnalysis")
+    public ConsumptionAnalysis getConsumptionAnalysis(Principal principal) {
+        return repaymentService.consumptionAnalysis(principal.getName());
+    }
+
+    @RequestMapping("/predictSurplus")
+
 
     @Scheduled(cron = "0 0 0 * * ?")
     public void checkForDefaults() {
