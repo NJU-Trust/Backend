@@ -31,4 +31,6 @@ public interface RepaymentRecordRepository extends JpaRepository<RepaymentRecord
     List<RepaymentRecord> findDistinctByTargetIdAndReturnDateBetween(Long targetId, LocalDate start, LocalDate end);
 
     List<RepaymentRecord> findDistinctByReturnDateLessThan(LocalDate date);
+
+    List<RepaymentRecord> findDistinctByUserUsernameAndReturnDateBetween(String username, LocalDate start, LocalDate end);
 }

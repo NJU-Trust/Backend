@@ -59,4 +59,10 @@ public class PersonalInfoController {
     public List<EventsInfo> getAllEventsInfo(Principal principal) {
         return personalInformationService.getAllEventsInfo(principal.getName());
     }
+
+    // 数值分析
+    @GetMapping(value = "/dataAnalysis")
+    public DataAnalysis getDataAnalysis(Principal principal, String startMonth, String endMonth) {
+        return personalInformationService.getDataAnalysis(principal.getName(), startMonth, endMonth);
+    }
 }

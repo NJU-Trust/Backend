@@ -6,25 +6,26 @@ import nju.trust.dao.admin.UnstructuredDataRepository;
 import nju.trust.dao.admin.UserEvidenceDao.UserEvidenceRepository;
 import nju.trust.dao.admin.UserInfoCheckRecordRepository;
 import nju.trust.dao.record.InvestmentRecordRepository;
+import nju.trust.dao.record.RepaymentRecordRepository;
+import nju.trust.dao.user.UserMonthlyStatisticsRepository;
 import nju.trust.dao.user.UserRepository;
 import nju.trust.entity.CheckItem;
 import nju.trust.entity.CheckState;
 import nju.trust.entity.UserLevel;
 import nju.trust.entity.record.InvestmentRecord;
+import nju.trust.entity.record.RepaymentRecord;
 import nju.trust.entity.record.UserEvidence.*;
 import nju.trust.entity.record.UserInfoCheckRecord;
 import nju.trust.entity.target.BaseTarget;
 import nju.trust.entity.target.TargetState;
 import nju.trust.entity.target.TargetType;
-import nju.trust.entity.user.Repayment;
-import nju.trust.entity.user.UnstructuredData;
-import nju.trust.entity.user.UnstructuredDataType;
-import nju.trust.entity.user.User;
+import nju.trust.entity.user.*;
 import nju.trust.payloads.personalinfomation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -44,11 +45,13 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
     private UserEvidenceRepository userEvidenceRepository;
     private UserInfoCheckRecordRepository userInfoCheckRecordRepository;
     private RepaymentRepository repaymentRepository;
+    private UserMonthlyStatisticsRepository userMonthlyStatisticsRepository;
+    private RepaymentRecordRepository repaymentRecordRepository;
 
     private static final String noComplete = "未填写";
 
     @Autowired
-    public PersonalInformationServiceImpl(UserRepository userRepository, InvestmentRecordRepository investmentRecordRepository, UnstructuredDataRepository unstructuredDataRepository, BaseTargetRepository baseTargetRepository, UserEvidenceRepository userEvidenceRepository, UserInfoCheckRecordRepository userInfoCheckRecordRepository, RepaymentRepository repaymentRepository) {
+    public PersonalInformationServiceImpl(UserRepository userRepository, InvestmentRecordRepository investmentRecordRepository, UnstructuredDataRepository unstructuredDataRepository, BaseTargetRepository baseTargetRepository, UserEvidenceRepository userEvidenceRepository, UserInfoCheckRecordRepository userInfoCheckRecordRepository, RepaymentRepository repaymentRepository, UserMonthlyStatisticsRepository userMonthlyStatisticsRepository, RepaymentRecordRepository repaymentRecordRepository) {
         this.userRepository = userRepository;
         this.investmentRecordRepository = investmentRecordRepository;
         this.unstructuredDataRepository = unstructuredDataRepository;
@@ -56,6 +59,8 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
         this.userEvidenceRepository = userEvidenceRepository;
         this.userInfoCheckRecordRepository = userInfoCheckRecordRepository;
         this.repaymentRepository = repaymentRepository;
+        this.userMonthlyStatisticsRepository = userMonthlyStatisticsRepository;
+        this.repaymentRecordRepository = repaymentRecordRepository;
     }
 
     // 投资借款部分
@@ -332,7 +337,6 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
         }
         return null;
     }
-
     // 日期格式：2018/9/8
     private String toDateForm(LocalDate date) {
         String seperator = "/";
@@ -537,6 +541,8 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
     /**
      * 校园关系图
      * @param username 用户名
+     * TODO
+     * 关系（信用交叉检验问卷第一问）：1-好友；2-普通同学；其他不考虑
      */
     @Override
     public PersonalRelationship getPersonalRelationships(String username) {
@@ -559,7 +565,8 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
 
         return personalRelationship;
     }
-    // 得到相关人员的用户名
+    // TODO 得到相关人员的用户名
+    // 关系（信用交叉检验问卷第一问）：1-好友；2-普通同学；其他不考虑
     private List<String> getRelationUsernames(String username) {
         List<User> userList = (List<User>)userRepository.findAll();
         int i = 0;
@@ -599,6 +606,7 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
 
         return people;
     }
+    // TODO
     private Relation getRelation(String source, String target) {
         Relation relation = new Relation();
         relation.setSource(source);
@@ -613,7 +621,7 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
         User user = userRepository.findByUsername(username).get();
         return user.getCreditScore();
     }
-    // 经济得分
+    // TODO 经济得分
     private double getFinancialScore() {
         double score = Math.random()*30 + 70;
         return toForm(score);
@@ -638,12 +646,115 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
             return score/7;
         }
     }
-    // 信用变化情况
+    // TODO 信用变化情况
     private CreditChange getCreditChange(String username) {
         User user = userRepository.findByUsername(username).get();
         if(user.getUserLevel() != null && user.getUserLevel().equals(UserLevel.DISCREDIT)) {
             return CreditChange.FROZEN;
         }
         return CreditChange.getCreditChange();
+    }
+
+    /**
+     * 数值分析
+     * TODO 投资额结余
+     * @param username   用户名
+     * @param startMonth 开始月份
+     * @param endMonth   结束月份
+     * 月份格式：2018-1
+     * 时间为闭区间
+     */
+    @Override
+    public DataAnalysis getDataAnalysis(String username, String startMonth, String endMonth) {
+        LocalDate start = getStart(startMonth);
+        LocalDate end = getEnd(endMonth);
+
+        List<MonthAnalysis> monthAnalysisList = new ArrayList<>();
+        double incomeSum = 0, expenseSum = 0;   // 总收入,总支出
+        LocalDate date = start;
+        while(date.isBefore(end)) {
+            List<UserMonthStatistics> userMonthStatisticsList = userMonthlyStatisticsRepository.findDistinctByUserUsernameAndDateBetween(username, date, date.with(TemporalAdjusters.lastDayOfMonth()));
+            // 收入、支出、日常支出, 学习支出, 饮食支出，净资产，蚂蚁花呗
+            double income = 0, expense = 0, daily = 0, learning = 0, food = 0, asset = 0, antCheckLater = 0;
+            for(UserMonthStatistics userMonthStatistics : userMonthStatisticsList) {
+                if(userMonthStatistics.getIncome() != null) {
+                    income = income + userMonthStatistics.getIncome();
+                }
+                if(userMonthStatistics.getExpense() != null) {
+                    expense = expense + userMonthStatistics.getExpense();
+                }
+                if(userMonthStatistics.getDaily() != null) {
+                    daily = daily + userMonthStatistics.getDaily();
+                }
+                if(userMonthStatistics.getLearning() != null) {
+                    learning = learning + userMonthStatistics.getLearning();
+                }
+                if(userMonthStatistics.getFood() != null) {
+                    food = food + userMonthStatistics.getFood();
+                }
+                if(userMonthStatistics.getAsset() != null) {
+                    asset = asset + userMonthStatistics.getAsset();
+                }
+                if(userMonthStatistics.getAntCheckLater() != null) {
+                    antCheckLater = antCheckLater + userMonthStatistics.getAntCheckLater();
+                }
+            }
+            // 月刚性支出 = 月日常支出 + 月学习支出 + 月饮食支出
+            double expense_rig = daily + learning + food;
+            // 月可调支出 = 月总支出 - 月刚性支出
+            double expense_disc = expense - expense_rig;
+            if(expense_disc < 0) {
+                expense_disc = 0;
+            }
+
+            MonthAnalysis monthAnalysis = new MonthAnalysis(date);
+            monthAnalysis.setIncome(income);
+            monthAnalysis.setAsset(asset);
+            monthAnalysis.setExpense(expense);
+            monthAnalysis.setExpense_rig(expense_rig);
+            monthAnalysis.setExpense_disc(expense_disc);
+            // TODO
+            monthAnalysis.setSurplus(0);
+
+            double lblt = antCheckLater + getToRepaySum(username, date);
+            monthAnalysis.setLblt(lblt);
+
+            monthAnalysisList.add(monthAnalysis);
+            incomeSum = incomeSum + income;
+            expenseSum = expenseSum + expense;
+
+            date = date.plusMonths(1);
+        }
+
+        return new DataAnalysis(monthAnalysisList, incomeSum, expenseSum);
+    }
+    // 得到本月需偿还金额
+    private double getToRepaySum(String username, LocalDate start) {
+        double toRepaySum = 0;
+
+        LocalDate end = start.with(TemporalAdjusters.lastDayOfMonth());
+        start = start.with(TemporalAdjusters.firstDayOfMonth());
+
+        List<RepaymentRecord> repaymentRecords = repaymentRecordRepository.findDistinctByUserUsernameAndReturnDateBetween(username, start, end);
+        for(RepaymentRecord repaymentRecord : repaymentRecords) {
+            toRepaySum = toRepaySum + repaymentRecord.getSum();
+        }
+
+        return toRepaySum;
+    }
+    private LocalDate getStart(String startMonth) {
+        return getLocalDate(startMonth);
+    }
+    private LocalDate getEnd(String endMonth) {
+        LocalDate firstDay = getLocalDate(endMonth);
+        return firstDay.with(TemporalAdjusters.lastDayOfMonth());
+    }
+    private LocalDate getLocalDate(String month) {
+        final String regex = "-";
+        String[] strs = month.split(regex);
+        int y = Integer.valueOf(strs[0]);
+        int m = Integer.valueOf(strs[1]);
+        LocalDate localDate = LocalDate.of(y, m, 1);
+        return localDate;
     }
 }

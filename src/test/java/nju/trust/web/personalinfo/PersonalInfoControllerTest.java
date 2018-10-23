@@ -1,3 +1,4 @@
+/*
 package nju.trust.web.personalinfo;
 
 import nju.trust.payloads.personalinfomation.PersonalRelationship;
@@ -18,11 +19,13 @@ import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+*/
 /**
  * @Author: 许杨
  * @Description:
  * @Date: 2018/9/15
- */
+ *//*
+
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
@@ -95,4 +98,17 @@ public class PersonalInfoControllerTest {
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
     }
-}
+
+    @Test
+    public void getDataAnalysis() throws Exception{
+        MvcResult result = mvc.perform(
+                get("/profile/dataAnalysis")
+                        .param("username", "test")
+                        .param("startMonth", "2018-9")
+                        .param("endMonth", "2018-10")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk())
+                .andDo(MockMvcResultHandlers.print())
+                .andReturn();
+    }
+}*/

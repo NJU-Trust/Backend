@@ -141,4 +141,38 @@ public class PersonalInformationServiceImplTest {
         System.out.println("financialPts:"+people.getFinancialPts());
         System.out.println("schoolPts:"+people.getSchoolPts());
     }
+
+    @Test
+    public void getDataAnalysis() {
+        System.out.println();
+        System.out.println("test getDataAnalysis:");
+        String username = "test";
+        String startMonth = "2018-9";
+        String endMonth = "2018-10";
+
+        DataAnalysis result = test.getDataAnalysis(username, startMonth, endMonth);
+        print(result);
+    }
+    private void print(DataAnalysis result) {
+        System.out.println("DataAnalysis:");
+        System.out.println("每月信息 monthAnalysisList:");
+        List<MonthAnalysis> monthAnalysisList = result.getMonthAnalysisList();
+        for(MonthAnalysis monthAnalysis : monthAnalysisList) {
+            print(monthAnalysis);
+        }
+        System.out.println();
+        System.out.println("总收入 incomeSum="+result.getIncomeSum());
+        System.out.println();
+        System.out.println("总支出 expenseSum="+result.getExpenseSum());
+    }
+    private void print(MonthAnalysis monthAnalysis) {
+        System.out.println("month:"+monthAnalysis.getMonth()+"  "
+                            + "income:"+monthAnalysis.getIncome()+"  "
+                            + "expense:"+monthAnalysis.getExpense()+"  "
+                            + "expense_rig:"+monthAnalysis.getExpense_rig()+"  "
+                            + "expense_disc:"+monthAnalysis.getExpense_disc()+"  "
+                            + "surplus:"+monthAnalysis.getSurplus()+"  "
+                            + "lblt:"+monthAnalysis.getLblt()+"  "
+                            + "asset:"+monthAnalysis.getAsset()+"  ");
+    }
 }

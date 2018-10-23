@@ -4,6 +4,7 @@ import nju.trust.entity.user.UserMonthStatistics;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -14,4 +15,6 @@ import java.util.List;
 public interface UserMonthlyStatisticsRepository extends PagingAndSortingRepository<UserMonthStatistics, Long> {
 
     List<UserMonthStatistics> findAllByUserUsername(String username, Sort sort);
+
+    List<UserMonthStatistics> findDistinctByUserUsernameAndDateBetween(String username, LocalDate date1, LocalDate date2);
 }
