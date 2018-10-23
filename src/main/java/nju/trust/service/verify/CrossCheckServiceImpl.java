@@ -73,7 +73,7 @@ public class CrossCheckServiceImpl implements CrossCheckService {
 
     @Override
     public List<CrossCheckInfo> getQuestionnaireList(String username) {
-        List<CreditCrossCheck> creditCrossChecks = userCrossCheckRepository.findAllByRelatedPersonUsernameAndValid(username,true);
+        List<CreditCrossCheck> creditCrossChecks = userCrossCheckRepository.findAllByRelatedPersonUsernameAndValidAndDone(username,true,false);
         List<CrossCheckInfo> crossCheckInfos = new ArrayList<>();
         for(int i=0;i<creditCrossChecks.size();i++){
             crossCheckInfos.add(new CrossCheckInfo(creditCrossChecks.get(i)));
