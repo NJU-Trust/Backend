@@ -84,7 +84,7 @@ public class CrossCheckServiceImpl implements CrossCheckService {
     @Override
     public ApiResponse submitQuestionnaire(long id, int q1, int q2, int q3, int q4, int q5, int q6, int q7, int q8, int q9) {
         if(q1==0||q2==0||q3==0||q4==0||q5==0||q6==0||q7==0||q8==0||q9==0){
-            return new ApiResponse(false,"not finish!");
+            return new ApiResponse(false,"未填写完整!");
         }
         if(userCrossCheckRepository.existsById(id)){
             CreditCrossCheck creditCrossCheck = userCrossCheckRepository.findById(id).get();
@@ -100,9 +100,9 @@ public class CrossCheckServiceImpl implements CrossCheckService {
             creditCrossCheck.setDone(true);
             userCrossCheckRepository.save(creditCrossCheck);
         }else{
-            return new ApiResponse(false,"invalid questionnaire id!");
+            return new ApiResponse(false,"问卷ID错误!");
         }
-        return new ApiResponse(true,"success!");
+        return new ApiResponse(true,"成功!");
     }
 
     @Override
