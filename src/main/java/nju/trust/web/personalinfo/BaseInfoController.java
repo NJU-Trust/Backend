@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.Principal;
+
 /**
  * @Author: 161250127
  * @Description:
@@ -22,8 +24,8 @@ public class BaseInfoController {
     private BaseInfoService baseInfoService;
 
     @GetMapping(value = "/personalInformation")
-    public PersonalBaseInfo getBaseInformation(String username) {
-        return baseInfoService.getBaseInfo(username);
+    public PersonalBaseInfo getBaseInformation(Principal principal) {
+        return baseInfoService.getBaseInfo(principal.getName());
     }
 
     @PostMapping(value = "/changeInformation")

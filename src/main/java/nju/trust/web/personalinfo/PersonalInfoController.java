@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.Principal;
 import java.util.List;
 
 /**
@@ -25,37 +26,37 @@ public class PersonalInfoController {
 
     // 用户管理
     @GetMapping(value = "/campusPerformence")
-    public CampusPerformance getCampusPerformance(String username) {
-        return personalInformationService.getCampusPerformance(username);
+    public CampusPerformance getCampusPerformance(Principal principal) {
+        return personalInformationService.getCampusPerformance(principal.getName());
     }
 
     // 信息表
     @GetMapping(value = "/information")
-    public PersonalDetailInfomation getPersonalDetailInformation(String username) {
-        return personalInformationService.getPersonalDetailInformation(username);
+    public PersonalDetailInfomation getPersonalDetailInformation(Principal principal) {
+        return personalInformationService.getPersonalDetailInformation(principal.getName());
     }
 
     // 账户总览 投资借款部分
     @GetMapping(value = "/investAndLoan")
-    public InvestAndLoan getInvestAndLoanInfo(String username) {
-        return personalInformationService.getInvestAndLoanInfo(username);
+    public InvestAndLoan getInvestAndLoanInfo(Principal principal) {
+        return personalInformationService.getInvestAndLoanInfo(principal.getName());
     }
 
     // 校园关系图
     @GetMapping(value = "/relationship")
-    public PersonalRelationship getPersonalRelationships(String username) {
-        return personalInformationService.getPersonalRelationships(username);
+    public PersonalRelationship getPersonalRelationships(Principal principal) {
+        return personalInformationService.getPersonalRelationships(principal.getName());
     }
 
     // 账户总额
     @GetMapping(value = "/totalAccount")
-    public TotalAccountInfo getTotalAccountInfo(String username) {
-        return personalInformationService.getTotalAccountInfo(username);
+    public TotalAccountInfo getTotalAccountInfo(Principal principal) {
+        return personalInformationService.getTotalAccountInfo(principal.getName());
     }
 
     // 待办事项
     @GetMapping(value = "/todo")
-    public List<EventsInfo> getAllEventsInfo(String username) {
-        return personalInformationService.getAllEventsInfo(username);
+    public List<EventsInfo> getAllEventsInfo(Principal principal) {
+        return personalInformationService.getAllEventsInfo(principal.getName());
     }
 }
