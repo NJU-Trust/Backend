@@ -62,4 +62,15 @@ public interface PersonalInformationService {
      * 时间为闭区间
      */
     DataAnalysis getDataAnalysis(String username, String startMonth, String endMonth);
+
+    /**
+     * 趋势分析
+     * TODO
+     * @param username 用户名
+     * @param startMonth 开始月份
+     * @param endMonth 结束月份
+     * 月份格式：2018-1
+     * 时间为闭区间
+     */
+    List<TrendAnalysis> getTrendAnalysis(String username, String startMonth, String endMonth);
 }

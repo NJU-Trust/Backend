@@ -17,4 +17,6 @@ public interface UserMonthlyStatisticsRepository extends PagingAndSortingReposit
     List<UserMonthStatistics> findAllByUserUsername(String username, Sort sort);
 
     List<UserMonthStatistics> findDistinctByUserUsernameAndDateBetween(String username, LocalDate date1, LocalDate date2);
+
+    UserMonthStatistics findTopByUserUsernameAndDateBetween(String username, LocalDate date1, LocalDate date2);
 }

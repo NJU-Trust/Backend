@@ -175,4 +175,30 @@ public class PersonalInformationServiceImplTest {
                             + "lblt:"+monthAnalysis.getLblt()+"  "
                             + "asset:"+monthAnalysis.getAsset()+"  ");
     }
+
+    @Test
+    public void getTrendAnalysis() {
+        System.out.println();
+        System.out.println("test getTrendAnalysis:");
+        String username = "test";
+        String startMonth = "2018-9";
+        String endMonth = "2018-10";
+
+        List<TrendAnalysis> result = test.getTrendAnalysis(username, startMonth, endMonth);
+
+        for(TrendAnalysis trendAnalysis : result) {
+            print(trendAnalysis);
+        }
+    }
+    private void print(TrendAnalysis trendAnalysis) {
+        System.out.println("month:"+trendAnalysis.getMonth()+"  "
+                +"engel:"+trendAnalysis.getEngel()+"  "
+                +"rig_ratio:"+trendAnalysis.getRig_ratio()+"  "
+                +"d2a_ratio:"+trendAnalysis.getD2a_ratio()+"  "
+                +"dp_ability:"+trendAnalysis.getDp_ability()+"  "
+                +"leverage:"+trendAnalysis.getLeverage()+"  "
+                +"consump_ratio:"+trendAnalysis.getConsump_ratio()+"  "
+                +"saving_ratio:"+trendAnalysis.getSaving_ratio()+"  ");
+        System.out.println();
+    }
 }

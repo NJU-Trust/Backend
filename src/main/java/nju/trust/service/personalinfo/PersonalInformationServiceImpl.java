@@ -757,4 +757,54 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
         LocalDate localDate = LocalDate.of(y, m, 1);
         return localDate;
     }
+
+    /**
+     * 趋势分析
+     * @param username   用户名
+     * @param startMonth 开始月份
+     * @param endMonth   结束月份
+     * 月份格式：2018-1
+     * 时间为闭区间
+     */
+    @Override
+    public List<TrendAnalysis> getTrendAnalysis(String username, String startMonth, String endMonth) {
+        LocalDate start = getStart(startMonth);
+        LocalDate end = getEnd(endMonth);
+
+        List<TrendAnalysis> trendAnalysisList = new ArrayList<>();
+
+        LocalDate date = start;
+        while(date.isBefore(end)) {
+            TrendAnalysis trendAnalysis = new TrendAnalysis(date);
+
+            UserMonthStatistics userMonthStatistics = userMonthlyStatisticsRepository.findTopByUserUsernameAndDateBetween(username, date, date.with(TemporalAdjusters.lastDayOfMonth()));
+
+            if(userMonthStatistics.getEngel() != null) {
+                trendAnalysis.setEngel(userMonthStatistics.getEngel());
+            }
+            if(userMonthStatistics.getRigidRatio() != null) {
+                trendAnalysis.setRig_ratio(userMonthStatistics.getRigidRatio());
+            }
+            if(userMonthStatistics.getDebtToAssetRatio() != null) {
+                trendAnalysis.setD2a_ratio(userMonthStatistics.getDebtToAssetRatio());
+            }
+            if(userMonthStatistics.getDebtPayingAbility() != null) {
+                trendAnalysis.setDp_ability(userMonthStatistics.getDebtPayingAbility());
+            }
+            if(userMonthStatistics.getLeverage() != null) {
+                trendAnalysis.setLeverage(userMonthStatistics.getLeverage());
+            }
+            if(userMonthStatistics.getConsumptionRatio() != null) {
+                trendAnalysis.setConsump_ratio(userMonthStatistics.getConsumptionRatio());
+            }
+            if(userMonthStatistics.getSavingRatio() != null) {
+                trendAnalysis.setSaving_ratio(userMonthStatistics.getSavingRatio());
+            }
+
+            trendAnalysisList.add(trendAnalysis);
+            date = date.plusMonths(1);
+        }
+
+        return trendAnalysisList;
+    }
 }

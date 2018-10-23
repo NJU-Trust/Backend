@@ -65,4 +65,10 @@ public class PersonalInfoController {
     public DataAnalysis getDataAnalysis(Principal principal, String startMonth, String endMonth) {
         return personalInformationService.getDataAnalysis(principal.getName(), startMonth, endMonth);
     }
+
+    // 趋势分析
+    @GetMapping(value = "/trendAnalysis")
+    public List<TrendAnalysis> getTrendAnalysis(Principal principal, String startMonth, String endMonth) {
+        return personalInformationService.getTrendAnalysis(principal.getName(), startMonth, endMonth);
+    }
 }
