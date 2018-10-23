@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.Principal;
 import java.util.List;
 
 /**
@@ -23,13 +24,13 @@ public class CrossCheckController {
     private CrossCheckService crossCheckService;
 
     @GetMapping(value = "setUpNetwork")
-    public ApiResponse setUpNetwork(String username, String studentId1,String studentId2,String studentId3){
-        return crossCheckService.setUpNetwork(username,studentId1,studentId2,studentId3);
+    public ApiResponse setUpNetwork(Principal principal, String studentId1, String studentId2, String studentId3){
+        return crossCheckService.setUpNetwork(principal.getName(),studentId1,studentId2,studentId3);
     }
 
     @GetMapping(value = "questionnaireList")
-    public List<CrossCheckInfo> getQuestionnaireList(String username){
-        return crossCheckService.getQuestionnaireList(username);
+    public List<CrossCheckInfo> getQuestionnaireList(Principal principal){
+        return crossCheckService.getQuestionnaireList(principal.getName());
     }
 
     @PostMapping(value = "submit")
@@ -38,8 +39,8 @@ public class CrossCheckController {
     }
 
     @GetMapping(value = "/crossScore")
-    public double getCrossScore(String username){
-        return 0.0;
+    public double getCrossScore(Principal principal){
+        return crossCheckService.getCrossScore(principal.getName());
     }
 
     @Autowired
