@@ -23,17 +23,17 @@ public class CrossCheckController {
 
     private CrossCheckService crossCheckService;
 
-    @GetMapping(value = "setUpNetwork")
+    @GetMapping(value = "/setUpNetwork")
     public ApiResponse setUpNetwork(Principal principal, String studentId1, String studentId2, String studentId3){
         return crossCheckService.setUpNetwork(principal.getName(),studentId1,studentId2,studentId3);
     }
 
-    @GetMapping(value = "questionnaireList")
+    @GetMapping(value = "/questionnaireList")
     public List<CrossCheckInfo> getQuestionnaireList(Principal principal){
         return crossCheckService.getQuestionnaireList(principal.getName());
     }
 
-    @PostMapping(value = "submit")
+    @PostMapping(value = "/submit")
     public ApiResponse submitQuestionnaire(long id, int q1, int q2, int q3, int q4, int q5, int q6, int q7, int q8, int q9){
         return crossCheckService.submitQuestionnaire(id, q1, q2, q3, q4, q5, q6, q7, q8, q9);
     }
