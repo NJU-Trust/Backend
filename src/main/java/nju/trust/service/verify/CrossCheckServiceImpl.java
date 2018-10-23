@@ -35,7 +35,7 @@ public class CrossCheckServiceImpl implements CrossCheckService {
     @Override
     public ApiResponse setUpNetwork(String username, String studentId1, String studentId2, String studentId3) {
         if(!userRepository.existsByUsername(username)){
-            return new ApiResponse(false,"username not exist!");
+            return new ApiResponse(false,"用户未登录!");
         }
         if(userRepository.existsByStudentId(studentId1)&&userRepository.existsByStudentId(studentId2)&&userRepository.existsByStudentId(studentId3)){
             //1.find users having the same institution
@@ -43,7 +43,7 @@ public class CrossCheckServiceImpl implements CrossCheckService {
             List<User> users = userRepository.findAllByInstitution(user.getInstitution());
             //2.find random 7 person and set up network
             if(users.size()<11){
-                return new ApiResponse(false,"the users are not enough to verify!");
+                return new ApiResponse(false,"平台目前没有足够相关用户能够验证!");
             }else{
                 LocalDate now = LocalDate.now();
                 LocalDate endDate = now.plusDays(3);
@@ -66,7 +66,7 @@ public class CrossCheckServiceImpl implements CrossCheckService {
                 userRepository.save(user);
             }
         }else {
-            return new ApiResponse(false,"studentId not exist!");
+            return new ApiResponse(false,"选择用户学号不存在!");
         }
         return new ApiResponse(true,"success!");
     }
