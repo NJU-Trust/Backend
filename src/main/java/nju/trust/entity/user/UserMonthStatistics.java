@@ -167,7 +167,7 @@ public class UserMonthStatistics {
 
     private Double consumptionRatio;
 
-    private Double savingRatio;
+    private Double savingRatio; // 储蓄率
 
     private Double liability;
 

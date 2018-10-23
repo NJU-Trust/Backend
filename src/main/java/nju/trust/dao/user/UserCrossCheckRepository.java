@@ -15,7 +15,7 @@ import java.util.Optional;
  */
 public interface UserCrossCheckRepository extends CrudRepository<CreditCrossCheck, Long> {
 
-    List<CreditCrossCheck> findAllByRelatedPersonUsernameAndValid(String username,boolean valid);
+    List<CreditCrossCheck> findAllByRelatedPersonUsernameAndValidAndDone(String username,boolean valid,boolean done);
 
     Optional<CreditCrossCheck> findById(long id);
 
