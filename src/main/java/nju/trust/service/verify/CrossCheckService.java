@@ -17,4 +17,6 @@ public interface CrossCheckService {
     List<CrossCheckInfo> getQuestionnaireList(String username);
 
     ApiResponse submitQuestionnaire(long id, int q1, int q2, int q3, int q4, int q5, int q6, int q7, int q8, int q9);
+
+    double getCrossScore(String username);
 }

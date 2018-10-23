@@ -37,6 +37,11 @@ public class CrossCheckController {
         return crossCheckService.submitQuestionnaire(id, q1, q2, q3, q4, q5, q6, q7, q8, q9);
     }
 
+    @GetMapping(value = "/crossScore")
+    public double getCrossScore(String username){
+        return 0.0;
+    }
+
     @Autowired
     public CrossCheckController(CrossCheckService crossCheckService) {
         this.crossCheckService = crossCheckService;

@@ -107,6 +107,8 @@ public class User {
 
     private String livingPlace;
 
+    //信用交叉检验得分
+    double crossScore = -1.0;
 
     @Override
     public boolean equals(Object o) {
@@ -399,5 +401,13 @@ public class User {
             }
             roles = roleStr.toString();
         }
+    }
+
+    public double getCrossScore() {
+        return crossScore;
+    }
+
+    public void setCrossScore(double crossScore) {
+        this.crossScore = crossScore;
     }
 }

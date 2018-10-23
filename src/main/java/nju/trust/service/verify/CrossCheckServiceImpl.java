@@ -101,4 +101,9 @@ public class CrossCheckServiceImpl implements CrossCheckService {
         }
         return new ApiResponse(true,"success!");
     }
+
+    @Override
+    public double getCrossScore(String username) {
+        return userRepository.findByUsername(username).get().getCrossScore();
+    }
 }

@@ -127,6 +127,7 @@ public class CrossCheckConfig {
                 }else if (90<=user.getCreditScore()&&user.getCreditScore()<=100){
                     user.setCreditRating(CreditRating.AA);
                 }
+                user.setCrossScore(score);
                 userRepository.save(user);
 
             }
