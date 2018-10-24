@@ -4,6 +4,7 @@ import nju.trust.payloads.ApiResponse;
 import nju.trust.payloads.target.Default;
 import nju.trust.payloads.target.ProjectInformation;
 import nju.trust.payloads.target.RepaymentAnalysis;
+import nju.trust.payloads.target.SurplusPrediction;
 import nju.trust.service.target.ConsumptionAnalysis;
 import nju.trust.service.target.RepaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +57,9 @@ public class RepaymentController {
     }
 
     @RequestMapping("/predictSurplus")
+    public SurplusPrediction getSurplusPrediction(Principal principal) {
+        return repaymentService.surplusPrediction(principal.getName());
+    }
 
 
     @Scheduled(cron = "0 0 0 * * ?")

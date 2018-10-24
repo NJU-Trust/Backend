@@ -39,7 +39,12 @@ class ConsumptionCorrectionEvaluator {
 
         Repayment repayment = target.getRepayment();
         int duration = target.getRepaymentDuration();
+        long nextDue = repayment.nextDue();
 
+        return getConsumptionCorrection(duration, nextDue);
+    }
+
+    ConsumptionCorrection getConsumptionCorrection(int duration, long nextDue) {
         double remainingS = remainingSurplus + surplusPerMonth - debt;
         double remainingD = discPerMonth;
         List<Double> surplusRatios = new ArrayList<>();
@@ -69,7 +74,7 @@ class ConsumptionCorrectionEvaluator {
             remainingD = discPerMonth;
         }
 
-        return new ConsumptionCorrection(repayment.nextDue(), surplusRatios, discRatios, needExtraIncomes);
+        return new ConsumptionCorrection(nextDue, surplusRatios, discRatios, needExtraIncomes);
     }
 
     private void init(List<UserMonthStatistics> monthlyData) {

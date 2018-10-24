@@ -14,9 +14,7 @@ import nju.trust.entity.user.Repayment;
 import nju.trust.entity.user.UserMonthStatistics;
 import nju.trust.entity.user.UserTotalStatistics;
 import nju.trust.exception.ResourceNotFoundException;
-import nju.trust.payloads.target.Default;
-import nju.trust.payloads.target.ProjectInformation;
-import nju.trust.payloads.target.RepaymentAnalysis;
+import nju.trust.payloads.target.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -33,6 +31,8 @@ import java.util.stream.Collectors;
  */
 @Service
 public class RepaymentService {
+
+    private static final int PREDICT_MONTHS = 12;
 
     private RepaymentRecordRepository repaymentRecordRepository;
 
@@ -107,8 +107,8 @@ public class RepaymentService {
         UserDataItem userDataItem = getUserDataItem(username);
 
         List<RepaymentRecord> records = repaymentRecordRepository.findAllByUserUsername(username);
-        // find latest repayment record
 
+        // find latest repayment record
         RepaymentRecord latestRecord = findLatestRepaymentRecord(records);
         long nextPaymentDay = LocalDate.now().until(latestRecord.getReturnDate(), ChronoUnit.DAYS);
 
@@ -123,6 +123,91 @@ public class RepaymentService {
         }
 
         return new ConsumptionAnalysis(latestRecord.getSum(), nextPaymentDay, nextPayList, userDataItem);
+    }
+
+    public SurplusPrediction surplusPrediction(String username) {
+
+        // Find user monthly data
+        List<UserMonthStatistics> userMonthStatistics =
+                userMonthlyStatisticsRepository.findAllByUserUsername(username,
+                        Sort.by(Sort.Direction.ASC, "date"));
+
+        UserMonthlyDataHelper userMonthlyDataHelper = new UserMonthlyDataHelper(userMonthStatistics);
+
+        // Get forecast values of surplus and disc
+        List<Double> kn = userMonthlyDataHelper.forecastSurplus(PREDICT_MONTHS);
+        List<Double> an = userMonthlyDataHelper.forecastDisc(PREDICT_MONTHS);
+
+        // Generate time line
+        List<LocalDate> time = new ArrayList<>();
+        for (int i = 0; i < PREDICT_MONTHS; i++) {
+            time.add(LocalDate.now().plusMonths(i));
+        }
+
+        // Generate table data
+        ConsumptionCorrection consumptionCorrection = getConsumptionCorrection(userMonthStatistics, username);
+        return new SurplusPrediction(time, kn, an, getTableData(consumptionCorrection));
+    }
+
+    private List<SurplusPrediction.TableItem> getTableData(ConsumptionCorrection consumptionCorrection) {
+        List<SurplusPrediction.TableItem> result = new ArrayList<>();
+        List<Double> surplusRatios = consumptionCorrection.getSurplusRatios();
+        List<Double> discRatios = consumptionCorrection.getDiscRatios();
+        List<Double> extraIncomes = consumptionCorrection.getExtraIncomes();
+
+        assert surplusRatios.size() == PREDICT_MONTHS
+                && discRatios.size() == PREDICT_MONTHS
+                && extraIncomes.size() == PREDICT_MONTHS;
+
+        for (int i = 0; i < PREDICT_MONTHS; i++) {
+            int month = LocalDate.now().plusMonths(i).getMonthValue();
+            result.add(new SurplusPrediction.TableItem(month, surplusRatios.get(i),
+                    discRatios.get(i), extraIncomes.get(i)));
+        }
+
+        return result;
+    }
+
+    private ConsumptionCorrection getConsumptionCorrection(List<UserMonthStatistics> monthStatistics, String username) {
+        // Calculate monthly repayment
+        List<RepaymentRecord> records = repaymentRecordRepository.findAllByUserUsername(username)
+                .stream().filter(r -> r.getReturnDate().isAfter(LocalDate.now()))
+                .sorted(Comparator.comparing(RepaymentRecord::getReturnDate))
+                .collect(Collectors.toList());
+
+        // If no data, return ConsumptionCorrection with empty lists
+        List<Double> monthlyRepayment;
+        if (records.isEmpty()) {
+            monthlyRepayment = Collections.nCopies(PREDICT_MONTHS, 0.);
+        } else {
+            // Iterate records and merge the records with same month
+            monthlyRepayment = new ArrayList<>();
+            RepaymentRecord previousRecord = records.get(0);
+            double currRepayment = 0;
+            for (RepaymentRecord r : records) {
+                if (r.getReturnDate().getMonthValue() == previousRecord.getReturnDate().getMonthValue()) {
+                    currRepayment += r.getSum();
+                } else {
+                    monthlyRepayment.add(currRepayment);
+                    currRepayment = r.getSum();
+                    previousRecord = r;
+                }
+            }
+            monthlyRepayment.add(currRepayment);
+
+            // If not full, add to 12
+            if (monthlyRepayment.size() < PREDICT_MONTHS) {
+                int need = PREDICT_MONTHS - monthlyRepayment.size();
+                for (int i = 0; i < need; i++) {
+                    monthlyRepayment.add(0.);
+                }
+            }
+        }
+
+        ConsumptionCorrectionEvaluator evaluator = new ConsumptionCorrectionEvaluator(monthStatistics,
+                null, monthlyRepayment);
+
+        return evaluator.getConsumptionCorrection(PREDICT_MONTHS, 0);
     }
 
     private UserDataItem getUserDataItem(String username) {

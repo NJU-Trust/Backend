@@ -5,8 +5,11 @@ import nju.trust.exception.InternalException;
 import nju.trust.exception.ResourceNotFoundException;
 import nju.trust.util.SimpleExponentialSmoothing;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Author: J.D. Liao
@@ -36,7 +39,8 @@ class UserMonthlyDataHelper {
     }
 
     double forecastDisc() {
-        List<Double> discData = statistics.stream().map(UserMonthStatistics::getDisc).collect(Collectors.toList());
+        List<Double> discData = statistics.stream()
+                .map(UserMonthStatistics::getDisc).collect(Collectors.toList());
         return SimpleExponentialSmoothing.forecast(discData);
     }
 
@@ -44,6 +48,19 @@ class UserMonthlyDataHelper {
         if (statistics.isEmpty())
             throw new ResourceNotFoundException("User statistics not found");
         return statistics.get(statistics.size() - 1).getDebt();
+    }
+
+    List<Double> forecastDisc(int months) {
+        List<Double> discData = statistics.stream()
+                .map(UserMonthStatistics::getDisc).collect(Collectors.toList());
+
+        return forecastDataSequence(discData, months);
+    }
+
+    List<Double> forecastSurplus(int months) {
+        List<Double> surplusData = statistics.stream()
+                .map(UserMonthStatistics::getSurplus).collect(Collectors.toList());
+        return forecastDataSequence(surplusData, months);
     }
 
     double getAvgMonthlyIncomeLevel() {
@@ -60,5 +77,20 @@ class UserMonthlyDataHelper {
         }
 
         return i;
+    }
+
+    private List<Double> forecastDataSequence(List<Double> data, int months) {
+        // If empty just return list filled with 0
+        if (data.isEmpty()) {
+            return Collections.nCopies(months, 0.);
+        }
+        // Forecast
+        List<Double> forecastData = new ArrayList<>();
+        for (int i = 0; i < months; i++) {
+            double nextValue = SimpleExponentialSmoothing.forecast(data.subList(i, data.size()));
+            forecastData.add(nextValue);
+        }
+
+        return forecastData;
     }
 }
