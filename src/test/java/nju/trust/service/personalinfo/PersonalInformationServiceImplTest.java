@@ -164,6 +164,16 @@ public class PersonalInformationServiceImplTest {
         System.out.println("总收入 incomeSum="+result.getIncomeSum());
         System.out.println();
         System.out.println("总支出 expenseSum="+result.getExpenseSum());
+        System.out.println();
+        System.out.println("总刚性支出 expense_rigSum="+result.getExpense_rigSum());
+        System.out.println();
+        System.out.println("总可调支出 expense_discSum="+result.getExpense_discSum());
+        System.out.println();
+        System.out.println("总投资额结余 surplusSum="+result.getSurplusSum());
+        System.out.println();
+        System.out.println("总负债 lbltSum="+result.getLbltSum());
+        System.out.println();
+        System.out.println("总净资产 assetSum="+result.getAssetSum());
     }
     private void print(MonthAnalysis monthAnalysis) {
         System.out.println("month:"+monthAnalysis.getMonth()+"  "

@@ -670,12 +670,13 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
         LocalDate end = getEnd(endMonth);
 
         List<MonthAnalysis> monthAnalysisList = new ArrayList<>();
-        double incomeSum = 0, expenseSum = 0;   // 总收入,总支出
+        // 总收入,总支出,总刚性支出,总可调支出,总投资额结余,总负债,总净资产
+        double incomeSum = 0, expenseSum = 0, expense_rigSum = 0, expense_discSum = 0, surplusSum = 0, lbltSum = 0, assetSum = 0;
         LocalDate date = start;
         while(date.isBefore(end)) {
             List<UserMonthStatistics> userMonthStatisticsList = userMonthlyStatisticsRepository.findDistinctByUserUsernameAndDateBetween(username, date, date.with(TemporalAdjusters.lastDayOfMonth()));
-            // 收入、支出、日常支出, 学习支出, 饮食支出，净资产，蚂蚁花呗
-            double income = 0, expense = 0, daily = 0, learning = 0, food = 0, asset = 0, antCheckLater = 0;
+            // 收入、支出、日常支出, 学习支出, 饮食支出，净资产，蚂蚁花呗，投资额结余
+            double income = 0, expense = 0, daily = 0, learning = 0, food = 0, asset = 0, antCheckLater = 0, surplus = 0;
             for(UserMonthStatistics userMonthStatistics : userMonthStatisticsList) {
                 if(userMonthStatistics.getIncome() != null) {
                     income = income + userMonthStatistics.getIncome();
@@ -714,7 +715,7 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
             monthAnalysis.setExpense_rig(expense_rig);
             monthAnalysis.setExpense_disc(expense_disc);
             // TODO
-            monthAnalysis.setSurplus(0);
+            monthAnalysis.setSurplus(surplus);
 
             double lblt = antCheckLater + getToRepaySum(username, date);
             monthAnalysis.setLblt(lblt);
@@ -722,11 +723,16 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
             monthAnalysisList.add(monthAnalysis);
             incomeSum = incomeSum + income;
             expenseSum = expenseSum + expense;
+            expense_rigSum = expense_rigSum + expense_rig;
+            expense_discSum = expense_discSum + expense_disc;
+            surplusSum = surplusSum + surplus;
+            lbltSum = lbltSum + lblt;
+            assetSum = assetSum + asset;
 
             date = date.plusMonths(1);
         }
 
-        return new DataAnalysis(monthAnalysisList, incomeSum, expenseSum);
+        return new DataAnalysis(monthAnalysisList, incomeSum, expenseSum, expense_rigSum, expense_discSum, surplusSum, lbltSum, assetSum);
     }
     // 得到本月需偿还金额
     private double getToRepaySum(String username, LocalDate start) {
