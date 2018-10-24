@@ -21,8 +21,9 @@ public class FailEvidence extends BaseUserEvidence{
     public FailEvidence() {
     }
 
-    public FailEvidence(User user, UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence) {
+    public FailEvidence(User user, UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence, int num) {
         super(user, item, time, state, evidence);
+        this.num = num;
     }
 
     public int getNum() {

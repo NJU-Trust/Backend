@@ -5,6 +5,7 @@ import nju.trust.payloads.verifyInfo.NameAndEvidence;
 import nju.trust.payloads.verifyInfo.SchoolVerifyInfo;
 import nju.trust.service.verify.VerifyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,12 +23,12 @@ public class VerifyController {
 
     private VerifyService verifyService;
 
-    @PostMapping(value = "/campus")
+    @GetMapping(value = "/campus")
     public ApiResponse saveCampusVerifyInfo(SchoolVerifyInfo schoolVerifyInfo, String username){
         return verifyService.schoolVerify(schoolVerifyInfo,username);
     }
 
-    @PostMapping(value = "/selfInfo")
+    @GetMapping(value = "/selfInfo")
     public ApiResponse saveSelfInfo(String username, int fail, List<String> report_cards, List<NameAndEvidence> school_rewards
             ,List<NameAndEvidence> city_rewards, List<NameAndEvidence> province_rewards, List<NameAndEvidence> country_rewards
             ,double volunteer, String volunteer_img, List<NameAndEvidence> self_qualifications){

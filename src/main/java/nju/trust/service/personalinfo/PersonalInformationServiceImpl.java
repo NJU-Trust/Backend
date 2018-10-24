@@ -7,6 +7,7 @@ import nju.trust.dao.admin.UserEvidenceDao.UserEvidenceRepository;
 import nju.trust.dao.admin.UserInfoCheckRecordRepository;
 import nju.trust.dao.record.InvestmentRecordRepository;
 import nju.trust.dao.record.RepaymentRecordRepository;
+import nju.trust.dao.user.CreditRecordRepository;
 import nju.trust.dao.user.UserMonthlyStatisticsRepository;
 import nju.trust.dao.user.UserRepository;
 import nju.trust.entity.CheckItem;
@@ -47,11 +48,12 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
     private RepaymentRepository repaymentRepository;
     private UserMonthlyStatisticsRepository userMonthlyStatisticsRepository;
     private RepaymentRecordRepository repaymentRecordRepository;
+    private CreditRecordRepository creditRecordRepository;
 
     private static final String noComplete = "未填写";
 
     @Autowired
-    public PersonalInformationServiceImpl(UserRepository userRepository, InvestmentRecordRepository investmentRecordRepository, UnstructuredDataRepository unstructuredDataRepository, BaseTargetRepository baseTargetRepository, UserEvidenceRepository userEvidenceRepository, UserInfoCheckRecordRepository userInfoCheckRecordRepository, RepaymentRepository repaymentRepository, UserMonthlyStatisticsRepository userMonthlyStatisticsRepository, RepaymentRecordRepository repaymentRecordRepository) {
+    public PersonalInformationServiceImpl(UserRepository userRepository, InvestmentRecordRepository investmentRecordRepository, UnstructuredDataRepository unstructuredDataRepository, BaseTargetRepository baseTargetRepository, UserEvidenceRepository userEvidenceRepository, UserInfoCheckRecordRepository userInfoCheckRecordRepository, RepaymentRepository repaymentRepository, UserMonthlyStatisticsRepository userMonthlyStatisticsRepository, RepaymentRecordRepository repaymentRecordRepository, CreditRecordRepository creditRecordRepository) {
         this.userRepository = userRepository;
         this.investmentRecordRepository = investmentRecordRepository;
         this.unstructuredDataRepository = unstructuredDataRepository;
@@ -61,6 +63,7 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
         this.repaymentRepository = repaymentRepository;
         this.userMonthlyStatisticsRepository = userMonthlyStatisticsRepository;
         this.repaymentRecordRepository = repaymentRecordRepository;
+        this.creditRecordRepository = creditRecordRepository;
     }
 
     // 投资借款部分
@@ -566,7 +569,7 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
         return personalRelationship;
     }
     // TODO 得到相关人员的用户名
-    // 关系（信用交叉检验问卷第一问）：1-好友；2-普通同学；其他不考虑
+    // TODO 关系（信用交叉检验问卷第一问）：1-好友；2-普通同学；其他不考虑
     private List<String> getRelationUsernames(String username) {
         List<User> userList = (List<User>)userRepository.findAll();
         int i = 0;
@@ -606,7 +609,7 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
 
         return people;
     }
-    // TODO
+    // TODO 人物关系
     private Relation getRelation(String source, String target) {
         Relation relation = new Relation();
         relation.setSource(source);
@@ -621,12 +624,12 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
         User user = userRepository.findByUsername(username).get();
         return user.getCreditScore();
     }
-    // TODO 经济得分
+    // TODO 经济得分=0.0488月收入+0.0844刚性比率+0.079资产负债率+0.0605消费比率 （上个月的数据）
     private double getFinancialScore() {
         double score = Math.random()*30 + 70;
         return toForm(score);
     }
-    // 校园表现得分
+    // TODO 校园表现得分=0.0917成绩+0.1839挂科+0.0387违约+0.2866获奖情况+0.0334社交+0.0475学校+0.0455学历 （上个月的数据）
     private double getCampusPerformanceScore(String username) {
         List<UnstructuredData> unstructuredDataList = unstructuredDataRepository.findDistinctByUserUsername(username);
         double score = 0;
@@ -647,11 +650,12 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
         }
     }
     // TODO 信用变化情况
-    private CreditChange getCreditChange(String username) {
+    public CreditChange getCreditChange(String username) {
         User user = userRepository.findByUsername(username).get();
         if(user.getUserLevel() != null && user.getUserLevel().equals(UserLevel.DISCREDIT)) {
             return CreditChange.FROZEN;
         }
+
         return CreditChange.getCreditChange();
     }
 

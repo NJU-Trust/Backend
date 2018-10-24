@@ -11,7 +11,7 @@ public enum RewardType {
     CITY(20),           // 市
     SCHOOL(10),         // 学校
     INSTITUTE(5),       // 学院
-    CERTIFICATE(15);    // 执业证书
+    CERTIFICATE(15);    // 职业证书
 
     private int score;
 

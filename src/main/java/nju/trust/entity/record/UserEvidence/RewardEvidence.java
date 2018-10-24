@@ -21,8 +21,9 @@ public class RewardEvidence extends BaseUserEvidence {
     @Enumerated(value = EnumType.STRING)
     private RewardType type;
 
-    public RewardEvidence(User user, UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence) {
+    public RewardEvidence(User user, UserInfoCheckRecord item, LocalDateTime time, CheckState state, String evidence, RewardType type) {
         super(user, item, time, state, evidence);
+        this.type = type;
     }
 
     public RewardEvidence() {
