@@ -670,12 +670,13 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
         LocalDate end = getEnd(endMonth);
 
         List<MonthAnalysis> monthAnalysisList = new ArrayList<>();
-        double incomeSum = 0, expenseSum = 0;   // 总收入,总支出
+        // 总收入,总支出,总刚性支出,总可调支出,总投资额结余,总负债,总净资产
+        double incomeSum = 0, expenseSum = 0, expense_rigSum = 0, expense_discSum = 0, surplusSum = 0, lbltSum = 0, assetSum = 0;
         LocalDate date = start;
         while(date.isBefore(end)) {
             List<UserMonthStatistics> userMonthStatisticsList = userMonthlyStatisticsRepository.findDistinctByUserUsernameAndDateBetween(username, date, date.with(TemporalAdjusters.lastDayOfMonth()));
-            // 收入、支出、日常支出, 学习支出, 饮食支出，净资产，蚂蚁花呗
-            double income = 0, expense = 0, daily = 0, learning = 0, food = 0, asset = 0, antCheckLater = 0;
+            // 收入、支出、日常支出, 学习支出, 饮食支出，净资产，蚂蚁花呗，投资额结余
+            double income = 0, expense = 0, daily = 0, learning = 0, food = 0, asset = 0, antCheckLater = 0, surplus = 0;
             for(UserMonthStatistics userMonthStatistics : userMonthStatisticsList) {
                 if(userMonthStatistics.getIncome() != null) {
                     income = income + userMonthStatistics.getIncome();
@@ -714,7 +715,7 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
             monthAnalysis.setExpense_rig(expense_rig);
             monthAnalysis.setExpense_disc(expense_disc);
             // TODO
-            monthAnalysis.setSurplus(0);
+            monthAnalysis.setSurplus(surplus);
 
             double lblt = antCheckLater + getToRepaySum(username, date);
             monthAnalysis.setLblt(lblt);
@@ -722,11 +723,16 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
             monthAnalysisList.add(monthAnalysis);
             incomeSum = incomeSum + income;
             expenseSum = expenseSum + expense;
+            expense_rigSum = expense_rigSum + expense_rig;
+            expense_discSum = expense_discSum + expense_disc;
+            surplusSum = surplusSum + surplus;
+            lbltSum = lbltSum + lblt;
+            assetSum = assetSum + asset;
 
             date = date.plusMonths(1);
         }
 
-        return new DataAnalysis(monthAnalysisList, incomeSum, expenseSum);
+        return new DataAnalysis(monthAnalysisList, incomeSum, expenseSum, expense_rigSum, expense_discSum, surplusSum, lbltSum, assetSum);
     }
     // 得到本月需偿还金额
     private double getToRepaySum(String username, LocalDate start) {
@@ -777,34 +783,156 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
         while(date.isBefore(end)) {
             TrendAnalysis trendAnalysis = new TrendAnalysis(date);
 
-            UserMonthStatistics userMonthStatistics = userMonthlyStatisticsRepository.findTopByUserUsernameAndDateBetween(username, date, date.with(TemporalAdjusters.lastDayOfMonth()));
+            List<UserMonthStatistics> userMonthStatisticsList = userMonthlyStatisticsRepository.findDistinctByUserUsernameAndDateBetween(username, date, date.with(TemporalAdjusters.lastDayOfMonth()));
+            if(userMonthStatisticsList.size() == 0) {
+                trendAnalysisList.add(trendAnalysis);
+                date = date.plusMonths(1);
+                continue;
+            }
 
-            if(userMonthStatistics.getEngel() != null) {
-                trendAnalysis.setEngel(userMonthStatistics.getEngel());
+            double engel = 0, rig_ratio = 0, d2a_ratio = 0, dp_ability = 0, leverage = 0, consump_ratio = 0, saving_ratio = 0;
+            for(UserMonthStatistics userMonthStatistics : userMonthStatisticsList) {
+                if(userMonthStatistics.getEngel() != null) {
+                    engel = engel + userMonthStatistics.getEngel();
+                }
+                if(userMonthStatistics.getRigidRatio() != null) {
+
+                    rig_ratio = rig_ratio + userMonthStatistics.getRigidRatio();
+                }
+                if(userMonthStatistics.getDebtToAssetRatio() != null) {
+                    d2a_ratio = d2a_ratio + userMonthStatistics.getDebtToAssetRatio();
+                }
+                if(userMonthStatistics.getDebtPayingAbility() != null) {
+                    dp_ability = dp_ability + userMonthStatistics.getDebtPayingAbility();
+                }
+                if(userMonthStatistics.getLeverage() != null) {
+                    leverage = leverage + userMonthStatistics.getLeverage();
+                }
+                if(userMonthStatistics.getConsumptionRatio() != null) {
+                    consump_ratio = consump_ratio + userMonthStatistics.getConsumptionRatio();
+                }
+                if(userMonthStatistics.getSavingRatio() != null) {
+                    saving_ratio = saving_ratio + userMonthStatistics.getSavingRatio();
+                }
             }
-            if(userMonthStatistics.getRigidRatio() != null) {
-                trendAnalysis.setRig_ratio(userMonthStatistics.getRigidRatio());
-            }
-            if(userMonthStatistics.getDebtToAssetRatio() != null) {
-                trendAnalysis.setD2a_ratio(userMonthStatistics.getDebtToAssetRatio());
-            }
-            if(userMonthStatistics.getDebtPayingAbility() != null) {
-                trendAnalysis.setDp_ability(userMonthStatistics.getDebtPayingAbility());
-            }
-            if(userMonthStatistics.getLeverage() != null) {
-                trendAnalysis.setLeverage(userMonthStatistics.getLeverage());
-            }
-            if(userMonthStatistics.getConsumptionRatio() != null) {
-                trendAnalysis.setConsump_ratio(userMonthStatistics.getConsumptionRatio());
-            }
-            if(userMonthStatistics.getSavingRatio() != null) {
-                trendAnalysis.setSaving_ratio(userMonthStatistics.getSavingRatio());
-            }
+
+            trendAnalysis.setEngel(engel);
+            trendAnalysis.setRig_ratio(rig_ratio);
+            trendAnalysis.setD2a_ratio(d2a_ratio);
+            trendAnalysis.setDp_ability(dp_ability);
+            trendAnalysis.setLeverage(leverage);
+            trendAnalysis.setConsump_ratio(consump_ratio);
+            trendAnalysis.setSaving_ratio(saving_ratio);
 
             trendAnalysisList.add(trendAnalysis);
             date = date.plusMonths(1);
         }
 
         return trendAnalysisList;
+    }
+
+    /**
+     * 比例分析
+     * @param username 用户名
+     * @param month    月份
+     */
+    @Override
+    public ProportionAnalysis getProportionAnalysis(String username, String month) {
+        LocalDate start = getStart(month);
+        LocalDate end = getEnd(month);
+        List<UserMonthStatistics> userMonthStatisticsList = userMonthlyStatisticsRepository.findDistinctByUserUsernameAndDateBetween(username, start, end);
+
+        if(userMonthStatisticsList.size() > 0) {
+            double outcome = 0, adjust = 0, food = 0 ;
+            ProportionOutcome data1 = new ProportionOutcome(0, 0, 0, 0, 0);
+            ProportionAdjust data2 = new ProportionAdjust(0, 0, 0, 0);
+            ProportionFood data3 = new ProportionFood(0, 0, 0, 0);
+
+            for(UserMonthStatistics userMonthStatistics : userMonthStatisticsList) {
+                if(userMonthStatistics.getExpense() != null) {
+                    outcome = userMonthStatistics.getExpense();
+                }
+                if(userMonthStatistics.getDisc() != null) {
+                    adjust = userMonthStatistics.getDisc();
+                }
+                if(userMonthStatistics.getFood() != null) {
+                    food = userMonthStatistics.getFood();
+                }
+                data1 = addProportionOutcome(userMonthStatistics, data1);
+                data2 = addProportionAdjust(userMonthStatistics, data2);
+                data3 = addProportionFood(userMonthStatistics, data3);
+            }
+            return new ProportionAnalysis(outcome, adjust, food, data1, data2, data3);
+        }
+        return new ProportionAnalysis();
+    }
+    // 比例分析的支出模块
+    private ProportionOutcome addProportionOutcome(UserMonthStatistics userMonthStatistics, ProportionOutcome pre) {
+        double daily = 0, learning = 0, food = 0, travel = 0, fun = 0;
+
+        if(userMonthStatistics.getDaily() != null) {
+            daily = userMonthStatistics.getDaily();
+        }
+        if(userMonthStatistics.getLearning() != null) {
+            learning = userMonthStatistics.getLearning();
+        }
+        if(userMonthStatistics.getFood() != null) {
+            food = userMonthStatistics.getFood();
+        }
+        if(userMonthStatistics.getTravel() != null) {
+            travel = userMonthStatistics.getTravel();
+        }
+        if(userMonthStatistics.getFun() != null) {
+            fun = userMonthStatistics.getFun();
+        }
+
+        pre.add(daily, learning, food, travel, fun);
+        return pre;
+    }
+    // 比例分析的可调支出模块
+    private ProportionAdjust addProportionAdjust(UserMonthStatistics userMonthStatistics, ProportionAdjust pre) {
+        double dress = 0, food = 0, hotel = 0, fun = 0;
+
+        if(userMonthStatistics.getDress() != null) {
+            dress = userMonthStatistics.getDress();
+        }
+        if(userMonthStatistics.getTakeOut() != null) {
+            food = food + userMonthStatistics.getTakeOut();
+        }
+        if(userMonthStatistics.getEatingOut() != null) {
+            food = food + userMonthStatistics.getEatingOut();
+        }
+        if(userMonthStatistics.getSnackAndFruit() != null) {
+            food = food + userMonthStatistics.getSnackAndFruit();
+        }
+        if(userMonthStatistics.getHotel() != null) {
+            hotel = userMonthStatistics.getHotel();
+        }
+        if(userMonthStatistics.getFun() != null) {
+            fun = userMonthStatistics.getFun();
+        }
+
+        pre.add(dress, food, hotel, fun);
+        return pre;
+    }
+    // 比例分析饮食模块
+    private ProportionFood addProportionFood(UserMonthStatistics userMonthStatistics, ProportionFood pre) {
+        double schoolCanteen = 0, takeOut = 0, eatingOut = 0, snackAndFruit = 0;
+
+        if(userMonthStatistics.getSchoolCanteen() != null) {
+            schoolCanteen = userMonthStatistics.getSchoolCanteen();
+        }
+        if(userMonthStatistics.getTakeOut() != null) {
+            takeOut = userMonthStatistics.getTakeOut();
+        }
+        if(userMonthStatistics.getEatingOut() != null) {
+            eatingOut = userMonthStatistics.getEatingOut();
+        }
+        if(userMonthStatistics.getSnackAndFruit() != null) {
+            snackAndFruit = userMonthStatistics.getSnackAndFruit();
+        }
+
+        pre.add(schoolCanteen, takeOut, eatingOut, snackAndFruit);
+        return pre;
     }
 }

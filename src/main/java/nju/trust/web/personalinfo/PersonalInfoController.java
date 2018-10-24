@@ -26,38 +26,38 @@ public class PersonalInfoController {
 
     // 用户管理
     @GetMapping(value = "/campusPerformence")
-    public CampusPerformance getCampusPerformance(Principal principal) {
-        return personalInformationService.getCampusPerformance(principal.getName());
+    public CampusPerformance getCampusPerformance(String username) {
+        return personalInformationService.getCampusPerformance(username);
     }
 
     // 信息表
     @GetMapping(value = "/information")
-    public PersonalDetailInfomation getPersonalDetailInformation(Principal principal) {
-        return personalInformationService.getPersonalDetailInformation(principal.getName());
+    public PersonalDetailInfomation getPersonalDetailInformation(String username) {
+        return personalInformationService.getPersonalDetailInformation(username);
     }
 
     // 账户总览 投资借款部分
     @GetMapping(value = "/investAndLoan")
-    public InvestAndLoan getInvestAndLoanInfo(Principal principal) {
-        return personalInformationService.getInvestAndLoanInfo(principal.getName());
+    public InvestAndLoan getInvestAndLoanInfo(String username) {
+        return personalInformationService.getInvestAndLoanInfo(username);
     }
 
     // 校园关系图
     @GetMapping(value = "/relationship")
-    public PersonalRelationship getPersonalRelationships(Principal principal) {
-        return personalInformationService.getPersonalRelationships(principal.getName());
+    public PersonalRelationship getPersonalRelationships(String username) {
+        return personalInformationService.getPersonalRelationships(username);
     }
 
     // 账户总额
     @GetMapping(value = "/totalAccount")
-    public TotalAccountInfo getTotalAccountInfo(Principal principal) {
-        return personalInformationService.getTotalAccountInfo(principal.getName());
+    public TotalAccountInfo getTotalAccountInfo(String username) {
+        return personalInformationService.getTotalAccountInfo(username);
     }
 
     // 待办事项
     @GetMapping(value = "/todo")
-    public List<EventsInfo> getAllEventsInfo(Principal principal) {
-        return personalInformationService.getAllEventsInfo(principal.getName());
+    public List<EventsInfo> getAllEventsInfo(String username) {
+        return personalInformationService.getAllEventsInfo(username);
     }
 
     // 数值分析
@@ -70,5 +70,11 @@ public class PersonalInfoController {
     @GetMapping(value = "/trendAnalysis")
     public List<TrendAnalysis> getTrendAnalysis(Principal principal, String startMonth, String endMonth) {
         return personalInformationService.getTrendAnalysis(principal.getName(), startMonth, endMonth);
+    }
+
+    // 比例分析
+    @GetMapping(value = "/proportionAnalysis")
+    public ProportionAnalysis getProportionAnalysis(Principal principal, String month) {
+        return personalInformationService.getProportionAnalysis(principal.getName(), month);
     }
 }
