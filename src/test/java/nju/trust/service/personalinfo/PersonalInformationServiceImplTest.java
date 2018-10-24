@@ -191,7 +191,7 @@ public class PersonalInformationServiceImplTest {
         System.out.println();
         System.out.println("test getTrendAnalysis:");
         String username = "test";
-        String startMonth = "2018-9";
+        String startMonth = "2018-1";
         String endMonth = "2018-10";
 
         List<TrendAnalysis> result = test.getTrendAnalysis(username, startMonth, endMonth);
@@ -218,7 +218,7 @@ public class PersonalInformationServiceImplTest {
         System.out.println("test getProportionAnalysis:");
 
         String username = "test";
-        String month = "2018-9";
+        String month = "2018-1";
 
         ProportionAnalysis proportionAnalysis = test.getProportionAnalysis(username, month);
 

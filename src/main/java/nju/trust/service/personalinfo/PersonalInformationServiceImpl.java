@@ -783,29 +783,46 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
         while(date.isBefore(end)) {
             TrendAnalysis trendAnalysis = new TrendAnalysis(date);
 
-            UserMonthStatistics userMonthStatistics = userMonthlyStatisticsRepository.findTopByUserUsernameAndDateBetween(username, date, date.with(TemporalAdjusters.lastDayOfMonth()));
+            List<UserMonthStatistics> userMonthStatisticsList = userMonthlyStatisticsRepository.findDistinctByUserUsernameAndDateBetween(username, date, date.with(TemporalAdjusters.lastDayOfMonth()));
+            if(userMonthStatisticsList.size() == 0) {
+                trendAnalysisList.add(trendAnalysis);
+                date = date.plusMonths(1);
+                continue;
+            }
 
-            if(userMonthStatistics.getEngel() != null) {
-                trendAnalysis.setEngel(userMonthStatistics.getEngel());
+            double engel = 0, rig_ratio = 0, d2a_ratio = 0, dp_ability = 0, leverage = 0, consump_ratio = 0, saving_ratio = 0;
+            for(UserMonthStatistics userMonthStatistics : userMonthStatisticsList) {
+                if(userMonthStatistics.getEngel() != null) {
+                    engel = engel + userMonthStatistics.getEngel();
+                }
+                if(userMonthStatistics.getRigidRatio() != null) {
+
+                    rig_ratio = rig_ratio + userMonthStatistics.getRigidRatio();
+                }
+                if(userMonthStatistics.getDebtToAssetRatio() != null) {
+                    d2a_ratio = d2a_ratio + userMonthStatistics.getDebtToAssetRatio();
+                }
+                if(userMonthStatistics.getDebtPayingAbility() != null) {
+                    dp_ability = dp_ability + userMonthStatistics.getDebtPayingAbility();
+                }
+                if(userMonthStatistics.getLeverage() != null) {
+                    leverage = leverage + userMonthStatistics.getLeverage();
+                }
+                if(userMonthStatistics.getConsumptionRatio() != null) {
+                    consump_ratio = consump_ratio + userMonthStatistics.getConsumptionRatio();
+                }
+                if(userMonthStatistics.getSavingRatio() != null) {
+                    saving_ratio = saving_ratio + userMonthStatistics.getSavingRatio();
+                }
             }
-            if(userMonthStatistics.getRigidRatio() != null) {
-                trendAnalysis.setRig_ratio(userMonthStatistics.getRigidRatio());
-            }
-            if(userMonthStatistics.getDebtToAssetRatio() != null) {
-                trendAnalysis.setD2a_ratio(userMonthStatistics.getDebtToAssetRatio());
-            }
-            if(userMonthStatistics.getDebtPayingAbility() != null) {
-                trendAnalysis.setDp_ability(userMonthStatistics.getDebtPayingAbility());
-            }
-            if(userMonthStatistics.getLeverage() != null) {
-                trendAnalysis.setLeverage(userMonthStatistics.getLeverage());
-            }
-            if(userMonthStatistics.getConsumptionRatio() != null) {
-                trendAnalysis.setConsump_ratio(userMonthStatistics.getConsumptionRatio());
-            }
-            if(userMonthStatistics.getSavingRatio() != null) {
-                trendAnalysis.setSaving_ratio(userMonthStatistics.getSavingRatio());
-            }
+
+            trendAnalysis.setEngel(engel);
+            trendAnalysis.setRig_ratio(rig_ratio);
+            trendAnalysis.setD2a_ratio(d2a_ratio);
+            trendAnalysis.setDp_ability(dp_ability);
+            trendAnalysis.setLeverage(leverage);
+            trendAnalysis.setConsump_ratio(consump_ratio);
+            trendAnalysis.setSaving_ratio(saving_ratio);
 
             trendAnalysisList.add(trendAnalysis);
             date = date.plusMonths(1);
@@ -823,26 +840,34 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
     public ProportionAnalysis getProportionAnalysis(String username, String month) {
         LocalDate start = getStart(month);
         LocalDate end = getEnd(month);
-        UserMonthStatistics userMonthStatistics = userMonthlyStatisticsRepository.findTopByUserUsernameAndDateBetween(username, start, end);
+        List<UserMonthStatistics> userMonthStatisticsList = userMonthlyStatisticsRepository.findDistinctByUserUsernameAndDateBetween(username, start, end);
 
-        double outcome = 0, adjust = 0, food = 0 ;
-        if(userMonthStatistics.getExpense() != null) {
-            outcome = userMonthStatistics.getExpense();
-        }
-        if(userMonthStatistics.getDisc() != null) {
-            adjust = userMonthStatistics.getDisc();
-        }
-        if(userMonthStatistics.getFood() != null) {
-            food = userMonthStatistics.getFood();
-        }
-        ProportionOutcome data1 = getProportionOutcome(userMonthStatistics);
-        ProportionAdjust data2 = getProportionAdjust(userMonthStatistics);
-        ProportionFood data3 = getProportionFood(userMonthStatistics);
+        if(userMonthStatisticsList.size() > 0) {
+            double outcome = 0, adjust = 0, food = 0 ;
+            ProportionOutcome data1 = new ProportionOutcome(0, 0, 0, 0, 0);
+            ProportionAdjust data2 = new ProportionAdjust(0, 0, 0, 0);
+            ProportionFood data3 = new ProportionFood(0, 0, 0, 0);
 
-        return new ProportionAnalysis(outcome, adjust, food, data1, data2, data3);
+            for(UserMonthStatistics userMonthStatistics : userMonthStatisticsList) {
+                if(userMonthStatistics.getExpense() != null) {
+                    outcome = userMonthStatistics.getExpense();
+                }
+                if(userMonthStatistics.getDisc() != null) {
+                    adjust = userMonthStatistics.getDisc();
+                }
+                if(userMonthStatistics.getFood() != null) {
+                    food = userMonthStatistics.getFood();
+                }
+                data1 = addProportionOutcome(userMonthStatistics, data1);
+                data2 = addProportionAdjust(userMonthStatistics, data2);
+                data3 = addProportionFood(userMonthStatistics, data3);
+            }
+            return new ProportionAnalysis(outcome, adjust, food, data1, data2, data3);
+        }
+        return new ProportionAnalysis();
     }
     // 比例分析的支出模块
-    private ProportionOutcome getProportionOutcome(UserMonthStatistics userMonthStatistics) {
+    private ProportionOutcome addProportionOutcome(UserMonthStatistics userMonthStatistics, ProportionOutcome pre) {
         double daily = 0, learning = 0, food = 0, travel = 0, fun = 0;
 
         if(userMonthStatistics.getDaily() != null) {
@@ -861,10 +886,11 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
             fun = userMonthStatistics.getFun();
         }
 
-        return new ProportionOutcome(daily, learning, food, travel, fun);
+        pre.add(daily, learning, food, travel, fun);
+        return pre;
     }
     // 比例分析的可调支出模块
-    private ProportionAdjust getProportionAdjust(UserMonthStatistics userMonthStatistics) {
+    private ProportionAdjust addProportionAdjust(UserMonthStatistics userMonthStatistics, ProportionAdjust pre) {
         double dress = 0, food = 0, hotel = 0, fun = 0;
 
         if(userMonthStatistics.getDress() != null) {
@@ -885,10 +911,12 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
         if(userMonthStatistics.getFun() != null) {
             fun = userMonthStatistics.getFun();
         }
-        return new ProportionAdjust(dress, food, hotel, fun);
+
+        pre.add(dress, food, hotel, fun);
+        return pre;
     }
     // 比例分析饮食模块
-    private ProportionFood getProportionFood(UserMonthStatistics userMonthStatistics) {
+    private ProportionFood addProportionFood(UserMonthStatistics userMonthStatistics, ProportionFood pre) {
         double schoolCanteen = 0, takeOut = 0, eatingOut = 0, snackAndFruit = 0;
 
         if(userMonthStatistics.getSchoolCanteen() != null) {
@@ -904,6 +932,7 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
             snackAndFruit = userMonthStatistics.getSnackAndFruit();
         }
 
-        return new ProportionFood(schoolCanteen, takeOut, eatingOut, snackAndFruit);
+        pre.add(schoolCanteen, takeOut, eatingOut, snackAndFruit);
+        return pre;
     }
 }

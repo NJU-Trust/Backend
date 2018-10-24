@@ -6,6 +6,8 @@ package nju.trust.payloads.personalinfomation;
  * @Date: 2018/10/23
  */
 public class ProportionAnalysis {
+    private static final String NOTCARE = "/";
+
     private String outcome; // 月支出
     private String adjust;  // 月可调支出
     private String food;    // 月饮食支出
@@ -13,7 +15,14 @@ public class ProportionAnalysis {
     private ProportionAdjust data2; // 可调支出
     private ProportionFood data3;   // 饮食支出
 
-    public ProportionAnalysis() {}
+    public ProportionAnalysis() {
+        outcome = NOTCARE;
+        adjust = NOTCARE;
+        food = NOTCARE;
+        data1 = new ProportionOutcome();
+        data2 = new ProportionAdjust();
+        data3 = new ProportionFood();
+    }
 
     public ProportionAnalysis(double outcome, double adjust, double food, ProportionOutcome data1, ProportionAdjust data2, ProportionFood data3) {
         this.outcome = toForm(outcome);

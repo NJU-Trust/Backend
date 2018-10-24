@@ -6,11 +6,21 @@ package nju.trust.payloads.personalinfomation;
  * @Date: 2018/10/23
  */
 public class ProportionOutcome {
+    private static final String NOTCARE = "/";
+
     private String daily;   // 日常
     private String learning;// 学习
     private String food;    // 饮食（总饮食）
     private String travel;  // 出行
     private String fun;     // 娱乐
+
+    public ProportionOutcome() {
+        daily = NOTCARE;
+        learning = NOTCARE;
+        food = NOTCARE;
+        travel = NOTCARE;
+        fun = NOTCARE;
+    }
 
     public ProportionOutcome(double daily, double learning, double food, double travel, double fun) {
         this.daily = toForm(daily);
@@ -60,7 +70,17 @@ public class ProportionOutcome {
         this.fun = toForm(fun);
     }
 
+
+
     private String toForm(double num) {
         return Double.parseDouble(String.format("%.2f", num))+"";
+    }
+
+    public void add(double daily, double learning, double food, double travel, double fun) {
+        setDaily(Double.parseDouble(this.daily) + daily);
+        setLearning(Double.parseDouble(this.learning) + learning);
+        setFood(Double.parseDouble(this.food) + food);
+        setTravel(Double.parseDouble(this.travel) + travel);
+        setFun(Double.parseDouble(this.fun) + fun);
     }
 }
