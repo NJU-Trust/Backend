@@ -25,9 +25,11 @@ public class OnGoingTarget {
 
     private Double repayMoney;
 
+    private Long targetId;
+
     public OnGoingTarget(String name, LocalDate releaseDate, Double interestRate,
                          Integer remainingRepaidPeriods, Double remainingMoney,
-                         LocalDate nextDueDate, Double repayMoney) {
+                         LocalDate nextDueDate, Double repayMoney, Long targetId) {
         this.name = name;
         this.releaseDate = releaseDate;
         this.interestRate = interestRate;
@@ -35,6 +37,11 @@ public class OnGoingTarget {
         this.remainingMoney = remainingMoney;
         this.nextDueDate = nextDueDate;
         this.repayMoney = repayMoney;
+        this.targetId = targetId;
+    }
+
+    public Long getTargetId() {
+        return targetId;
     }
 
     public String getName() {

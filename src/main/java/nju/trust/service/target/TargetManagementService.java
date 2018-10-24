@@ -52,7 +52,7 @@ public class TargetManagementService {
             int remainingPeriods = repayment.getDuration() - record.getPeriod() + 1;
             result.add(new OnGoingTarget(target.getName(), target.getStartTime(),
                     repayment.getInterestRate(), remainingPeriods, record.getRemainingPrincipal(),
-                    repayment.nextDueDate(), record.getSum()));
+                    repayment.nextDueDate(), record.getSum(), target.getId()));
 
         }
         return result;
