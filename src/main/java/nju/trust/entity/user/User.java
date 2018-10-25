@@ -84,6 +84,8 @@ public class User {
      */
     private Double creditScore;
 
+    //信用交叉检验得分
+    private Double crossScore = -1.0;
     /**
      * 挂科数
      */
@@ -107,8 +109,9 @@ public class User {
 
     private String livingPlace;
 
-    //信用交叉检验得分
-    double crossScore = -1.0;
+
+    public User() {
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -388,6 +391,7 @@ public class User {
         }
     }
 
+
     public void setRoles(ArrayList<RoleName> role) {
         if (role == null) {
             roles = null;
@@ -403,11 +407,11 @@ public class User {
         }
     }
 
-    public double getCrossScore() {
+    public Double getCrossScore() {
         return crossScore;
     }
 
-    public void setCrossScore(double crossScore) {
+    public void setCrossScore(Double crossScore) {
         this.crossScore = crossScore;
     }
 }
