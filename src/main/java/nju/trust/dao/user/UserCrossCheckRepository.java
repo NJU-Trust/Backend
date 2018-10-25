@@ -21,7 +21,7 @@ public interface UserCrossCheckRepository extends CrudRepository<CreditCrossChec
 
     boolean existsById(long id);
 
-    List<User> findDistinctByEndDate(LocalDate date);
+    List<CreditCrossCheck> findDistinctByEndDate(LocalDate date);
 
     List<CreditCrossCheck> findAllByUserUsernameAndEndDate(String username, LocalDate date);
 

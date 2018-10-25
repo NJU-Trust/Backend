@@ -99,6 +99,6 @@ public class CrossCheckServiceImpl implements CrossCheckService {
         }else{
             return new ApiResponse(false,"invalid questionnaire id!");
         }
-        return null;
+        return new ApiResponse(true,"success!");
     }
 }

@@ -2,6 +2,7 @@ package nju.trust.config;
 
 import nju.trust.dao.user.UserCrossCheckRepository;
 import nju.trust.dao.user.UserRepository;
+import nju.trust.entity.CreditRating;
 import nju.trust.entity.user.CreditCrossCheck;
 import nju.trust.entity.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,10 +39,18 @@ public class CrossCheckConfig {
     private void configureTasks() {
         LocalDate date = LocalDate.now();
         //今天要计算的人员名单
-        List<User> users = userCrossCheckRepository.findDistinctByEndDate(date);
+        List<CreditCrossCheck> creditCrossCheckList = userCrossCheckRepository.findDistinctByEndDate(date);
+        List<User> users = new ArrayList<>();
+        for(int i=0;i<creditCrossCheckList.size();i++){
+            if(users.indexOf(creditCrossCheckList.get(i).getUser())<0){
+                users.add(creditCrossCheckList.get(i).getUser());
+            }
+        }
+
         for(int i=0;i<users.size();i++){
             //当前user
             User user = users.get(i);
+
             //得到提交检验问卷的人
             List<CreditCrossCheck> creditCrossChecks = userCrossCheckRepository.findAllByUserUsernameAndEndDate(user.getUsername(),date);
             ArrayList<Long> ids = new ArrayList<>();
@@ -55,17 +64,31 @@ public class CrossCheckConfig {
                 creditCrossChecks.get(j).setValid(false);
                 userCrossCheckRepository.save(creditCrossChecks.get(j));
             }
+
+            /*
+            System.out.println(user.getUsername());
+            System.out.println(ids);
+            System.out.println(indexOfIds);
+            */
+
             //>=5 计算问卷得分
             if(ids.size()>=5){
                 double score = 0;
-                int totalWeight = 0;
+                double totalWeight = 0;
                 for(int k=0;k<indexOfIds.size();k++){
                     int weight = calculateWeight(creditCrossChecks.get(indexOfIds.get(k)));
                     int totalScore = calculateTotalScore(creditCrossChecks.get(indexOfIds.get(k)));
+                    /*
+                    System.out.println("totalScore:"+totalScore+"   weight:"+weight);
+                    */
                     totalWeight+=weight;
                     score+=weight*totalScore;
                 }
                 score = score*1.0/totalWeight;
+
+                /*
+                System.out.println("calculate score:"+score);
+                */
 
                 double creditScore = user.getCreditScore();
 
@@ -78,24 +101,34 @@ public class CrossCheckConfig {
                     if(score>creditScore){
                         //+3
                         user.setCreditScore(creditScore+3);
-                        userRepository.save(user);
                     }else{
                         //-3
                         user.setCreditScore(creditScore-3);
-                        userRepository.save(user);
                     }
                 }else if(X>=35){
                     //+-5
                     if(score>creditScore){
                         //+5
                         user.setCreditScore(creditScore+5);
-                        userRepository.save(user);
                     }else{
                         //-5
                         user.setCreditScore(creditScore-5);
-                        userRepository.save(user);
                     }
                 }
+                //评级修改
+                if(user.getCreditScore()<40){
+                    user.setCreditRating(CreditRating.D);
+                }else if(40<=user.getCreditScore()&&user.getCreditScore()<60){
+                    user.setCreditRating(CreditRating.C);
+                }else if(60<=user.getCreditScore()&&user.getCreditScore()<75){
+                    user.setCreditRating(CreditRating.B);
+                }else if (75<=user.getCreditScore()&&user.getCreditScore()<90){
+                    user.setCreditRating(CreditRating.A);
+                }else if (90<=user.getCreditScore()&&user.getCreditScore()<=100){
+                    user.setCreditRating(CreditRating.AA);
+                }
+                userRepository.save(user);
+
             }
 
         }
@@ -156,7 +189,7 @@ public class CrossCheckConfig {
             if(score89>25){
                 score89=25;
             }
-        }else{
+        }else if(creditCrossCheck.getQ8()<creditCrossCheck.getQ9()){
             score89-=5;
         }
         totalScore+=score89;
