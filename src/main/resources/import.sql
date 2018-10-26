@@ -1,15 +1,15 @@
 insert into user (username, password, credit_score, credit_rating, user_level) values ('test', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS', 85, 'A', 'PRIMARY');
-INSERT INTO user (username, credit_rating, credit_score, institution, password, student_id) VALUES ('cross1', 'A', '85', '软院', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS', '161250001');
-INSERT INTO user (username, institution, password, student_id) VALUES ('cross2', '软院', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS',  '161250002');
-INSERT INTO user (username, institution, password, student_id) VALUES ('cross3', '软院', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS',  '161250003');
-INSERT INTO user (username, institution, password, student_id) VALUES ('cross4', '软院', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS', '161250004');
-INSERT INTO user (username, institution, password, student_id) VALUES ('cross5', '软院', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS', '161250005');
-INSERT INTO user (username, institution, password, student_id) VALUES ('cross6', '软院', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS', '161250006');
-INSERT INTO user (username, institution, password, student_id) VALUES ('cross7', '软院', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS', '161250007');
-INSERT INTO user (username, institution, password, student_id) VALUES ('cross8', '软院', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS', '161250008');
-INSERT INTO user (username, institution, password, student_id) VALUES ('cross9', '软院', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS', '161250009');
-INSERT INTO user (username, institution, password, student_id) VALUES ('cross10', '软院', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS', '161250010');
-INSERT INTO user (username, institution, password, student_id) VALUES ('cross11', '软院', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS', '161250011');
+INSERT INTO user (username, credit_rating, credit_score, institution, password, student_id ,cross_score) VALUES ('cross1', 'A', '85', '软院', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS', '161250001',-1.0);
+INSERT INTO user (username, institution, password, student_id,cross_score) VALUES ('cross2', '软院', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS',  '161250002',-1.0);
+INSERT INTO user (username, institution, password, student_id,cross_score) VALUES ('cross3', '软院', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS',  '161250003',-1.0);
+INSERT INTO user (username, institution, password, student_id,cross_score) VALUES ('cross4', '软院', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS', '161250004',-1.0);
+INSERT INTO user (username, institution, password, student_id,cross_score) VALUES ('cross5', '软院', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS', '161250005',-1.0);
+INSERT INTO user (username, institution, password, student_id,cross_score) VALUES ('cross6', '软院', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS', '161250006',-1.0);
+INSERT INTO user (username, institution, password, student_id,cross_score) VALUES ('cross7', '软院', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS', '161250007',-1.0);
+INSERT INTO user (username, institution, password, student_id,cross_score) VALUES ('cross8', '软院', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS', '161250008',-1.0);
+INSERT INTO user (username, institution, password, student_id,cross_score) VALUES ('cross9', '软院', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS', '161250009',-1.0);
+INSERT INTO user (username, institution, password, student_id,cross_score) VALUES ('cross10', '软院', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS', '161250010',-1.0);
+INSERT INTO user (username, institution, password, student_id,cross_score) VALUES ('cross11', '软院', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS', '161250011',-1.0);
 
 insert into user_month_statistics(id, income, disc, surplus, username, debt) values (1, 1000, 500, 500, 'test', 100);
 insert into user_month_statistics(id, income, disc, surplus, username, debt) values (2, 1050, 500, 500, 'test', 100);
