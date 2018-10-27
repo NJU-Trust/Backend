@@ -15,13 +15,13 @@ import java.time.LocalDateTime;
 @Entity
 public class UserInfoCheckRecord {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;    // 编号
 
     @Enumerated(EnumType.STRING)
     private CheckItem checkItem;    // 条目
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "username")
     private User user;  // 用户
 

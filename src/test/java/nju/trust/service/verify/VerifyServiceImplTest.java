@@ -2,6 +2,7 @@ package nju.trust.service.verify;
 
 import nju.trust.payloads.ApiResponse;
 import nju.trust.payloads.verifyInfo.NameAndEvidence;
+import nju.trust.payloads.verifyInfo.SchoolVerifyInfo;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,14 +30,34 @@ public class VerifyServiceImplTest {
     private VerifyService test;
 
     @Test
+    public void schoolVerify() {
+        SchoolVerifyInfo info = new SchoolVerifyInfo();
+        info.setRealName("唐佳未");
+        info.setGender("女");
+        info.setBirthday("2018-01-01T");
+        info.setIdCardNumber("idCardNumber   ");
+        info.setUniversity("NJU");
+        info.setInstitution("SE");
+        info.setMajor("SE");
+        info.setAlipay("alipay");
+        info.setStuCardImage("stuCardImage");
+        info.setSchoolCardImage("schoolCardImage");
+        String username = "test";
+
+        ApiResponse response = test.schoolVerify(info, username);
+
+        System.out.println("response:"+response.getSuccess()+"  "+response.getMessage());
+    }
+
+    @Test
     public void selfInfoVerify() {
         List<String> report_cards = new ArrayList<>();
-        //report_cards.add("report_cards1");
-        //report_cards.add("report_cards2");
+        report_cards.add("report_cards1");
+        report_cards.add("report_cards2");
 
         List<NameAndEvidence> school_rewards = new ArrayList<>();
-        //school_rewards.add(new NameAndEvidence("校级奖学金", "school scholarship evidence"));
-        //school_rewards.add(new NameAndEvidence("花旗杯", "school match evidence"));
+        school_rewards.add(new NameAndEvidence("校级奖学金", "school scholarship evidence"));
+        school_rewards.add(new NameAndEvidence("花旗杯", "school match evidence"));
 
         List<NameAndEvidence> city_rewards = new ArrayList<>();
         city_rewards.add(new NameAndEvidence("市级奖学金", "city scholarship evidence"));
@@ -64,5 +85,18 @@ public class VerifyServiceImplTest {
         List<String> result = test.getRoles(username);
         System.out.println();
         System.out.println("result:"+ Arrays.toString(result.toArray()));
+    }
+
+    @Test
+    public void alumnaVerify() {
+        String username = "test";
+        String gender = "女";
+        String birthday = "1998-02-16";
+        String idCardNumber = "410425199802160521";
+        String education = "本科";
+        String evidence = "education evidence";
+        ApiResponse result = test.alumnaVerify(username, gender, birthday, idCardNumber, education, evidence);
+        System.out.println();
+        System.out.println("result:"+ result.getSuccess()+"  "+result.getMessage());
     }
 }

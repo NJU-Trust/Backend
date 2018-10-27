@@ -31,8 +31,9 @@ public class UserEvidenceRepository {
     private StudyEvidenceRepository studyEvidenceRepository;
     private TestCheatEvidenceRepository testCheatEvidenceRepository;
     private VolunteerEvidenceRepository volunteerEvidenceRepository;
+    private SelfInfoEvidenceRepository selfInfoEvidenceRepository;
     @Autowired
-    public UserEvidenceRepository(BaseUserEvidenceRepository baseUserEvidenceRepository, DiscreditEvidenceRepository discreditEvidenceRepository, EducationEvidenceRepository educationEvidenceRepository, FailEvidenceRepository failEvidenceRepository, MajorEvidenceRepository majorEvidenceRepository, MatchEvidenceRepository matchEvidenceRepository, PaymentEvidenceRepository paymentEvidenceRepository, RepaymentEvidenceRepository repaymentEvidenceRepository, ReturnBooksEvidenceRepository returnBooksEvidenceRepository, RewardEvidenceRepository rewardEvidenceRepository, ScholarshipEvidenceRepository scholarshipEvidenceRepository, SchoolEvidenceRepository schoolEvidenceRepository, StudentWorkEvidenceRepository studentWorkEvidenceRepository, StudyEvidenceRepository studyEvidenceRepository, TestCheatEvidenceRepository testCheatEvidenceRepository, VolunteerEvidenceRepository volunteerEvidenceRepository) {
+    public UserEvidenceRepository(BaseUserEvidenceRepository baseUserEvidenceRepository, DiscreditEvidenceRepository discreditEvidenceRepository, EducationEvidenceRepository educationEvidenceRepository, FailEvidenceRepository failEvidenceRepository, MajorEvidenceRepository majorEvidenceRepository, MatchEvidenceRepository matchEvidenceRepository, PaymentEvidenceRepository paymentEvidenceRepository, RepaymentEvidenceRepository repaymentEvidenceRepository, ReturnBooksEvidenceRepository returnBooksEvidenceRepository, RewardEvidenceRepository rewardEvidenceRepository, ScholarshipEvidenceRepository scholarshipEvidenceRepository, SchoolEvidenceRepository schoolEvidenceRepository, StudentWorkEvidenceRepository studentWorkEvidenceRepository, StudyEvidenceRepository studyEvidenceRepository, TestCheatEvidenceRepository testCheatEvidenceRepository, VolunteerEvidenceRepository volunteerEvidenceRepository, SelfInfoEvidenceRepository selfInfoEvidenceRepository) {
         this.baseUserEvidenceRepository = baseUserEvidenceRepository;
         this.discreditEvidenceRepository = discreditEvidenceRepository;
         this.educationEvidenceRepository = educationEvidenceRepository;
@@ -49,6 +50,7 @@ public class UserEvidenceRepository {
         this.studyEvidenceRepository = studyEvidenceRepository;
         this.testCheatEvidenceRepository = testCheatEvidenceRepository;
         this.volunteerEvidenceRepository = volunteerEvidenceRepository;
+        this.selfInfoEvidenceRepository = selfInfoEvidenceRepository;
     }
 
     public List<String> findEvidencesByItem(UserInfoCheckRecord record) {
@@ -230,5 +232,9 @@ public class UserEvidenceRepository {
 
     public List<StudyEvidence> findStudyEvidenceByUser(String username) {
         return studyEvidenceRepository.findDistinctByUserUsername(username);
+    }
+
+    public List<SelfInfoEvidence> findSelfInfoEvidenceByItem(UserInfoCheckRecord checkRecord) {
+        return selfInfoEvidenceRepository.findDistinctByItem(checkRecord);
     }
 }

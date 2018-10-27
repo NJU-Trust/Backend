@@ -37,7 +37,6 @@ public interface VerifyService {
 
     /**
      * 校友信息验证
-     * TODO
      * @param username     用户名
      * @param gender       性别（男 女）
      * @param birthday     出生年月日（2018-01-01）
@@ -50,9 +49,8 @@ public interface VerifyService {
 
     /**
      * 得到用户角色
-     * TODO
      * @param username 用户名
-     * @return ["初级/非初级","校友/学生"]
+     * @return ["初级/非初级/初级审核中","校友/学生"]
      */
     List<String> getRoles(String username);
 }
