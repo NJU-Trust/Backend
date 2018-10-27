@@ -74,3 +74,8 @@ INSERT INTO trust.repayment_record (id, time, actual_repay_date, interest, perio
 INSERT INTO trust.repayment_record (id, time, actual_repay_date, interest, period, principal, remaining_principal, return_date, sum, username, target_id) VALUES (16, '2020-09-13 00:00:00', null, 90, 100, 100, 200, '2020-09-13', 200, 'test', 1);
 INSERT INTO trust.repayment_record (id, time, actual_repay_date, interest, period, principal, remaining_principal, return_date, sum, username, target_id) VALUES (17, '2020-01-13 00:00:00', null, 90, 100, 100, 200, '2020-01-13', 200, 'test', 1);
 INSERT INTO trust.repayment_record (id, time, actual_repay_date, interest, period, principal, remaining_principal, return_date, sum, username, target_id) VALUES (18, '2020-02-13 00:00:00', null, 90, 100, 100, 200, '2020-02-13', 200, 'test', 1);
+
+INSERT INTO `trust`.`base_target` (`collected_money`, `completion_rate`, `identity_option`, `money`, `name`, `project_description`, `proof`, `start_time`, `target_rating`, `target_rating_score`, `target_state`, `target_type`, `use_of_funds`, `username`) VALUES (1440, 80, 0, 1800, 'test_target', 'target 1 description', 'proof path', '2018-06-10', 'A', 0.95, 'ON_GOING', 'SMALL', '鞋帽服饰', 'test')
+
+INSERT INTO `trust`.`small_target` (`classification`, `id`) VALUES (0, 3)
+INSERT INTO `trust`.`repayment` (`difficulty`, `duration`, `interest_rate`, `remaining_amount`, `start_date`, `total_interest`, `type`, `target_id`, `username`) VALUES (70, 6, 5.33, 2000, '2018-09-10', 200, 'PRE_INTEREST', 3, 'test')

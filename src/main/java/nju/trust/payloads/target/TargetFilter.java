@@ -2,12 +2,8 @@ package nju.trust.payloads.target;
 
 import nju.trust.entity.target.BaseTarget;
 import nju.trust.entity.target.TargetType;
-import org.springframework.data.jpa.domain.Specification;
 
-import javax.persistence.criteria.Predicate;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -29,35 +25,20 @@ public class TargetFilter {
 
     private LocalDate endDate;
 
-    public Specification<BaseTarget> toSpecification(String username) {
-        return (Specification<BaseTarget>) (root, criteriaQuery, criteriaBuilder) -> {
-            List<Predicate> predicates = new ArrayList<>();
-            predicates.add(criteriaBuilder.equal(root.get("user").get("username"), username));
-            Optional.ofNullable(moneyLower)
-                    .ifPresent(t -> predicates.add(criteriaBuilder.ge(root.get("money"), t)));
-            Optional.ofNullable(moneyUpper)
-                    .ifPresent(t -> predicates.add(criteriaBuilder.le(root.get("money"), t)));
-            Optional.ofNullable(targetType)
-                    .ifPresent(t -> predicates.add(criteriaBuilder.equal(root.get("targetType"), t)));
-            Optional.ofNullable(name)
-                    .ifPresent(t -> predicates.add(criteriaBuilder.like(root.get("name"), t)));
-            Optional.ofNullable(startDate)
-                    .ifPresent(t -> predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("startTime"), t)));
-            Optional.ofNullable(endDate)
-                    .ifPresent(t -> predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("startTime"), t)));
-
-            Predicate[] result = new Predicate[predicates.size()];
-            return criteriaBuilder.and(result);
-        };
-    }
-
     public java.util.function.Predicate<BaseTarget> toPredicate() {
         java.util.function.Predicate<BaseTarget> result =
-                t -> Optional.ofNullable(t.getMoney())
-                        .map(m -> m <= moneyUpper && m >= moneyLower).orElse(true);
-        result = result.and(t -> Optional.ofNullable(t.getTargetType()).map(m -> m == targetType).orElse(true))
-                .and(t -> Optional.ofNullable(t.getStartTime())
-                        .map(d -> d.isBefore(endDate) && d.isAfter(startDate)).orElse(true));
+                t -> Optional.ofNullable(moneyLower)
+                        .map(m -> t.getMoney() >= moneyLower).orElse(true);
+        result = result.and(t -> Optional.ofNullable(targetType)
+                .map(m -> m == t.getTargetType()).orElse(true))
+                .and(t -> Optional.ofNullable(moneyUpper)
+                        .map(m -> m >= t.getMoney()).orElse(true))
+                .and(t -> Optional.ofNullable(startDate)
+                        .map(d -> d.isBefore(t.getStartTime())).orElse(true))
+                .and(t -> Optional.ofNullable(endDate)
+                        .map(d -> d.isAfter(t.getStartTime())).orElse(true))
+                .and(t -> Optional.ofNullable(name)
+                        .map(n -> n.equals(t.getName())).orElse(true));
 
         return result;
     }
