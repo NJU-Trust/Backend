@@ -29,7 +29,7 @@ public class VerifyController {
         return verifyService.schoolVerify(schoolVerifyInfo,principal.getName());
     }
 
-    @GetMapping(value = "/selfInfo")
+    @PostMapping(value = "/selfInfo")
     public ApiResponse saveSelfInfo(Principal principal, int fail, List<String> report_cards, List<NameAndEvidence> school_rewards
             ,List<NameAndEvidence> city_rewards, List<NameAndEvidence> province_rewards, List<NameAndEvidence> country_rewards
             ,double volunteer, String volunteer_img, List<NameAndEvidence> self_qualifications){
