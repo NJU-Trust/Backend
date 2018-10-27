@@ -46,16 +46,16 @@ public class SchoolVerifyInfo {
         return Gender.getGender(gender);
     }
 
-    public void setGender(Gender gender) {
-        this.gender = gender.getStr();
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
     public LocalDate getBirthday() {
-        return LocalDate.parse(birthday, fmt);
+        return LocalDate.parse(birthday.split("T")[0], fmt);
     }
 
-    public void setBirthday(LocalDate birthday) {
-        this.birthday = birthday.format(fmt);
+    public void setBirthday(String birthday) {
+        this.birthday=birthday;
     }
 
     public String getIdCardNumber() {
