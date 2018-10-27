@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,13 +42,19 @@ public class TargetManagementService {
     private DefaultRecordRepository defaultRecordRepository;
 
     public List<OnGoingTarget> getOnGoingTargetList(String username, TargetFilter filter) {
-        List<BaseTarget> targets = targetRepository.findAll(filter.toSpecification(username));
+        List<BaseTarget> targets = targetRepository.findAllByUserUsername(username)
+                .stream()
+                .filter(t -> filter.toPredicate().test(t) && t.getTargetState() == TargetState.IN_THE_PAYMENT)
+                .collect(Collectors.toList());
         List<OnGoingTarget> result = new ArrayList<>();
         for (BaseTarget target : targets) {
             Repayment repayment = target.getRepayment();
             RepaymentRecord record = repaymentRecordRepository
-                    .findByReturnDateAndTargetId(repayment.nextDueDate(), target.getId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Repayment record not found"));
+                    .findAllByTargetId(target.getId())
+                    .stream()
+                    .filter(r -> !r.hasPaidOff())
+                    .min(Comparator.comparing(RepaymentRecord::getReturnDate))
+                    .orElseThrow(IllegalStateException::new);
 
             int remainingPeriods = repayment.getDuration() - record.getPeriod() + 1;
             result.add(new OnGoingTarget(target.getName(), target.getStartTime(),
@@ -59,14 +66,15 @@ public class TargetManagementService {
     }
 
     public List<ReleasedTarget> completedTargetList(String username, TargetFilter filter) {
-        return targetRepository.findAll(filter.toSpecification(username))
-                .stream().filter(t -> t.getTargetState() == TargetState.PAY_OFF)
+        return targetRepository.findAllByUserUsername(username).stream()
+                .filter(t -> filter.toPredicate().test(t) && t.getTargetState() == TargetState.PAY_OFF)
                 .map(ReleasedTarget::new).collect(Collectors.toList());
     }
 
     public List<ReleasedTarget> releasedTargetList(String username, TargetFilter filter) {
-        return targetRepository.findAll(filter.toSpecification(username))
-                .stream().map(ReleasedTarget::new).collect(Collectors.toList());
+        return targetRepository.findAllByUserUsername(username).stream()
+                .filter(t -> filter.toPredicate().test(t))
+                .map(ReleasedTarget::new).collect(Collectors.toList());
     }
 
     public List<InvestmentTarget> investedOngoingTargets(String username, TargetFilter filter) {
