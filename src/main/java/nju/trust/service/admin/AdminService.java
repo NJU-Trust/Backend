@@ -29,7 +29,7 @@ public interface AdminService {
      * @param type 用户类别（借款用户：无借款用户、待还款用户、逾期用户；投资用户）
      * @return List<UserSimpleInfo>
      */
-    List<UserSimpleInfo> getUserList(Pageable pageable, String keyword, UserType type);
+    List<UserSimpleInfo> getUserList(String keyword, UserType type);
 
     /**
      * 财务信息
@@ -61,7 +61,7 @@ public interface AdminService {
      * @param type 项目类型（小额拆借类、学习培训类）
      * @return
      */
-    List<TargetAdminBriefInfo> seeTarget(Pageable pageable, TargetState state, TargetType type);
+    List<TargetAdminBriefInfo> seeTarget(TargetState state, TargetType type);
 
     /**
      * 查看项目信息
@@ -94,7 +94,7 @@ public interface AdminService {
      * 优先级：UPDATE > SUBMIT 时间早 > 时间晚
      * @return List<UserStateList>
      */
-    List<UserStateList> getUserStateList(Pageable pageable);
+    List<UserStateList> getUserStateList();
 
     /**
      * 返回用户的待审核条目
@@ -118,7 +118,7 @@ public interface AdminService {
      * @param type 标的类别
      * @return 标的概要信息
      */
-    public List<PendingTargetBriefInfo> getPendingTargets(Pageable pageable, TargetType type);
+    public List<PendingTargetBriefInfo> getPendingTargets(TargetType type);
 
     /**
      * 得到待审核的小额标的编号

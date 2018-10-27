@@ -21,7 +21,6 @@ import nju.trust.payloads.ApiResponse;
 import nju.trust.payloads.admin.*;
 import nju.trust.payloads.user.UserSimpleInfo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -46,7 +45,6 @@ public class AdminServiceImpl implements AdminService {
     private AdminInvestmentRecordRepository adminInvestmentRecordRepository;
     private SmallTargetRepository smallTargetRepository;
     private LargeTargetRepository largeTargetRepository;
-    private TargetRepository targetRepository;
     private UserInfoCheckRecordRepository userInfoCheckRecordRepository;
     private RepaymentRepository repaymentRepository;
     private UserEvidenceRepository userEvidenceRecordRepository;
@@ -54,14 +52,13 @@ public class AdminServiceImpl implements AdminService {
     private RepaymentRecordRepository repaymentRecordRepository;
     private ScoreCalUtil scoreCalUtil;
     @Autowired
-    public AdminServiceImpl(LoanStateCheckUtil calUtil, AdminUserRepository adminUserRepository, BaseTargetRepository baseTargetRepository, AdminInvestmentRecordRepository adminInvestmentRecordRepository, SmallTargetRepository smallTargetRepository, LargeTargetRepository largeTargetRepository, TargetRepository targetRepository, UserInfoCheckRecordRepository userInfoCheckRecordRepository, RepaymentRepository repaymentRepository, UserEvidenceRepository userEvidenceRecordRepository, InvestmentRecordRepository investmentRecordRepository, RepaymentRecordRepository repaymentRecordRepository, ScoreCalUtil scoreCalUtil) {
+    public AdminServiceImpl(LoanStateCheckUtil calUtil, AdminUserRepository adminUserRepository, BaseTargetRepository baseTargetRepository, AdminInvestmentRecordRepository adminInvestmentRecordRepository, SmallTargetRepository smallTargetRepository, LargeTargetRepository largeTargetRepository, UserInfoCheckRecordRepository userInfoCheckRecordRepository, RepaymentRepository repaymentRepository, UserEvidenceRepository userEvidenceRecordRepository, InvestmentRecordRepository investmentRecordRepository, RepaymentRecordRepository repaymentRecordRepository, ScoreCalUtil scoreCalUtil) {
         this.calUtil = calUtil;
         this.adminUserRepository = adminUserRepository;
         this.baseTargetRepository = baseTargetRepository;
         this.adminInvestmentRecordRepository = adminInvestmentRecordRepository;
         this.smallTargetRepository = smallTargetRepository;
         this.largeTargetRepository = largeTargetRepository;
-        this.targetRepository = targetRepository;
         this.userInfoCheckRecordRepository = userInfoCheckRecordRepository;
         this.repaymentRepository = repaymentRepository;
         this.userEvidenceRecordRepository = userEvidenceRecordRepository;
@@ -82,19 +79,20 @@ public class AdminServiceImpl implements AdminService {
      * @return List<UserSimpleInfo>
      */
     @Override
-    public List<UserSimpleInfo> getUserList(Pageable pageable, String keyword, UserType type) {
+    public List<UserSimpleInfo> getUserList(String keyword, UserType type) {
         // 通过模糊查询、用户类别筛选用户
         List<UserSimpleInfo> infoList = getUserSimpleList(keyword, type);
 
+        return infoList;
         // 分页
-        int pageNumber = pageable.getPageNumber();
+        /*int pageNumber = pageable.getPageNumber();
         int pageSize = pageable.getPageSize();
         List<UserSimpleInfo> infoList2 = new ArrayList<>();
         for(int i = pageNumber*pageSize ; i < infoList.size() && i < (pageNumber+1)*pageSize ; i++) {
             infoList2.add(infoList.get(i));
         }
 
-        return infoList2;
+        return infoList2;*/
     }
     private List<UserSimpleInfo> getUserSimpleList(String keyword, UserType type) {
         List<String> usernames;
@@ -207,7 +205,7 @@ public class AdminServiceImpl implements AdminService {
      * @return 项目的概要信息列表
      */
     @Override
-    public List<TargetAdminBriefInfo> seeTarget(Pageable pageable, TargetState state, TargetType type) {
+    public List<TargetAdminBriefInfo> seeTarget(TargetState state, TargetType type) {
         List<BaseTarget> records;
 
         // 通过状态查看标的
@@ -215,10 +213,10 @@ public class AdminServiceImpl implements AdminService {
             records = baseTargetRepository.findDistinctByTargetStateAndTargetType(state, type);
         }else if(state == null){
             records = (List<BaseTarget>) baseTargetRepository.findAll();
-            records = getTargetInfoByType(records, type, pageable);
+            records = getTargetInfoByType(records, type);
         }else {
             records = baseTargetRepository.findDistinctByTargetState(state);
-            records = getTargetInfoByType(records, type, pageable);
+            records = getTargetInfoByType(records, type);
         }
         if(records == null || records.size() == 0) {
             return new ArrayList<>();
@@ -227,7 +225,8 @@ public class AdminServiceImpl implements AdminService {
         // BaseTarget转TargetAdminBriefInfo
         List<TargetAdminBriefInfo> infos = baseTargetsToBriefInfos(records);
 
-        // 分页
+        return infos;
+        /*// 分页
         int pageNumber = pageable.getPageNumber();
         int pageSize = pageable.getPageSize();
         List<TargetAdminBriefInfo> infoList = new ArrayList<>();
@@ -235,10 +234,10 @@ public class AdminServiceImpl implements AdminService {
             infoList.add(infos.get(i));
         }
 
-        return infoList;
+        return infoList;*/
     }
     // 通过type对target进行筛选并分页
-    private List<BaseTarget> getTargetInfoByType(List<BaseTarget> records, TargetType type, Pageable pageable) {
+    private List<BaseTarget> getTargetInfoByType(List<BaseTarget> records, TargetType type) {
         if(type != null) {  // 通过type对target进行筛选
             int i = 0;
             while(i < records.size()) {
@@ -281,9 +280,9 @@ public class AdminServiceImpl implements AdminService {
      */
     @Override
     public TargetAdminDetailInfo seeTarget(Long id) {
-        if(repaymentRepository.existsByTargetId(id) && targetRepository.existsById(id)) {
+        if(repaymentRepository.existsByTargetId(id) && baseTargetRepository.existsById(id)) {
             System.out.println("repayment exists");
-            BaseTarget baseTarget = targetRepository.findById(id).get();
+            BaseTarget baseTarget = baseTargetRepository.findById(id).get();
             Repayment repayment = repaymentRepository.findFirstByTargetId(id);
             return new TargetAdminDetailInfo(baseTarget, repayment);
         }else {
@@ -487,7 +486,7 @@ public class AdminServiceImpl implements AdminService {
     }
     // 得到最大n户用户名（n<=10） 最大用户就是在平台上借款总额最多的用户
     private ArrayList<String> getMost10Loan() {
-        List<BaseTarget> allTargets = (List<BaseTarget>)targetRepository.findAll();
+        List<BaseTarget> allTargets = (List<BaseTarget>)baseTargetRepository.findAll();
 
         List<UserLoanRelation> relations = new ArrayList<>();
         for(BaseTarget target : allTargets) {
@@ -770,7 +769,7 @@ public class AdminServiceImpl implements AdminService {
      * @return List<UserStateList>
      */
     @Override
-    public List<UserStateList> getUserStateList(Pageable pageable) {
+    public List<UserStateList> getUserStateList() {
         List<UserInfoCheckRecord> records = userInfoCheckRecordRepository.findByCheckState(CheckState.UPDATE);
         records.addAll(userInfoCheckRecordRepository.findByCheckState(CheckState.ONGING));
 
@@ -778,14 +777,16 @@ public class AdminServiceImpl implements AdminService {
 
         Collections.sort(list);
 
-        // 分页
+        return list;
+
+/*        // 分页
         int pageNumber = pageable.getPageNumber();
         int pageSize = pageable.getPageSize();
         List<UserStateList> infoList = new ArrayList<>();
         for(int i = pageNumber*pageSize ; i < list.size() && i < (pageNumber+1)*pageSize ; i++) {
             infoList.add(list.get(i));
         }
-        return infoList;
+        return infoList;*/
     }
 
     /**
@@ -879,14 +880,14 @@ public class AdminServiceImpl implements AdminService {
      * @return 标的概要信息
      */
     @Override
-    public List<PendingTargetBriefInfo> getPendingTargets(Pageable pageable, TargetType type) {
+    public List<PendingTargetBriefInfo> getPendingTargets(TargetType type) {
         TargetState state = TargetState.PENDING;
         // 通过标的类型筛选得到标的信息
         List<BaseTarget> records;
         if(type == null) {
-            records = targetRepository.findByTargetState(state, pageable);
+            records = baseTargetRepository.findDistinctByTargetState(state);
         }else {
-            records = targetRepository.findByTargetTypeAndTargetState(type, state, pageable);
+            records = baseTargetRepository.findDistinctByTargetStateAndTargetType(state, type);
         }
 
         // 生产标的的概要信息
@@ -929,7 +930,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public PendingTargetDetailInfo getPendingTarget(Long id) {
-        BaseTarget baseTarget = targetRepository.findById(id).get();
+        BaseTarget baseTarget = baseTargetRepository.findById(id).get();
         User user = baseTarget.getUser();
         TargetType targetType = baseTarget.getTargetType();
         CheckState state = scoreCalUtil.checkUserState(user.getUsername());
@@ -954,20 +955,20 @@ public class AdminServiceImpl implements AdminService {
      */
     @Override
     public ApiResponse approveTarget(Long targetId, ApproveResult result) {
-        if(!targetRepository.existsById(targetId)) {
+        if(!baseTargetRepository.existsById(targetId)) {
             return new ApiResponse(false, "该任务不存在");
         }
         if(result == null) {
             return new ApiResponse(false, "请选择“通过”或“拒绝”");
         }
-        BaseTarget target = targetRepository.findById(targetId).get();
+        BaseTarget target = baseTargetRepository.findById(targetId).get();
         if(!target.getTargetState().equals(TargetState.PENDING)) {
             return new ApiResponse(false, "该任务已经审核");
         }
 
         // 审核操作成功，数据库进行存储
         target.setTargetState(result.getTargetState());
-        targetRepository.save(target);
+        baseTargetRepository.save(target);
         return ApiResponse.successResponse();
     }
 }
