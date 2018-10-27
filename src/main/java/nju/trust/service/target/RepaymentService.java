@@ -239,18 +239,18 @@ public class RepaymentService {
 
     private PayItem getPayItemForTarget(BaseTarget target) {
         List<RepaymentRecord> records = repaymentRecordRepository
-                .findAllByTargetId(target.getId(), Sort.by(Sort.Direction.ASC, "returnDate"));
+                .findAllByTargetId(target.getId(), Sort.by(Sort.Direction.ASC, "returnDate"))
+                .stream().filter(r -> !r.hasPaidOff())
+                .collect(Collectors.toList());
         // Find latest three record
         if (records.isEmpty())
             return null;
 
         List<RepaymentRecord> latestThreeRecords = new ArrayList<>(3);
         for (RepaymentRecord r : records) {
-            if (!r.hasPaidOff()) {
-                latestThreeRecords.add(r);
-                if (latestThreeRecords.size() == 3)
-                    break;
-            }
+            latestThreeRecords.add(r);
+            if (latestThreeRecords.size() == 3)
+                break;
         }
 
         // Initialize pay item
