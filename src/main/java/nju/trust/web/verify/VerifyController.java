@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.Principal;
 import java.util.List;
 
 /**
@@ -24,15 +25,27 @@ public class VerifyController {
     private VerifyService verifyService;
 
     @GetMapping(value = "/campus")
-    public ApiResponse saveCampusVerifyInfo(SchoolVerifyInfo schoolVerifyInfo, String username){
-        return verifyService.schoolVerify(schoolVerifyInfo,username);
+    public ApiResponse saveCampusVerifyInfo(SchoolVerifyInfo schoolVerifyInfo, Principal principal){
+        return verifyService.schoolVerify(schoolVerifyInfo,principal.getName());
     }
 
     @GetMapping(value = "/selfInfo")
-    public ApiResponse saveSelfInfo(String username, int fail, List<String> report_cards, List<NameAndEvidence> school_rewards
+    public ApiResponse saveSelfInfo(Principal principal, int fail, List<String> report_cards, List<NameAndEvidence> school_rewards
             ,List<NameAndEvidence> city_rewards, List<NameAndEvidence> province_rewards, List<NameAndEvidence> country_rewards
             ,double volunteer, String volunteer_img, List<NameAndEvidence> self_qualifications){
-        return verifyService.selfInfoVerify(username, fail,report_cards,school_rewards,city_rewards,province_rewards,country_rewards,volunteer,volunteer_img,self_qualifications);
+        return verifyService.selfInfoVerify(principal.getName(), fail,report_cards,school_rewards,city_rewards,province_rewards,country_rewards,volunteer,volunteer_img,self_qualifications);
+    }
+
+    // TODO 校友信息验证
+    @GetMapping(value = "/alumnaVerify")
+    public ApiResponse alumnaVerify(Principal principal, String gender, String birthday, String idCardNumber, String education, String evidence) {
+        return verifyService.alumnaVerify(principal.getName(), gender, birthday, idCardNumber, education, evidence);
+    }
+
+    // 得到用户的角色
+    @GetMapping(value = "/getRoles")
+    public List<String> getRoles(String username) {
+        return verifyService.getRoles(username);
     }
 
     @Autowired

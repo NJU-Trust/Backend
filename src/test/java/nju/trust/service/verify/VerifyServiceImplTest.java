@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -55,5 +56,13 @@ public class VerifyServiceImplTest {
         System.out.println();
         System.out.println("test selfInfoVerify:");
         System.out.println("result: success = "+response.getSuccess()+"  message = "+response.getMessage());
+    }
+
+    @Test
+    public void getRoles() {
+        String username = "test";
+        List<String> result = test.getRoles(username);
+        System.out.println();
+        System.out.println("result:"+ Arrays.toString(result.toArray()));
     }
 }
