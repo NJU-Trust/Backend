@@ -117,7 +117,8 @@ public class TargetServiceImpl implements TargetService {
 
     @Override
     public TargetInfo getTargetInfo(Long targetId) {
-        return null;
+        return targetRepository.findById(targetId).map(TargetInfo::new)
+                .orElseThrow(() -> new ResourceNotFoundException("Target not found"));
     }
 
     @Override
