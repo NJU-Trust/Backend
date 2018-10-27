@@ -7,6 +7,7 @@ import nju.trust.entity.CheckItem;
 import nju.trust.entity.CheckState;
 import nju.trust.entity.record.UserEvidence.*;
 import nju.trust.entity.record.UserInfoCheckRecord;
+import nju.trust.entity.user.RoleName;
 import nju.trust.entity.user.User;
 import nju.trust.payloads.ApiResponse;
 import nju.trust.payloads.verifyInfo.NameAndEvidence;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @Author: 161250127
@@ -122,7 +124,6 @@ public class VerifyServiceImpl implements VerifyService {
         RewardEvidence rewardEvidence = new RewardEvidence(user, item, time, STATE, evidence, RewardType.CERTIFICATE);
         rewardEvidenceRepository.save(rewardEvidence);
     }
-
     // 志愿时长
     private void saveVolunteer(User user, double volunteer, String volunteer_img, LocalDateTime time) {
         UserInfoCheckRecord item = getUserInfoCheckRecord(user, CheckItem.VOLUNTEERTIME, volunteer+"小时");
@@ -178,7 +179,6 @@ public class VerifyServiceImpl implements VerifyService {
         matchEvidence.setType(type);
         matchEvidenceRepository.save(matchEvidence);
     }
-
     private UserInfoCheckRecord getUserInfoCheckRecord(User user, CheckItem checkItem, String description) {
         UserInfoCheckRecord userInfoCheckRecord = new UserInfoCheckRecord();
 
@@ -190,5 +190,48 @@ public class VerifyServiceImpl implements VerifyService {
         userInfoCheckRecordRepository.save(userInfoCheckRecord);
 
         return userInfoCheckRecord;
+    }
+
+    /**
+     * 校友信息验证
+     * TODO
+     * @param username     用户名
+     * @param gender       性别（男 女）
+     * @param birthday     出生年月日（2018-01-01）
+     * @param idCardNumber 身份证号
+     * @param education    学历（本科毕业、研究生毕业、博士毕业）
+     * @param evidence     学历证明
+     * @return 提交是否成功
+     */
+    @Override
+    public ApiResponse alumnaVerify(String username, String gender, String birthday, String idCardNumber, String education, String evidence) {
+        return null;
+    }
+
+    /**
+     * 得到用户角色
+     * @param username 用户名
+     * @return ["初级/非初级","校友/学生"]
+     */
+    @Override
+    public List<String> getRoles(String username) {
+        List<String> roles = new ArrayList<>();
+
+        User user = userRepository.findByUsername(username).get();
+        Set<RoleName> roleNameSet = user.getRoles();
+
+        if(roleNameSet.contains(RoleName.ROLE_PRIMARY)) {
+            roles.add("初级");
+        }else {
+            roles.add("非初级");
+        }
+
+        if(roleNameSet.contains(RoleName.ROLE_SF)) {
+            roles.add("校友");
+        }else {
+            roles.add("学生");
+        }
+
+        return roles;
     }
 }
