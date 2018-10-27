@@ -11,7 +11,7 @@ public class ChangedPersonalInfo {
 
     private String username;
 
-    private Gender gender;
+    private String gender;
 
     private Integer age;
 
@@ -27,11 +27,11 @@ public class ChangedPersonalInfo {
         this.username = username;
     }
 
-    public Gender getGender() {
+    public String getGender() {
         return gender;
     }
 
-    public void setGender(Gender gender) {
+    public void setGender(String gender) {
         this.gender = gender;
     }
 
