@@ -25,7 +25,7 @@ public interface TargetService {
 
     ApiResponse applyLargeTarget(LargeTargetRequest request, String username);
 
-    List<TargetInfo> filterLargeTargets(Pageable pageable, LargeTargetFilterRequest filterRequest);
+    List<TargetInfo> filterLargeTargets(LargeTargetFilterRequest filterRequest);
 
     List<TargetInfo> filterSmallTargets(SmallTargetFilterRequest filterRequest);
 
