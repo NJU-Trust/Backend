@@ -6,6 +6,25 @@ package nju.trust.entity.user;
  * Description:
  */
 public enum Gender {
-    MALE,
-    FEMALE
+    MALE("男"),
+    FEMALE("女");
+
+    private String str;
+
+    Gender(String str) {
+        this.str = str;
+    }
+
+    public String getStr() {
+        return str;
+    }
+
+    public static Gender getGender(String s) {
+        for(Gender gender : Gender.values()) {
+            if(s.equals(gender.getStr())) {
+                return gender;
+            }
+        }
+        return null;
+    }
 }
