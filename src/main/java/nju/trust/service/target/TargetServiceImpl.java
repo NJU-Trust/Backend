@@ -180,11 +180,10 @@ public class TargetServiceImpl implements TargetService {
     }
 
     @Override
-    public List<TargetInfo> filterLargeTargets(Pageable pageable, LargeTargetFilterRequest filterRequest) {
-        // Execute searching and map the results to TargetInfo
+    public List<TargetInfo> filterLargeTargets(LargeTargetFilterRequest filterRequest) {
         Specification<LargeTarget> specification = new LargeTargetSpecification(filterRequest);
+        Pageable pageable = PageRequest.of(filterRequest.getPage(), filterRequest.getSize(),new Sort(Sort.Direction.ASC, filterRequest.getProperties()));
         Page<LargeTarget> targets = largeTargetRepository.findAll(specification, pageable);
-
         return targets.stream().map(LargeTargetInfo::new).collect(Collectors.toList());
     }
 

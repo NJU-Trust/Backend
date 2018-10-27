@@ -4,6 +4,7 @@ import nju.trust.entity.CreditRating;
 import nju.trust.entity.target.LargeProjectClassification;
 import nju.trust.entity.target.TargetRating;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -47,6 +48,16 @@ public class LargeTargetFilterRequest {
 
     @Size(min = 2, max = 2)
     private Double[] userRankingRate;
+
+    @NotNull
+    private int size;
+
+    @NotNull
+    private int page;
+
+    @NotNull
+    private String properties;
+
 
     private CreditRating[] userCreditRating;
 
@@ -122,4 +133,27 @@ public class LargeTargetFilterRequest {
         this.userCreditRating = userCreditRating;
     }
 
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    public int getPage() {
+        return page;
+    }
+
+    public void setPage(int page) {
+        this.page = page;
+    }
+
+    public String getProperties() {
+        return properties;
+    }
+
+    public void setProperties(String properties) {
+        this.properties = properties;
+    }
 }

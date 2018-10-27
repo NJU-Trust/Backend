@@ -53,7 +53,7 @@ public class TargetController {
     }
 
     @PostMapping("/new/large")
-    public ApiResponse createLargeTarget(LargeTargetRequest largeTargetRequest, Principal principal) {
+    public ApiResponse createLargeTarget(@RequestBody LargeTargetRequest largeTargetRequest, Principal principal) {
         return targetService.applyLargeTarget(largeTargetRequest, principal.getName());
     }
 
@@ -63,8 +63,8 @@ public class TargetController {
     }
 
     @RequestMapping("/largeTargetList")
-    public List<TargetInfo> getLargeTargets(Pageable pageable, @Valid @RequestBody LargeTargetFilterRequest filter) {
-        return targetService.filterLargeTargets(pageable, filter);
+    public List<TargetInfo> getLargeTargets(@Valid @RequestBody LargeTargetFilterRequest filter) {
+        return targetService.filterLargeTargets(filter);
     }
 
     @RequestMapping("/smallTargetList")
