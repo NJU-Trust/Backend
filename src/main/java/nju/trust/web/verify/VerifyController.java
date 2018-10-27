@@ -44,8 +44,8 @@ public class VerifyController {
 
     // 得到用户的角色
     @GetMapping(value = "/getRoles")
-    public List<String> getRoles(String username) {
-        return verifyService.getRoles(username);
+    public List<String> getRoles(Principal principal) {
+        return verifyService.getRoles(principal.getName());
     }
 
     @Autowired
