@@ -85,7 +85,7 @@ class ConsumptionCorrectionEvaluator {
         debt = helper.getCurrentDebt();
 
         // Check whether duration equals size of monthlyRepayment
-        check();
+//        check();
     }
 
     private void check() {
