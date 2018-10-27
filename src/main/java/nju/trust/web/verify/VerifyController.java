@@ -28,8 +28,8 @@ public class VerifyController {
     }
 
     @PostMapping(value = "/selfInfo")
-    public ApiResponse saveSelfInfo(String username, @RequestBody SelfInfo selfInfo){
-        return verifyService.selfInfoVerify(username, selfInfo.getFail(), selfInfo.getReport_cards(), selfInfo.getSchool_rewards(), selfInfo.getCity_rewards(), selfInfo.getProvince_rewards(), selfInfo.getCountry_rewards(), selfInfo.getVolunteer(), selfInfo.getVolunteer_img(), selfInfo.getSelf_qualifications());
+    public ApiResponse saveSelfInfo(Principal principal, @RequestBody SelfInfo selfInfo){
+        return verifyService.selfInfoVerify(principal.getName(), selfInfo.getFail(), selfInfo.getReport_cards(), selfInfo.getSchool_rewards(), selfInfo.getCity_rewards(), selfInfo.getProvince_rewards(), selfInfo.getCountry_rewards(), selfInfo.getVolunteer(), selfInfo.getVolunteer_img(), selfInfo.getSelf_qualifications());
     }
 
     // TODO 校友信息验证
