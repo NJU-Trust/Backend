@@ -229,7 +229,7 @@ public class VerifyServiceImpl implements VerifyService {
             return new ApiResponse(false, "性别填写错误");
         }
         // 出生年月日（2018-01-01）
-        LocalDate birth = LocalDate.parse(birthday, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        LocalDate birth = LocalDate.parse(birthday.split("T")[0], DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         if(birth.isAfter(LocalDate.now())) {
             return new ApiResponse(false, "生日填写错误");
         }
