@@ -28,7 +28,7 @@ public enum CheckItem {
     PAYMENT("学费及住宿费的缴纳情况"),        // 对应于表2 学费及住宿费的缴纳情况 int
     REPAYMENT("贷款偿还"),                  // 对应于表2 贷款等偿还信息       int
     RETURNBOOKS("图书馆借阅还书情况"),       // 对应于表2 图书借还信息         int
-    ;
+    SELFINFO("个人信息");
 
     private String itemStr;
 

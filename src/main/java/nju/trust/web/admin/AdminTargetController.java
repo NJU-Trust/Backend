@@ -38,8 +38,8 @@ public class AdminTargetController {
     // 查看项目概要
     @GetMapping(value = "/briefInfo")
     @PreAuthorize("hasRole('ADMIN')")
-    public List<TargetAdminBriefInfo> seeTarget(Pageable pageable, TargetState state, TargetType type) {
-        return adminService.seeTarget(pageable, state, type);
+    public List<TargetAdminBriefInfo> seeTarget(TargetState state, TargetType type) {
+        return adminService.seeTarget(state, type);
     }
 
     // 查看项目详情
@@ -53,8 +53,8 @@ public class AdminTargetController {
     // 获取待审核标的列表，分页显示
     @GetMapping(value = "/pendinglist")
     @PreAuthorize("hasRole('ADMIN')")
-    public List<PendingTargetBriefInfo> getPendingTargets(Pageable pageable, TargetType type) {
-        return adminService.getPendingTargets(pageable, type);
+    public List<PendingTargetBriefInfo> getPendingTargets(TargetType type) {
+        return adminService.getPendingTargets(type);
     }
 
     //查看标的详情

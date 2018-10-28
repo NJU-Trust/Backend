@@ -44,18 +44,18 @@ public class AdminUserController {
 
     @GetMapping(value = "/manage")
     @PreAuthorize("hasRole('ADMIN')")
-    public List<UserSimpleInfo> getUserList(Pageable pageable, UserListRequest request) {
+    public List<UserSimpleInfo> getUserList(UserListRequest request) {
         String keyword = request.getKeyword();
         UserType type = request.getType();
-        return adminService.getUserList(pageable, keyword, type);
+        return adminService.getUserList(keyword, type);
     }
 
     // 用户审批
     // 获取待审核的用户列表，分页显示
     @GetMapping(value = "/userlist")
     @PreAuthorize("hasRole('ADMIN')")
-    public List<UserStateList> getUserStateList(Pageable pageable) {
-        return adminService.getUserStateList(pageable);
+    public List<UserStateList> getUserStateList() {
+        return adminService.getUserStateList();
     }
 
     // 审核用户非结构化信息

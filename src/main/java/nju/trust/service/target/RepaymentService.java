@@ -84,7 +84,10 @@ public class RepaymentService {
                 .orElseThrow(() -> new ResourceNotFoundException("Target not found"));
         Repayment repayment = target.getRepayment();
         RepaymentRecord repaymentRecord = repaymentRecordRepository
-                .findByReturnDateAndTargetId(repayment.nextDueDate(), targetId)
+                .findAllByTargetId(targetId)
+                .stream()
+                .filter(r -> !r.hasPaidOff())
+                .min(Comparator.comparing(RepaymentRecord::getReturnDate))
                 .orElseThrow(NoSuchElementException::new);
 
         return new ProjectInformation(target.getStartTime(),

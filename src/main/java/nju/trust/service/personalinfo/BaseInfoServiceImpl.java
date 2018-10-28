@@ -1,6 +1,7 @@
 package nju.trust.service.personalinfo;
 
 import nju.trust.dao.user.UserRepository;
+import nju.trust.entity.user.Gender;
 import nju.trust.entity.user.User;
 import nju.trust.exception.ResourceNotFoundException;
 import nju.trust.payloads.ApiResponse;
@@ -44,7 +45,7 @@ public class BaseInfoServiceImpl implements BaseInfoService {
         String username = changedPersonalInfo.getUsername();
         if(userRepository.existsByUsername(username)){
             User user = userRepository.findByUsername(username).get();
-            user.setGender(changedPersonalInfo.getGender());
+            user.setGender(Gender.getGender(changedPersonalInfo.getGender()));
             user.setAge(changedPersonalInfo.getAge());
             user.setInstitution(changedPersonalInfo.getInstitution());
             user.setLivingPlace(changedPersonalInfo.getLivingPlace());

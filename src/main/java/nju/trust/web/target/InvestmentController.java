@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.constraints.NotNull;
 import java.security.Principal;
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class InvestmentController {
     private TargetManagementService managementService;
 
     @RequestMapping("/target")
-    public ApiResponse invest(Long targetId, Principal principal, Double money) {
+    public ApiResponse invest(@NotNull Long targetId, Principal principal, @NotNull Double money) {
         return targetService.investTarget(targetId, principal.getName(), money);
     }
 

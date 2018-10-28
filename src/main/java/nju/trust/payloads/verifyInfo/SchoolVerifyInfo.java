@@ -3,6 +3,7 @@ package nju.trust.payloads.verifyInfo;
 import nju.trust.entity.user.Gender;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 /**
  * @Author: 161250127
@@ -13,9 +14,9 @@ public class SchoolVerifyInfo {
     //姓名
     private String realName;
     //性别
-    private Gender gender;
+    private String gender;
     //出生日期
-    private LocalDate birthday;
+    private String birthday;
     //身份证号
     private String idCardNumber;
     //学校
@@ -31,6 +32,8 @@ public class SchoolVerifyInfo {
     //校园卡照片路径
     private String schoolCardImage;
 
+    private final DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
     public String getRealName() {
         return realName;
     }
@@ -40,19 +43,19 @@ public class SchoolVerifyInfo {
     }
 
     public Gender getGender() {
-        return gender;
+        return Gender.getGender(gender);
     }
 
-    public void setGender(Gender gender) {
+    public void setGender(String gender) {
         this.gender = gender;
     }
 
     public LocalDate getBirthday() {
-        return birthday;
+        return LocalDate.parse(birthday.split("T")[0], fmt);
     }
 
-    public void setBirthday(LocalDate birthday) {
-        this.birthday = birthday;
+    public void setBirthday(String birthday) {
+        this.birthday=birthday;
     }
 
     public String getIdCardNumber() {

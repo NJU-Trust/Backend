@@ -37,22 +37,22 @@ public interface VerifyService {
 
     /**
      * 校友信息验证
-     * TODO
      * @param username     用户名
      * @param gender       性别（男 女）
      * @param birthday     出生年月日（2018-01-01）
      * @param idCardNumber 身份证号
      * @param education    学历（本科毕业、研究生毕业、博士毕业）
      * @param evidence     学历证明
+     * @param institution  工作单位
+     * @param livingPlace  居住地
      * @return 提交是否成功
      */
-    ApiResponse alumnaVerify(String username, String gender, String birthday, String idCardNumber, String education, String evidence);
+    ApiResponse alumnaVerify(String username, String gender, String birthday, String idCardNumber, String education, String evidence, String institution, String livingPlace);
 
     /**
      * 得到用户角色
-     * TODO
      * @param username 用户名
-     * @return ["初级/非初级","校友/学生"]
+     * @return ["初级/非初级/初级审核中","校友/学生"]
      */
     List<String> getRoles(String username);
 }

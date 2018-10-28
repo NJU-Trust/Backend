@@ -8,6 +8,7 @@ import nju.trust.entity.CheckState;
 import nju.trust.entity.UserLevel;
 import nju.trust.entity.record.UserEvidence.*;
 import nju.trust.entity.record.UserInfoCheckRecord;
+import nju.trust.entity.user.RoleName;
 import nju.trust.entity.user.UnstructuredData;
 import nju.trust.entity.user.UnstructuredDataType;
 import nju.trust.entity.user.User;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @Author: 许杨
@@ -88,10 +90,71 @@ public class ScoreCalUtil {
             case RETURNBOOKS:
                 calReturnBooksScore(checkRecord);
                 break;
+            case SELFINFO:
+                upLevel(checkRecord);
         }
 
         changeBaseUserEvidenceState(checkRecord.getId(), CheckState.PASS);
     }
+    // 用户信息审核：账户升级为中级，信息存入user，unstructuredData中
+    private void upLevel(UserInfoCheckRecord checkRecord) {
+        List<SelfInfoEvidence> selfInfoEvidences = userEvidenceRepository.findSelfInfoEvidenceByItem(checkRecord);
+        for(SelfInfoEvidence evidence : selfInfoEvidences) {
+            switch (evidence.getEvidenceType()) {
+                case STUDENTCARD:   // 学生证
+                    saveStudentCard(evidence);
+                    break;
+                case SCHOOLCARD:    // 校园卡
+                    saveSchoolCard(evidence);
+                    break;
+                case EDUCATION: // 学历
+                    saveEducation(evidence);
+                    break;
+            }
+        }
+
+        // 账户升级
+        String username = checkRecord.getUser().getUsername();
+        User user = userRepository.findByUsername(username).get();
+        Set<RoleName> roleNameSet = user.getRoles();
+        ArrayList<RoleName> roleNameArrayList = new ArrayList<>(roleNameSet);
+        int index = roleNameArrayList.indexOf(RoleName.ROLE_PRIMARY);
+        if(index >= 0) {
+            roleNameArrayList.remove(index);
+        }
+        roleNameArrayList.add(RoleName.ROLE_INTERMEDIATE);
+        user.setRoles(roleNameArrayList);
+        userRepository.save(user);
+    }
+    // 学生证截图存入user中
+    private void saveStudentCard(SelfInfoEvidence evidence) {
+        User user = evidence.getUser();
+        user.setStuCardImage(evidence.getEvidence());
+        userRepository.save(user);
+    }
+    // 校园卡截图存入user中
+    private void saveSchoolCard(SelfInfoEvidence evidence) {
+        User user = evidence.getUser();
+        user.setSchoolCardImage(evidence.getEvidence());
+        userRepository.save(user);
+    }
+    // 学历存入非结构化数据中
+    private void saveEducation(SelfInfoEvidence evidence) {
+        String username = evidence.getUser().getUsername();
+        UnstructuredDataType dataType = UnstructuredDataType.EDUCATION;
+        UnstructuredData data = unstructuredDataRepository.findFirstByUserUsernameAndDataType(username, dataType);
+        if(data == null) {
+            data = new UnstructuredData();
+            data.setDataType(dataType);
+            data.setUser(evidence.getUser());
+        }
+        data.setEvidence(evidence.getEvidence());
+        data.setScore(0.0);
+        UserInfoCheckRecord item = evidence.getItem();
+        data.setDescription(item.getDescription());
+        unstructuredDataRepository.save(data);
+    }
+
     // 计算每年平均志愿活动时长加分
     private void calVolunteerScore(UserInfoCheckRecord checkRecord) {
         Long id = checkRecord.getId();
