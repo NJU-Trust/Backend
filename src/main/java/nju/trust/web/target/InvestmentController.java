@@ -4,6 +4,7 @@ import nju.trust.payloads.ApiResponse;
 import nju.trust.payloads.investment.CollectedTarget;
 import nju.trust.payloads.investment.CompletedTarget;
 import nju.trust.payloads.investment.InvestmentTarget;
+import nju.trust.payloads.target.BadTarget;
 import nju.trust.payloads.target.TargetFilter;
 import nju.trust.service.target.TargetManagementService;
 import nju.trust.service.target.TargetService;
@@ -29,19 +30,24 @@ public class InvestmentController {
     }
 
     @RequestMapping("/ongoing")
-    public List<InvestmentTarget> ongoingTargets(Principal principal, TargetFilter filter) {
-        return managementService.investedOngoingTargets(principal.getName(), filter);
+    public List<InvestmentTarget> ongoingTargets(String username, TargetFilter filter) {
+        return managementService.investedOngoingTargets(username, filter);
     }
 
     @RequestMapping("/complete")
-    public List<CompletedTarget> completedTargets(Principal principal, TargetFilter filter) {
-        return managementService.investedCompletedTargets(principal.getName(), filter);
+    public List<CompletedTarget> completedTargets(String username, TargetFilter filter) {
+        return managementService.investedCompletedTargets(username, filter);
     }
 
 
     // Perhaps no need to implement this
     @RequestMapping("/collect")
-    public List<CollectedTarget> collectedTargets(Principal principal) {
+    public List<CollectedTarget> collectedTargets(String username) {
+        return null;
+    }
+
+    @RequestMapping("/bad")
+    public List<BadTarget> getBadTargets(Double moneyUpper, Double moneyLower, String state) {
         return null;
     }
 
