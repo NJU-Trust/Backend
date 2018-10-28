@@ -143,7 +143,7 @@ public class AdminServiceImplTest {
         String idCardNumber = "410425199802160521";
         String education = "本科";
         String evidence = "education evidence";
-        ApiResponse result = verifyService.alumnaVerify(username, gender, birthday, idCardNumber, education, evidence);
+        ApiResponse result = verifyService.alumnaVerify(username, gender, birthday, idCardNumber, education, evidence, "institution", "living place");
 
     }
 
