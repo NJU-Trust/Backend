@@ -150,4 +150,18 @@ public class TargetAdminDetailInfo {
         this.targetRating = targetInfo.getTargetRating();
         this.type = type;
     }*/
+
+    public void print() {
+        System.out.println("detailInfo:");
+        System.out.println("id:"+this.id);
+        System.out.println("username:"+this.username);
+        System.out.println("startTime:"+this.startTime);
+        System.out.println("money:"+this.money);
+        System.out.println("collectedMoney:"+this.collectedMoney);
+        System.out.println("projectDescription:"+this.projectDescription);
+        System.out.println("state:"+this.state);
+        System.out.println("interestRate:"+this.interestRate);
+        System.out.println("targetRating:"+this.targetRating);
+        System.out.println("type:"+this.type);
+    }
 }

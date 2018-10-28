@@ -30,7 +30,7 @@ public enum RepaymentType {
     }
 
     public String getStr() {
-        return str;
+        return this.str;
     }
 
     public static RepaymentType getEnum(String str) {

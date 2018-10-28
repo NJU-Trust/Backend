@@ -3,6 +3,7 @@ package nju.trust.service.admin;
 import nju.trust.dao.user.UserRepository;
 import nju.trust.entity.UserType;
 import nju.trust.entity.record.ApproveResult;
+import nju.trust.entity.target.TargetRating;
 import nju.trust.entity.user.User;
 import nju.trust.payloads.ApiResponse;
 import nju.trust.payloads.admin.*;
@@ -19,6 +20,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -233,4 +235,9 @@ public class AdminServiceImplTest {
     public void approveTarget() {
     }
 
+    @Test
+    public void seeTarget() {
+        TargetAdminDetailInfo detailInfo = test.seeTarget((long)1);
+        detailInfo.print();
+    }
 }

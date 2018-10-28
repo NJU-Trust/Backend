@@ -9,15 +9,25 @@ public enum LargeProjectClassification {
     /**
      * 大额考证
      */
-    CERTIFICATE_TEST,
+    CERTIFICATE_TEST("大额考证"),
     /**
      * 交换生
      */
-    EXCHANGE_PROJECT,
+    EXCHANGE_PROJECT("交换生"),
 
-    GMAT,
+    GMAT("GMAT"),
 
-    TOEFL,
+    TOEFL("TOEFL"),
 
-    IELTS,
+    IELTS("IELTS");
+
+    private String str;
+
+    LargeProjectClassification(String str) {
+        this.str = str;
+    }
+
+    public String getStr() {
+        return str;
+    }
 }

@@ -270,7 +270,18 @@ public class AdminServiceImpl implements AdminService {
                 nameList.add(username);
             }
         }
-        return new TargetAdminBriefInfo(baseTarget, nameList);
+
+        String classification = "";
+        if(baseTarget.getTargetType() == TargetType.LARGE) {
+            LargeTarget largeTarget = largeTargetRepository.findById(baseTarget.getId()).get();
+            classification = largeTarget.getClassification().getStr();
+        }
+        if(baseTarget.getTargetType() == TargetType.SMALL) {
+            SmallTarget smallTarget = smallTargetRepository.findById(baseTarget.getId()).get();
+            classification = smallTarget.getClassification().getStr();
+        }
+
+        return new TargetAdminBriefInfo(baseTarget, nameList, classification);
     }
 
     /**
