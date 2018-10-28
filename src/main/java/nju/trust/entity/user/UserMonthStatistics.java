@@ -12,7 +12,7 @@ import java.time.LocalDate;
 public class UserMonthStatistics {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private LocalDate date;

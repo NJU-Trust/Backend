@@ -8,6 +8,7 @@ import nju.trust.dao.admin.UserInfoCheckRecordRepository;
 import nju.trust.dao.record.InvestmentRecordRepository;
 import nju.trust.dao.record.RepaymentRecordRepository;
 import nju.trust.dao.user.CreditRecordRepository;
+import nju.trust.dao.user.UserCrossCheckRepository;
 import nju.trust.dao.user.UserMonthlyStatisticsRepository;
 import nju.trust.dao.user.UserRepository;
 import nju.trust.entity.CheckItem;
@@ -49,11 +50,11 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
     private UserMonthlyStatisticsRepository userMonthlyStatisticsRepository;
     private RepaymentRecordRepository repaymentRecordRepository;
     private CreditRecordRepository creditRecordRepository;
+    private UserCrossCheckRepository userCrossCheckRepository;
 
     private static final String noComplete = "未填写";
-
     @Autowired
-    public PersonalInformationServiceImpl(UserRepository userRepository, InvestmentRecordRepository investmentRecordRepository, UnstructuredDataRepository unstructuredDataRepository, BaseTargetRepository baseTargetRepository, UserEvidenceRepository userEvidenceRepository, UserInfoCheckRecordRepository userInfoCheckRecordRepository, RepaymentRepository repaymentRepository, UserMonthlyStatisticsRepository userMonthlyStatisticsRepository, RepaymentRecordRepository repaymentRecordRepository, CreditRecordRepository creditRecordRepository) {
+    public PersonalInformationServiceImpl(UserRepository userRepository, InvestmentRecordRepository investmentRecordRepository, UnstructuredDataRepository unstructuredDataRepository, BaseTargetRepository baseTargetRepository, UserEvidenceRepository userEvidenceRepository, UserInfoCheckRecordRepository userInfoCheckRecordRepository, RepaymentRepository repaymentRepository, UserMonthlyStatisticsRepository userMonthlyStatisticsRepository, RepaymentRecordRepository repaymentRecordRepository, CreditRecordRepository creditRecordRepository, UserCrossCheckRepository userCrossCheckRepository) {
         this.userRepository = userRepository;
         this.investmentRecordRepository = investmentRecordRepository;
         this.unstructuredDataRepository = unstructuredDataRepository;
@@ -64,6 +65,7 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
         this.userMonthlyStatisticsRepository = userMonthlyStatisticsRepository;
         this.repaymentRecordRepository = repaymentRecordRepository;
         this.creditRecordRepository = creditRecordRepository;
+        this.userCrossCheckRepository = userCrossCheckRepository;
     }
 
     // 投资借款部分
@@ -544,22 +546,16 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
     /**
      * 校园关系图
      * @param username 用户名
-     * TODO
      * 关系（信用交叉检验问卷第一问）：1-好友；2-普通同学；其他不考虑
      */
     @Override
     public PersonalRelationship getPersonalRelationships(String username) {
-        List<String> usernameList = getRelationUsernames(username);
-
         List<People> peoples = new ArrayList<>();
-        List<Relation> relations = new ArrayList<>();
-
+        List<Relation> relations = getRelations(username);
         peoples.add(getPeople(username));
-        for(String name : usernameList) {
-            People people = getPeople(name);
-            Relation relation = getRelation(username, name);
+        for(Relation relation : relations) {
+            People people = getPeople(relation.getTarget());
             peoples.add(people);
-            relations.add(relation);
         }
 
         PersonalRelationship personalRelationship = new PersonalRelationship();
@@ -568,68 +564,75 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
 
         return personalRelationship;
     }
-    // TODO 得到相关人员的用户名
-    // TODO 关系（信用交叉检验问卷第一问）：1-好友；2-普通同学；其他不考虑
-    private List<String> getRelationUsernames(String username) {
-        List<User> userList = (List<User>)userRepository.findAll();
-        int i = 0;
-        while(i < userList.size()) {
-            String name = userList.get(i).getUsername();
-            if(name.equals(username) || name.toLowerCase().equals("admin")) {
-                userList.remove(i);
-            }else {
-                i++;
+    // 得到相关人员的用户名
+    // 关系（信用交叉检验问卷第一问）：1-好友；2-普通同学；其他不考虑
+    private List<Relation> getRelations(String username) {
+        List<Relation> relations = new ArrayList<>();
+        List<CreditCrossCheck> creditCrossChecks = userCrossCheckRepository.findAllByUserUsernameAndDone(username, true);
+        for(CreditCrossCheck creditCrossCheck : creditCrossChecks) {
+            Relation relation = new Relation();
+            relation.setSource(username);
+            String target = creditCrossCheck.getRelatedPerson().getUsername();
+            relation.setTarget(target);
+            switch (creditCrossCheck.getQ1()) {
+                case 1:
+                    relation.setName("好友");
+                    break;
+                case 2:
+                    relation.setName("普通同学");
+                    break;
+                default:
+                    continue;
             }
+            CreditChange creditChange = getCreditChange(target);
+            relation.setCreditChange(creditChange.getStr());
+
+            System.out.println("relation:"+relation.getSource()+"->"+relation.getTarget()+"  "+relation.getName());
+
+            relations.add(relation);
         }
 
-        int j = userList.size();
-        j = j<5 ? j : 5;
-        List<String> usernameList = new ArrayList<>();
-        if(j == 0) {
-            return new ArrayList<>();
-        }
-        ArrayList<Integer> indexs = new ArrayList<>();
-        for(i = 0 ; i < j; i++) {
-            int index = (int)Math.random()*userList.size();
-            if(indexs.contains(index)) {
-                continue;
-            }
-            String name = userList.get(index).getUsername();
-            usernameList.add(name);
-            indexs.add(index);
-        }
-        return usernameList;
+        return relations;
     }
+    // 得到每个用户的展示信息
     private People getPeople(String username) {
+        LocalDate start = LocalDate.now().minusMonths(1).with(TemporalAdjusters.firstDayOfMonth());
+        LocalDate end = start.with(TemporalAdjusters.lastDayOfMonth());
+
         People people = new People();
         people.setName(username);
         people.setCreditPts(getCreditScore(username));
-        people.setFinancialPts(toForm(getFinancialScore()));
-        people.setSchoolPts(toForm(getCampusPerformanceScore(username)));
+        people.setFinancialPts(toForm(getFinancialScore(username, start, end)));
+        people.setSchoolPts(getCampusPerformanceScore(username));
 
         return people;
-    }
-    // TODO 人物关系
-    private Relation getRelation(String source, String target) {
-        Relation relation = new Relation();
-        relation.setSource(source);
-        relation.setTarget(target);
-        relation.setName("同学");
-        CreditChange creditChange = getCreditChange(target);
-        relation.setCreditChange(creditChange.getStr());
-        return relation;
     }
     // 信用得分
     private double getCreditScore(String username) {
         User user = userRepository.findByUsername(username).get();
+
+        if(user.getCreditScore() == null) {
+            return 0;
+        }
         return user.getCreditScore();
     }
-    // TODO 经济得分=0.0488月收入+0.0844刚性比率+0.079资产负债率+0.0605消费比率 （上个月的数据）
-    private double getFinancialScore() {
-        double score = Math.random()*30 + 70;
+    // 经济得分=0.0488月收入+0.0844刚性比率+0.079资产负债率+0.0605消费比率 （上个月的数据）
+    private double getFinancialScore(String username, LocalDate start, LocalDate end) {
+        double score = 0;
+
+        List<UserMonthStatistics> monthStatisticsList = userMonthlyStatisticsRepository.findDistinctByUserUsernameAndDateBetween(username, start, end);
+        if(monthStatisticsList.size() > 0) {
+            UserMonthStatistics monthStatistics = monthStatisticsList.get(0);
+            double income = monthStatistics.getIncome();
+            double rigidRatio = monthStatistics.getRigidRatio();
+            double debtToAssetRatio = monthStatistics.getDebtToAssetRatio();
+            double consumptionRatio = monthStatistics.getConsumptionRatio();
+            score = 0.0488*income + 0.0844*rigidRatio + 0.079*debtToAssetRatio + 0.0605*consumptionRatio;
+        }
+
         return toForm(score);
     }
-    // TODO 校园表现得分=0.0917成绩+0.1839挂科+0.0387违约+0.2866获奖情况+0.0334社交+0.0475学校+0.0455学历 （上个月的数据）
+    // 校园表现得分=0.0917成绩-0.1839挂科-0.0387违约+0.2866获奖情况+0.0334社交+0.0475学校+0.0455学历 （上个月的数据）
     private double getCampusPerformanceScore(String username) {
         List<UnstructuredData> unstructuredDataList = unstructuredDataRepository.findDistinctByUserUsername(username);
         double score = 0;
@@ -637,26 +640,97 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
             return score;
         }
         for(UnstructuredData data : unstructuredDataList) {
-            if(data.getDataType().equals(UnstructuredDataType.VIOLATION) || data.getDataType().equals(UnstructuredDataType.FAILED_SUBJECTS) || data.getDataType().equals(UnstructuredDataType.CHEATING)) {
-                score = score - data.getScore();
-            }else {
-                score = score + data.getScore();
+            UnstructuredDataType dataType = data.getDataType();
+            switch (dataType) {
+                case GRADE:
+                    score = score + 0.0917 * data.getScore();
+                    break;
+                case FAILED_SUBJECTS:
+                    score = score - 0.1839 * data.getScore();
+                    break;
+                case VIOLATION:
+                    score = score - 0.0387 * data.getScore();
+                    break;
+                case AWARD:
+                    score = score + 0.2866 * data.getScore();
+                    break;
+                case SOCIALITY:
+                    score = score + 0.0334 * data.getScore();
+                    break;
+                case SCHOOL:
+                    score = score + 0.0475 * data.getScore();
+                    break;
+                case EDUCATION:
+                    score = score + 0.0455 * data.getScore();
+                    break;
+                default:
+                    continue;
             }
         }
         if(score < 0) {
             return 0;
         }else {
-            return score/7;
+            return score;
         }
     }
-    // TODO 信用变化情况
-    public CreditChange getCreditChange(String username) {
+    // 信用变化情况
+    private CreditChange getCreditChange(String username) {
         User user = userRepository.findByUsername(username).get();
+
+        if(user.getCreditScore() == null) {
+            return CreditChange.NO_CHANGE;
+        }
+
+        // 失信人
         if(user.getUserLevel() != null && user.getUserLevel().equals(UserLevel.DISCREDIT)) {
             return CreditChange.FROZEN;
         }
 
-        return CreditChange.getCreditChange();
+        // 严重下降
+        if(isWarning(user.getCreditScore())) {
+            return CreditChange.WARNING;
+        }
+
+        // 判断信用上升、下降
+        LocalDate now = LocalDate.now();
+        // 上上月
+        LocalDate start1 = now.minusMonths(2).with(TemporalAdjusters.firstDayOfMonth());
+        LocalDate end1 = start1.with(TemporalAdjusters.lastDayOfMonth());
+        List<CreditRecord> creditRecords1 = creditRecordRepository.findByUserUsernameAndDateBetween(username, start1, end1);
+        // 上月
+        LocalDate start2 = now.minusMonths(1).with(TemporalAdjusters.firstDayOfMonth());
+        LocalDate end2 = start2.with(TemporalAdjusters.lastDayOfMonth());
+        List<CreditRecord> creditRecords2 = creditRecordRepository.findByUserUsernameAndDateBetween(username, start2, end2);
+
+        if(creditRecords2.size() > 0 && creditRecords1.size() > 0) {
+            double score1 = creditRecords1.get(0).getCreditScore();
+            double score2 = creditRecords2.get(0).getCreditScore();
+
+            double percent = (score1-score2)/score1;
+
+            if(percent >= 0.05) {
+                return CreditChange.WORSE;
+            }
+            if(percent <= -0.05) {
+                return CreditChange.BETTER;
+            }
+        }
+
+        return CreditChange.NO_CHANGE;
+    }
+    // 判断用户是否信用严重下降  网站中最差的5%
+    private boolean isWarning(double score) {
+        List<User> userList = (List<User>)userRepository.findAll();
+        List<Double> scoreList = new ArrayList<>();
+        for(User user : userList) {
+            if(user.getCreditScore() != null)
+                scoreList.add(user.getCreditScore());
+        }
+        Collections.sort(scoreList);
+
+        int index = scoreList.indexOf(score);
+        int size = scoreList.size();
+        return index / (double)size <= 0.05;
     }
 
     /**

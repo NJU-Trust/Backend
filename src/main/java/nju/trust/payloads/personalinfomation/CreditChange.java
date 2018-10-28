@@ -6,11 +6,11 @@ package nju.trust.payloads.personalinfomation;
  * @Date: 2018/9/16
  */
 public enum CreditChange {
-    BETTER("信用上升"),
-    WORSE("信用下降"),
+    BETTER("信用上升"), // （上上月信用-上月信用）/上上月信用<-5%
+    WORSE("信用下降"),  // （上上月信用-上月信用）/上上月信用>5%
     NO_CHANGE("信用未改变"),
-    WARNING("信用严重下降，警告"),
-    FROZEN("账户已冻结");
+    WARNING("信用严重下降，警告"),   // 网站中最差的5%
+    FROZEN("账户已冻结");    // 失信人
 
     private final String str;
 
@@ -20,18 +20,5 @@ public enum CreditChange {
 
     public String getStr() {
         return str;
-    }
-
-    public static CreditChange getCreditChange() {
-        double num = Math.random();
-        if(num < 0.7) {
-            return NO_CHANGE;
-        }else if(num < 0.87) {
-            return BETTER;
-        }else if(num < 0.99) {
-            return WORSE;
-        }else {
-            return WARNING;
-        }
     }
 }

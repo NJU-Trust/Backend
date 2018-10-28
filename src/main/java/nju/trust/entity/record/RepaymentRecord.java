@@ -2,6 +2,7 @@ package nju.trust.entity.record;
 
 import nju.trust.entity.target.BaseTarget;
 import nju.trust.entity.user.User;
+import org.springframework.boot.autoconfigure.web.ResourceProperties;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -12,7 +13,7 @@ import java.time.temporal.ChronoUnit;
 public class RepaymentRecord extends BaseRecord {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

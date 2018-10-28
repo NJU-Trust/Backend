@@ -1,5 +1,13 @@
 package nju.trust.service.personalinfo;
 
+import nju.trust.dao.user.CreditRecordRepository;
+import nju.trust.dao.user.UserCrossCheckRepository;
+import nju.trust.dao.user.UserMonthlyStatisticsRepository;
+import nju.trust.dao.user.UserRepository;
+import nju.trust.entity.user.CreditCrossCheck;
+import nju.trust.entity.user.CreditRecord;
+import nju.trust.entity.user.User;
+import nju.trust.entity.user.UserMonthStatistics;
 import nju.trust.payloads.personalinfomation.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,6 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.xml.ws.soap.Addressing;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -25,6 +34,14 @@ import static org.junit.Assert.*;
 public class PersonalInformationServiceImplTest {
     @Autowired
     private PersonalInformationService test;
+    @Autowired
+    private UserCrossCheckRepository crossCheckRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private UserMonthlyStatisticsRepository userMonthlyStatisticsRepository;
+    @Autowired
+    private CreditRecordRepository creditRecordRepository;
 
     @Test
     public void getInvestAndLoanInfo() {
@@ -110,23 +127,102 @@ public class PersonalInformationServiceImplTest {
 
     @Test
     public void getPersonalRelationships() {
+        prepareData();
+
         System.out.println("test getPersonalRelationships");
         String username = "test";
         System.out.println("username:"+username);
         PersonalRelationship result = test.getPersonalRelationships(username);
         print(result);
     }
+    private void prepareData() {
+        System.out.println("prepare data");
+        // 信用交叉检验
+        CreditCrossCheck creditCrossCheck = new CreditCrossCheck();
+        creditCrossCheck.setRelatedPerson(userRepository.findByUsername("cross1").get());
+        creditCrossCheck.setUser(userRepository.findByUsername("test").get());
+        creditCrossCheck.setDone(true);
+        creditCrossCheck.setQ1(0);
+        crossCheckRepository.save(creditCrossCheck);
+
+        creditCrossCheck = new CreditCrossCheck();
+        creditCrossCheck.setRelatedPerson(userRepository.findByUsername("cross2").get());
+        creditCrossCheck.setUser(userRepository.findByUsername("test").get());
+        creditCrossCheck.setDone(true);
+        creditCrossCheck.setQ1(1);
+        crossCheckRepository.save(creditCrossCheck);
+
+        creditCrossCheck = new CreditCrossCheck();
+        creditCrossCheck.setRelatedPerson(userRepository.findByUsername("cross3").get());
+        creditCrossCheck.setUser(userRepository.findByUsername("test").get());
+        creditCrossCheck.setDone(true);
+        creditCrossCheck.setQ1(2);
+        crossCheckRepository.save(creditCrossCheck);
+
+        creditCrossCheck = new CreditCrossCheck();
+        creditCrossCheck.setRelatedPerson(userRepository.findByUsername("cross4").get());
+        creditCrossCheck.setUser(userRepository.findByUsername("test").get());
+        creditCrossCheck.setDone(true);
+        crossCheckRepository.save(creditCrossCheck);
+
+        // 月数据统计
+        LocalDate date = LocalDate.now().minusMonths(1);
+
+        UserMonthStatistics userMonthStatistics = new UserMonthStatistics();
+        userMonthStatistics.setUser(userRepository.findByUsername("test").get());
+        userMonthStatistics.setIncome(100.0);
+        userMonthStatistics.setRigidRatio(100.0);
+        userMonthStatistics.setDebtToAssetRatio(100.0);
+        userMonthStatistics.setConsumptionRatio(100.0);
+        userMonthStatistics.setDate(date);
+        userMonthlyStatisticsRepository.save(userMonthStatistics);
+
+        // 信用
+        User user = userRepository.findByUsername("cross2").get();
+        user.setCreditScore(15.0);
+        userRepository.save(user);
+
+        CreditRecord record = new CreditRecord();
+        record.setUser(user);
+        record.setCreditScore(20.0);
+        record.setDate(LocalDate.of(2018, 9, 1));
+        creditRecordRepository.save(record);
+
+        record = new CreditRecord();
+        record.setUser(user);
+        record.setCreditScore(90.0);
+        record.setDate(LocalDate.of(2018, 8, 1));
+        creditRecordRepository.save(record);
+
+        user = userRepository.findByUsername("cross3").get();
+        user.setCreditScore(100.0);
+        userRepository.save(user);
+
+        record = new CreditRecord();
+        record.setUser(user);
+        record.setCreditScore(90.0);
+        record.setDate(LocalDate.of(2018, 9, 1));
+        creditRecordRepository.save(record);
+
+        record = new CreditRecord();
+        record.setUser(user);
+        record.setCreditScore(20.0);
+        record.setDate(LocalDate.of(2018, 8, 1));
+        creditRecordRepository.save(record);
+    }
     private void print(PersonalRelationship relationship) {
         System.out.println("peoples:");
         List<People> peoples = relationship.getPeople();
         for(People people : peoples) {
             print(people);
+            System.out.println();
         }
         System.out.println();
         System.out.println("relations:");
         List<Relation> relations = relationship.getRelations();
         for(Relation relation : relations) {
             print(relation);
+            System.out.println();
         }
     }
     private void print(Relation relation) {
