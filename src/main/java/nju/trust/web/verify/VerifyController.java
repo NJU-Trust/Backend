@@ -34,8 +34,8 @@ public class VerifyController {
 
     // 校友信息验证
     @GetMapping(value = "/alumnaVerify")
-    public ApiResponse alumnaVerify(Principal principal, String gender, String birthday, String idCardNumber, String education, String evidence) {
-        return verifyService.alumnaVerify(principal.getName(), gender, birthday, idCardNumber, education, evidence);
+    public ApiResponse alumnaVerify(Principal principal, String gender, String birthday, String idCardNumber, String education, String evidence, String institution, String livingPlace) {
+        return verifyService.alumnaVerify(principal.getName(), gender, birthday, idCardNumber, education, evidence, institution, livingPlace);
     }
 
     // 得到用户的角色

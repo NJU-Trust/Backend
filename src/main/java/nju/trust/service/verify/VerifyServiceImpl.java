@@ -219,10 +219,12 @@ public class VerifyServiceImpl implements VerifyService {
      * @param idCardNumber 身份证号
      * @param education    学历（本科毕业、研究生毕业、博士毕业）
      * @param evidence     学历证明
+     * @param institution  工作单位
+     * @param livingPlace  居住地
      * @return 提交是否成功
      */
     @Override
-    public ApiResponse alumnaVerify(String username, String gender, String birthday, String idCardNumber, String education, String evidence) {
+    public ApiResponse alumnaVerify(String username, String gender, String birthday, String idCardNumber, String education, String evidence, String institution, String livingPlace) {
         // 性别（男 女）
         Gender genderEnum = Gender.getGender(gender);
         if(genderEnum == null) {
@@ -243,6 +245,8 @@ public class VerifyServiceImpl implements VerifyService {
         user.setGender(genderEnum);
         user.setBirthday(birth);
         user.setIdCardNumber(idCardNumber);
+        user.setInstitution(institution);
+        user.setLivingPlace(livingPlace);
         userRepository.save(user);
 
         // 学历 学历证明

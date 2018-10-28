@@ -43,9 +43,11 @@ public interface VerifyService {
      * @param idCardNumber 身份证号
      * @param education    学历（本科毕业、研究生毕业、博士毕业）
      * @param evidence     学历证明
+     * @param institution  工作单位
+     * @param livingPlace  居住地
      * @return 提交是否成功
      */
-    ApiResponse alumnaVerify(String username, String gender, String birthday, String idCardNumber, String education, String evidence);
+    ApiResponse alumnaVerify(String username, String gender, String birthday, String idCardNumber, String education, String evidence, String institution, String livingPlace);
 
     /**
      * 得到用户角色
