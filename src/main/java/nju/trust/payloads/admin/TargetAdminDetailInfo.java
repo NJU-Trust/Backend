@@ -1,12 +1,10 @@
 package nju.trust.payloads.admin;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import nju.trust.entity.target.BaseTarget;
 import nju.trust.entity.target.TargetRating;
 import nju.trust.entity.target.TargetState;
 import nju.trust.entity.user.Repayment;
 import nju.trust.entity.user.RepaymentType;
-import nju.trust.payloads.target.TargetInfo;
 
 import java.time.LocalDate;
 
@@ -22,11 +20,10 @@ public class TargetAdminDetailInfo {
     private Double money;   // 金额
     private Double collectedMoney;  // 已筹集金额
     private String projectDescription;  // 项目说明
-    private TargetState state;  // 标的状态
+    private String state;  // 标的状态
     private Double interestRate;    // 利率（同时也是项目收益情况）
-    @JsonProperty("riskRating")
     private TargetRating targetRating;// 项目风险评级
-    private RepaymentType type; // 还款方案
+    private String type; // 还款方案
 
     public TargetAdminDetailInfo(BaseTarget baseTarget, Repayment repayment) {
         this.id = baseTarget.getId();
@@ -35,10 +32,10 @@ public class TargetAdminDetailInfo {
         this.money = baseTarget.getMoney();
         this.collectedMoney = baseTarget.getCollectedMoney();
         this.projectDescription = baseTarget.getProjectDescription();
-        this.state = baseTarget.getTargetState();
+        this.state = baseTarget.getTargetState().getStr();
         this.interestRate = repayment.getInterestRate();
         this.targetRating = baseTarget.getTargetRating();
-        this.type = repayment.getType();
+        this.type = repayment.getType().getStr();
     }
 
     public Long getId() {
@@ -90,11 +87,11 @@ public class TargetAdminDetailInfo {
     }
 
     public TargetState getState() {
-        return state;
+        return TargetState.getEnum(state);
     }
 
     public void setState(TargetState state) {
-        this.state = state;
+        this.state = state.getStr();
     }
 
     public Double getInterestRate() {
@@ -114,11 +111,11 @@ public class TargetAdminDetailInfo {
     }
 
     public RepaymentType getType() {
-        return type;
+        return RepaymentType.getEnum(type);
     }
 
     public void setType(RepaymentType type) {
-        this.type = type;
+        this.type = type.getStr();
     }
 
     public TargetAdminDetailInfo() {
@@ -130,10 +127,10 @@ public class TargetAdminDetailInfo {
         this.money = money;
         this.collectedMoney = collectedMoney;
         this.projectDescription = projectDescription;
-        this.state = state;
+        this.state = state.getStr();
         this.interestRate = interestRate;
         this.targetRating = targetRating;
-        this.type = type;
+        this.type = type.getStr();
     }
 /*    public TargetAdminDetailInfo(TargetInfo targetInfo, RepaymentType type) {
         if(targetInfo == null) {
