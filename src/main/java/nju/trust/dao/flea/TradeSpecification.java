@@ -42,6 +42,7 @@ public class TradeSpecification implements Specification<Trade> {
         }
         if (!filter.isMine()){
             predicates.clear();
+            System.out.println(filter.isSelling());
             predicates.add(criteriaBuilder.equal(root.get("isSelling"), filter.isSelling()));
             result = criteriaBuilder.and(result, criteriaBuilder.or(toPredicateArray(predicates)));
         }

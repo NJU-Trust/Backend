@@ -22,7 +22,7 @@ public class Trade {
 
     private String goodsType;
 
-    private int goodsPrice;
+    private Integer goodsPrice;
 
     private String goodsDesc;
 
@@ -36,11 +36,11 @@ public class Trade {
 
     private LocalDate createDate;
 
-    private boolean isSelling;
+    private Boolean isSelling;
 
-    private boolean isRating;
+    private Boolean isRating;
 
-    private int rating;
+    private Integer rating;
 
     public Long getId() {
         return id;

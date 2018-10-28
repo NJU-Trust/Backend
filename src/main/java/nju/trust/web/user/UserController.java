@@ -5,8 +5,11 @@ import nju.trust.payloads.ApiResponse;
 import nju.trust.payloads.JwtAuthenticationResponse;
 import nju.trust.payloads.LoginRequest;
 import nju.trust.payloads.SignUpRequest;
+import nju.trust.payloads.user.BizToken;
 import nju.trust.security.JwtTokenProvider;
 import nju.trust.service.UserService;
+import nju.trust.util.APIContext;
+import nju.trust.util.CitiHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +39,8 @@ public class UserController {
 
     private UserService userService;
 
+    private APIContext apiContext;
+
     @Autowired
     public void setUserService(UserService userService) {
         this.userService = userService;
@@ -49,6 +54,11 @@ public class UserController {
     @Autowired
     public void setTokenProvider(JwtTokenProvider tokenProvider) {
         this.tokenProvider = tokenProvider;
+    }
+
+    @Autowired
+    public void setApiContext(APIContext apiContext) {
+        this.apiContext = apiContext;
     }
 
     @GetMapping(value = "/test")
@@ -75,5 +85,25 @@ public class UserController {
     @PostMapping(value = "/signup")
     public ApiResponse registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
         return userService.addUser(signUpRequest);
+    }
+
+    @GetMapping(value = "/gettoken")
+    public BizToken getToken() {
+        try {
+            CitiHelper.getBizToken(apiContext);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return new BizToken(apiContext.getEventId(),apiContext.getBizToken(),apiContext.getModulus(),apiContext.getExponent());
+    }
+
+    @GetMapping(value = "/presignin")
+    public BizToken preSignin(String username, String password) {
+        try {
+            CitiHelper.getAccounts(username, password, apiContext);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return new BizToken(apiContext.getEventId(),apiContext.getBizToken(),apiContext.getModulus(),apiContext.getExponent());
     }
 }

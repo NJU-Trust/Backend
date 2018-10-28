@@ -48,7 +48,7 @@ public class LostAndFoundSpecification implements Specification<LostAndFound> {
         if (!filter.getMsgProperties().isEmpty()) {
             predicates.clear();
             for (String types : filter.getMsgProperties())
-                predicates.add(criteriaBuilder.equal(root.get("msgProperty"), MsgProperty.getMsgProperty(types)));
+                predicates.add(criteriaBuilder.equal(root.get("property"), MsgProperty.getMsgProperty(types)));
             result = criteriaBuilder.and(result, criteriaBuilder.or(toPredicateArray(predicates)));
         }
         return result;

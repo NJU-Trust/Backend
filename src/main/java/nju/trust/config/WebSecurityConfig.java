@@ -3,6 +3,7 @@ package nju.trust.config;
 import nju.trust.security.JwtAuthenticationEntryPoint;
 import nju.trust.security.JwtAuthenticationFilter;
 import nju.trust.service.UserPrincipalService;
+import nju.trust.util.APIContext;
 import okhttp3.OkHttpClient;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,6 +90,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public Base64 base64() { return new Base64(); }
+
+    @Bean
+    public APIContext apiContext() { return new APIContext(); }
 
     /**
      * @param http

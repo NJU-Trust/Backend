@@ -50,7 +50,8 @@ public class TradeController {
     }
 
     @GetMapping(value = "/finish")
-    public ApiResponse rating(Long id, String toUsername) {
+    public ApiResponse finish(Long id, String toUsername) {
+        System.out.println(id);
         return tradeService.finishTrade(id, toUsername);
     }
 
