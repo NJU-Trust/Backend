@@ -94,8 +94,26 @@ public class ScoreCalUtil {
                 upLevel(checkRecord);
         }
 
+        calSchoolScore(checkRecord.getUser().getUsername());
+
         changeBaseUserEvidenceState(checkRecord.getId(), CheckState.PASS);
     }
+    // 计算校园表现
+    private void calSchoolScore(String username) {
+        List<UnstructuredData> unstructuredDataList = unstructuredDataRepository.findDistinctByUserUsername(username);
+        double scoreSum = 0;
+
+        for(UnstructuredData unstructuredData : unstructuredDataList) {
+            double score = unstructuredData.getScore();
+            UnstructuredDataType type = unstructuredData.getDataType();
+            scoreSum = scoreSum + score * type.getRatio();
+        }
+
+        User user = userRepository.findByUsername(username).get();
+        user.setCampusScore(scoreSum);
+        userRepository.save(user);
+    }
+
     // 用户信息审核：账户升级为中级，信息存入user，unstructuredData中
     private void upLevel(UserInfoCheckRecord checkRecord) {
         List<SelfInfoEvidence> selfInfoEvidences = userEvidenceRepository.findSelfInfoEvidenceByItem(checkRecord);
@@ -154,7 +172,6 @@ public class ScoreCalUtil {
         data.setDescription(item.getDescription());
         unstructuredDataRepository.save(data);
     }
-
     // 计算每年平均志愿活动时长加分
     private void calVolunteerScore(UserInfoCheckRecord checkRecord) {
         Long id = checkRecord.getId();
@@ -166,7 +183,7 @@ public class ScoreCalUtil {
             pre = createUnstructuredData(checkRecord.getUser(), UnstructuredDataType.SOCIALITY);
         }
         double preScore = pre.getScore();
-        score = checkScore(preScore, score);
+        score = checkScore(0, score);
         pre.setScore(score);
         unstructuredDataRepository.save(pre);
     }

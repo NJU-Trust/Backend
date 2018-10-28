@@ -6,50 +6,57 @@ package nju.trust.entity.user;
  * Description:
  */
 public enum UnstructuredDataType {
-    SCHOOL(0),             // 学校
+    SCHOOL(0, 0.0475),             // 学校
 
-    MAJOR(0),
+    MAJOR(0, 0),
 
-    EDUCATION(0),          // 学历
+    EDUCATION(0, 0.0455),          // 学历
 
-    ECONOMIC(0),
+    ECONOMIC(0, 0),
 
-    GRADE(0),              // 成绩
+    GRADE(0, 0.0917),              // 成绩
 
-    FAILED_SUBJECTS(0),    // 挂科
+    FAILED_SUBJECTS(0,0.1839),    // 挂科
 
-    SCHOLARSHIP(0),
+    SCHOLARSHIP(0, 0),
 
-    AWARD(0),              // 获奖情况
+    AWARD(0, 0.2866),              // 获奖情况
 
-    COMPETITION_AND_RESEARCH(0),
+    COMPETITION_AND_RESEARCH(0, 0),
 
-    VIOLATION(100),          // 违约情况
+    VIOLATION(100, 0.0387),          // 违约情况
 
-    TUITION(0),
+    TUITION(0, 0),
 
-    BORROWING_BOOK(0),
+    BORROWING_BOOK(0, 0),
 
-    CHEATING(0),
+    CHEATING(0, 0),
 
-    REPAYMENT_SITUATION(0),
+    REPAYMENT_SITUATION(0, 0),
 
-    UNTRUSTWORTHY_PEOPLE(0),
+    UNTRUSTWORTHY_PEOPLE(0, 0),
 
-    STUDENT_WORK(0),
+    STUDENT_WORK(0, 0),
 
-    VOLENTEER_TIME(0),
+    VOLENTEER_TIME(0, 0),
 
-    SOCIALITY(0)           // 社交情况
+    SOCIALITY(0, 0.0334)           // 社交情况
     ;
 
     private double initialScore;
 
-    UnstructuredDataType(double initialScore) {
+    private double ratio;   // 计算校园表现时的系数
+
+    UnstructuredDataType(double initialScore, double ratio) {
         this.initialScore = initialScore;
+        this.ratio = ratio;
     }
 
     public double getInitialScore() {
         return initialScore;
+    }
+
+    public double getRatio() {
+        return ratio;
     }
 }

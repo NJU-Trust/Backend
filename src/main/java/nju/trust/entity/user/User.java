@@ -109,6 +109,8 @@ public class User {
 
     private String livingPlace;
 
+    private Double campusScore; // 校园表现
+
 
     public User() {
     }
@@ -413,5 +415,13 @@ public class User {
 
     public void setCrossScore(Double crossScore) {
         this.crossScore = crossScore;
+    }
+
+    public Double getCampusScore() {
+        return campusScore;
+    }
+
+    public void setCampusScore(Double campusScore) {
+        this.campusScore = campusScore;
     }
 }
