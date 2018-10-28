@@ -24,23 +24,23 @@ public class TargetManagementController {
     private TargetManagementService targetManagementService;
 
     @RequestMapping("/ongoing")
-    public List<OnGoingTarget> onGoingTargets(Principal principal, TargetFilter filter) {
-        return targetManagementService.getOnGoingTargetList(principal.getName(), filter);
+    public List<OnGoingTarget> onGoingTargets(String username, TargetFilter filter) {
+        return targetManagementService.getOnGoingTargetList(username, filter);
     }
 
     @RequestMapping("/complete")
-    public List<ReleasedTarget> completedTargets(Principal principal, TargetFilter filter) {
-        return targetManagementService.completedTargetList(principal.getName(), filter);
+    public List<ReleasedTarget> completedTargets(String username, TargetFilter filter) {
+        return targetManagementService.completedTargetList(username, filter);
     }
 
     @RequestMapping("/released")
-    public List<ReleasedTarget> releasedTargets(Principal principal, TargetFilter filter) {
-        return targetManagementService.releasedTargetList(principal.getName(), filter);
+    public List<ReleasedTarget> releasedTargets(String username, TargetFilter filter) {
+        return targetManagementService.releasedTargetList(username, filter);
     }
 
     @RequestMapping("/default")
-    public List<DefaultRecord> defaultRecords(Principal principal, TargetFilter filter) {
-        return targetManagementService.defaultRecords(principal.getName());
+    public List<DefaultRecord> defaultRecords(String username, TargetFilter filter) {
+        return targetManagementService.defaultRecords(username);
     }
 
     @Autowired
