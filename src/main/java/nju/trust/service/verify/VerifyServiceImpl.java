@@ -7,6 +7,7 @@ import nju.trust.entity.CheckItem;
 import nju.trust.entity.CheckState;
 import nju.trust.entity.record.UserEvidence.*;
 import nju.trust.entity.record.UserInfoCheckRecord;
+import nju.trust.entity.user.Gender;
 import nju.trust.entity.user.RoleName;
 import nju.trust.entity.user.User;
 import nju.trust.payloads.ApiResponse;
@@ -15,7 +16,9 @@ import nju.trust.payloads.verifyInfo.SchoolVerifyInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -36,8 +39,9 @@ public class VerifyServiceImpl implements VerifyService {
     private ScholarshipEvidenceRepository scholarshipEvidenceRepository;
     private VolunteerEvidenceRepository volunteerEvidenceRepository;
     private RewardEvidenceRepository rewardEvidenceRepository;
+    private SelfInfoEvidenceRepository selfInfoEvidenceRepository;
     @Autowired
-    public VerifyServiceImpl(UserRepository userRepository, UserInfoCheckRecordRepository userInfoCheckRecordRepository, FailEvidenceRepository failEvidenceRepository, MatchEvidenceRepository matchEvidenceRepository, ScholarshipEvidenceRepository scholarshipEvidenceRepository, VolunteerEvidenceRepository volunteerEvidenceRepository, RewardEvidenceRepository rewardEvidenceRepository) {
+    public VerifyServiceImpl(UserRepository userRepository, UserInfoCheckRecordRepository userInfoCheckRecordRepository, FailEvidenceRepository failEvidenceRepository, MatchEvidenceRepository matchEvidenceRepository, ScholarshipEvidenceRepository scholarshipEvidenceRepository, VolunteerEvidenceRepository volunteerEvidenceRepository, RewardEvidenceRepository rewardEvidenceRepository, SelfInfoEvidenceRepository selfInfoEvidenceRepository) {
         this.userRepository = userRepository;
         this.userInfoCheckRecordRepository = userInfoCheckRecordRepository;
         this.failEvidenceRepository = failEvidenceRepository;
@@ -45,6 +49,7 @@ public class VerifyServiceImpl implements VerifyService {
         this.scholarshipEvidenceRepository = scholarshipEvidenceRepository;
         this.volunteerEvidenceRepository = volunteerEvidenceRepository;
         this.rewardEvidenceRepository = rewardEvidenceRepository;
+        this.selfInfoEvidenceRepository = selfInfoEvidenceRepository;
     }
 
     /**
@@ -69,9 +74,23 @@ public class VerifyServiceImpl implements VerifyService {
         user.setInstitution(info.getInstitution());
         user.setMajor(info.getMajor());
         user.setAlipay(info.getAlipay());
-        user.setStuCardImage(info.getStuCardImage());
-        user.setSchoolCardImage(info.getSchoolCardImage());
         userRepository.save(user);
+
+        LocalDateTime time = LocalDateTime.now();
+        CheckState state = CheckState.ONGING;
+        UserInfoCheckRecord item = new UserInfoCheckRecord();
+        item.setCheckItem(CheckItem.SELFINFO);
+        item.setUser(user);
+        item.setCheckState(state);
+        item.setTime(time);
+        item.setDescription(user.getRealName());
+        userInfoCheckRecordRepository.save(item);
+
+        SelfInfoEvidence stuCardEvidence = new SelfInfoEvidence(user, item, time, state, info.getStuCardImage(), SelfInfoEvidenceType.STUDENTCARD, SelfInfoType.STUDENT);
+        selfInfoEvidenceRepository.save(stuCardEvidence);
+        SelfInfoEvidence schoolCardEvidence = new SelfInfoEvidence(user, item, time, state, info.getSchoolCardImage(), SelfInfoEvidenceType.SCHOOLCARD, SelfInfoType.STUDENT);
+        selfInfoEvidenceRepository.save(schoolCardEvidence);
+
         return ApiResponse.successResponse();
     }
 
@@ -194,7 +213,6 @@ public class VerifyServiceImpl implements VerifyService {
 
     /**
      * 校友信息验证
-     * TODO
      * @param username     用户名
      * @param gender       性别（男 女）
      * @param birthday     出生年月日（2018-01-01）
@@ -205,13 +223,49 @@ public class VerifyServiceImpl implements VerifyService {
      */
     @Override
     public ApiResponse alumnaVerify(String username, String gender, String birthday, String idCardNumber, String education, String evidence) {
-        return null;
+        // 性别（男 女）
+        Gender genderEnum = Gender.getGender(gender);
+        if(genderEnum == null) {
+            return new ApiResponse(false, "性别填写错误");
+        }
+        // 出生年月日（2018-01-01）
+        LocalDate birth = LocalDate.parse(birthday.split("T")[0], DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        if(birth.isAfter(LocalDate.now())) {
+            return new ApiResponse(false, "生日填写错误");
+        }
+
+        // 身份证
+
+        if(!userRepository.existsByUsername(username)) {
+            return new ApiResponse(false, "用户不存在");
+        }
+        User user = userRepository.findByUsername(username).get();
+        user.setGender(genderEnum);
+        user.setBirthday(birth);
+        user.setIdCardNumber(idCardNumber);
+        userRepository.save(user);
+
+        // 学历 学历证明
+        LocalDateTime time = LocalDateTime.now();
+        CheckState state = CheckState.ONGING;
+        UserInfoCheckRecord item = new UserInfoCheckRecord();
+        item.setCheckItem(CheckItem.SELFINFO);
+        item.setUser(user);
+        item.setCheckState(state);
+        item.setTime(time);
+        item.setDescription(education);
+        userInfoCheckRecordRepository.save(item);
+
+        SelfInfoEvidence educationEvidence = new SelfInfoEvidence(user, item, time, state, evidence, SelfInfoEvidenceType.EDUCATION, SelfInfoType.ALUMNA);
+        selfInfoEvidenceRepository.save(educationEvidence);
+
+        return ApiResponse.successResponse();
     }
 
     /**
      * 得到用户角色
      * @param username 用户名
-     * @return ["初级/非初级","校友/学生"]
+     * @return ["初级/非初级/初级审核中","校友/学生"]
      */
     @Override
     public List<String> getRoles(String username) {
@@ -221,7 +275,16 @@ public class VerifyServiceImpl implements VerifyService {
         Set<RoleName> roleNameSet = user.getRoles();
 
         if(roleNameSet.contains(RoleName.ROLE_PRIMARY)) {
-            roles.add("初级");
+            // 区分初级、初级审核中
+            List<UserInfoCheckRecord> ongoingList = userInfoCheckRecordRepository.findDistinctByUserUsernameAndCheckItemAndCheckState(username, CheckItem.SELFINFO, CheckState.ONGING);
+            List<UserInfoCheckRecord> rejectList = userInfoCheckRecordRepository.findDistinctByUserUsernameAndCheckItemAndCheckState(username, CheckItem.SELFINFO, CheckState.REJECT);
+            List<UserInfoCheckRecord> updateList = userInfoCheckRecordRepository.findDistinctByUserUsernameAndCheckItemAndCheckState(username, CheckItem.SELFINFO, CheckState.UPDATE);
+
+            if(ongoingList.size() == 0 && rejectList.size() == 0 && updateList.size() == 0) {
+                roles.add("初级");
+            }else {
+                roles.add("初级审核中");
+            }
         }else {
             roles.add("非初级");
         }

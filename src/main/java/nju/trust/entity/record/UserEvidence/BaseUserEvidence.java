@@ -18,14 +18,14 @@ import java.time.LocalDateTime;
 @DiscriminatorColumn(name = "dataType", discriminatorType = DiscriminatorType.STRING)
 public abstract class BaseUserEvidence {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;    // 编号
 
     @ManyToOne(targetEntity = User.class)
     @JoinColumn(name = "username", nullable = false)
     private User user;  // 用户
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "item")
     private UserInfoCheckRecord item;  // 对应的条目
 

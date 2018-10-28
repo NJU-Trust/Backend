@@ -5,10 +5,7 @@ import nju.trust.payloads.personalinfomation.ChangedPersonalInfo;
 import nju.trust.payloads.personalinfomation.PersonalBaseInfo;
 import nju.trust.service.personalinfo.BaseInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
@@ -29,7 +26,7 @@ public class BaseInfoController {
     }
 
     @PostMapping(value = "/changeInformation")
-    public ApiResponse changeBaseInformation(ChangedPersonalInfo changedPersonalInfo){
+    public ApiResponse changeBaseInformation(@RequestBody ChangedPersonalInfo changedPersonalInfo){
         return baseInfoService.changeBaseInfo(changedPersonalInfo);
     }
 

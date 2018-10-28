@@ -18,4 +18,6 @@ public interface UserInfoCheckRecordRepository extends CrudRepository<UserInfoCh
     List<UserInfoCheckRecord> findByCheckState(CheckState update);
 
     List<UserInfoCheckRecord> findDistinctByUserUsernameAndAndCheckItem(String username, CheckItem item);
+
+    List<UserInfoCheckRecord> findDistinctByUserUsernameAndCheckItemAndCheckState(String username, CheckItem item, CheckState state);
 }

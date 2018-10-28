@@ -3,12 +3,10 @@ package nju.trust.web.verify;
 import nju.trust.payloads.ApiResponse;
 import nju.trust.payloads.verifyInfo.NameAndEvidence;
 import nju.trust.payloads.verifyInfo.SchoolVerifyInfo;
+import nju.trust.payloads.verifyInfo.SelfInfo;
 import nju.trust.service.verify.VerifyService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
@@ -29,14 +27,12 @@ public class VerifyController {
         return verifyService.schoolVerify(schoolVerifyInfo,principal.getName());
     }
 
-    @GetMapping(value = "/selfInfo")
-    public ApiResponse saveSelfInfo(Principal principal, int fail, List<String> report_cards, List<NameAndEvidence> school_rewards
-            ,List<NameAndEvidence> city_rewards, List<NameAndEvidence> province_rewards, List<NameAndEvidence> country_rewards
-            ,double volunteer, String volunteer_img, List<NameAndEvidence> self_qualifications){
-        return verifyService.selfInfoVerify(principal.getName(), fail,report_cards,school_rewards,city_rewards,province_rewards,country_rewards,volunteer,volunteer_img,self_qualifications);
+    @PostMapping(value = "/selfInfo")
+    public ApiResponse saveSelfInfo(Principal principal, @RequestBody SelfInfo selfInfo){
+        return verifyService.selfInfoVerify(principal.getName(), selfInfo.getFail(), selfInfo.getReport_cards(), selfInfo.getSchool_rewards(), selfInfo.getCity_rewards(), selfInfo.getProvince_rewards(), selfInfo.getCountry_rewards(), selfInfo.getVolunteer(), selfInfo.getVolunteer_img(), selfInfo.getSelf_qualifications());
     }
 
-    // TODO 校友信息验证
+    // 校友信息验证
     @GetMapping(value = "/alumnaVerify")
     public ApiResponse alumnaVerify(Principal principal, String gender, String birthday, String idCardNumber, String education, String evidence) {
         return verifyService.alumnaVerify(principal.getName(), gender, birthday, idCardNumber, education, evidence);

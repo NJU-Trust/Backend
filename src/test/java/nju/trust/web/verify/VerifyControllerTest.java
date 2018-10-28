@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -36,6 +37,23 @@ public class VerifyControllerTest {
             MvcResult result = mvc.perform(
                     get("/verify/getRoles")
                             .param("username", "test")
+                            .contentType(MediaType.APPLICATION_JSON_VALUE))
+                    .andExpect(status().isOk())
+                    .andDo(MockMvcResultHandlers.print())
+                    .andReturn();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }*/
+    }
+
+    @Test
+    public void saveSelfInfo() {
+        /*try {
+            MvcResult result = mvc.perform(
+                    post("/verify/selfInfo")
+                            .param("username", "test")
+                            .param("fail", "1")
+                            .param("")
                             .contentType(MediaType.APPLICATION_JSON_VALUE))
                     .andExpect(status().isOk())
                     .andDo(MockMvcResultHandlers.print())
