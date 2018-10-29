@@ -47,8 +47,8 @@ public class InvestmentController {
     }
 
     @RequestMapping("/bad")
-    public List<BadTarget> getBadTargets(Double moneyUpper, Double moneyLower, String state) {
-        return null;
+    public List<BadTarget> getBadTargets(String username, Double moneyUpper, Double moneyLower, String state) {
+        return targetService.getBadTargets(username, moneyUpper, moneyLower, state);
     }
 
     @Autowired

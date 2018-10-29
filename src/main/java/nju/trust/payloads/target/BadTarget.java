@@ -6,12 +6,21 @@ package nju.trust.payloads.target;
  * @Date: 2018/10/28
  */
 public class BadTarget {
+    private Long targetId;          // 项目编号
     private String projectName;     // 项目名称
     private String loanFrom;        // 借款人姓名
     private String badStartDate;    // 坏账发生日期 yyyy/mm/dd
     private double investAmount;    // 投资金额
     private double lossAmount;      // 损失金额
     private String state;           // 状态，正在追回 | 已结束
+
+    public Long getTargetId() {
+        return targetId;
+    }
+
+    public void setTargetId(Long targetId) {
+        this.targetId = targetId;
+    }
 
     public String getProjectName() {
         return projectName;

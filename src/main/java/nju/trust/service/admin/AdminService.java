@@ -2,6 +2,7 @@ package nju.trust.service.admin;
 
 import nju.trust.entity.*;
 import nju.trust.entity.record.ApproveResult;
+import nju.trust.entity.record.RepaymentRecord;
 import nju.trust.entity.target.TargetState;
 import nju.trust.entity.target.TargetType;
 import nju.trust.payloads.ApiResponse;
@@ -162,4 +163,11 @@ public interface AdminService {
      * @return 是否成功
      */
     ApiResponse approveTarget(Long targetId, ApproveResult result);
+
+    /**
+     * 判断是非为坏账
+     * @param repaymentRecord
+     * @return
+     */
+    boolean isViolate(RepaymentRecord repaymentRecord);
 }

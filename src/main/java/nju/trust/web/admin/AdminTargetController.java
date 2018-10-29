@@ -50,14 +50,15 @@ public class AdminTargetController {
     }
 
     // 项目审批
-    // 获取待审核标的列表，分页显示
+    // TODO 不要 获取待审核标的列表，分页显示
+    // TODO type str LARGE SMALL
     @GetMapping(value = "/pendinglist")
     @PreAuthorize("hasRole('ADMIN')")
     public List<PendingTargetBriefInfo> getPendingTargets(TargetType type) {
         return adminService.getPendingTargets(type);
     }
 
-    //查看标的详情
+    //TODO 和上一个合并 查看标的详情
     @GetMapping(value = "/targetpendingitem")
     @PreAuthorize("hasRole('ADMIN')")
     public PendingTargetDetailInfo getPendingTargetDetailInfo(Long targetID){
@@ -67,6 +68,7 @@ public class AdminTargetController {
     // 标的审核结果
     @GetMapping(value = "/targetcheck")
     @PreAuthorize("hasRole('ADMIN')")
+    // TODO result “通过”
     public ApiResponse approveTarget(Long targetId, ApproveResult result) {
         return adminService.approveTarget(targetId, result);
     }

@@ -21,6 +21,7 @@ import nju.trust.payloads.Range;
 import nju.trust.payloads.investment.InvestmentStrategy;
 import nju.trust.payloads.target.*;
 import nju.trust.service.TransferHelper;
+import nju.trust.service.admin.AdminService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +72,8 @@ public class TargetServiceImpl implements TargetService {
 
     private TransferHelper transferHelper;
 
+    private AdminService adminService;
+
     @Autowired
     public TargetServiceImpl(TargetRepository targetRepository,
                              SmallTargetRepository smallTargetRepository,
@@ -81,7 +84,8 @@ public class TargetServiceImpl implements TargetService {
                              InvestmentRecordRepository investmentRecordRepository,
                              RepaymentRepository repaymentRepository,
                              TransferHelper transferHelper,
-                             RepaymentRecordRepository repaymentRecordRepository) {
+                             RepaymentRecordRepository repaymentRecordRepository,
+                             AdminService adminService) {
         this.targetRepository = targetRepository;
         this.smallTargetRepository = smallTargetRepository;
         this.largeTargetRepository = largeTargetRepository;
@@ -92,6 +96,7 @@ public class TargetServiceImpl implements TargetService {
         this.repaymentRecordRepository = repaymentRecordRepository;
         this.transferHelper = transferHelper;
         this.loanRecordRepository = loanRecordRepository;
+        this.adminService = adminService;
     }
 
     @Override
@@ -326,6 +331,108 @@ public class TargetServiceImpl implements TargetService {
         return ApiResponse.successResponse();
     }
 
+    /**
+     * 得到坏账记录
+     * @param moneyUpper 损失金额上限 null:上不封顶
+     * @param moneyLower 损失金额下限 null:下不封底
+     * @param state      还款中 已还款 null
+     * null表示该条件无限制
+     */
+    @Override
+    public List<BadTarget> getBadTargets(String username, Double moneyUpper, Double moneyLower, String state) {
+        List<RepaymentRecord> badRepayment = new ArrayList<>();
+
+        List<RepaymentRecord> repaymentRecords = repaymentRecordRepository.findAll();
+        for(RepaymentRecord repaymentRecord : repaymentRecords) {
+            if(adminService.isViolate(repaymentRecord)) {
+                badRepayment.add(repaymentRecord);
+            }
+        }
+
+        List<BadTarget> badTargets = getBadTargetList(badRepayment, username);
+
+        // 筛选
+        if(moneyUpper != null) {
+            badTargets = checkMoneyUpper(badTargets, moneyUpper);
+        }
+        if(moneyLower != null) {
+            badTargets = checkMoneyLower(badTargets, moneyLower);
+        }
+        if(state != null) {
+            badTargets = checkState(badTargets, state);
+        }
+
+        return badTargets;
+    }
+    private List<BadTarget> checkMoneyUpper(List<BadTarget> badTargets, Double moneyUpper) {
+        int index = 0;
+        while(index < badTargets.size()) {
+            BadTarget badTarget = badTargets.get(index);
+            if(badTarget.getLossAmount() > moneyUpper) {
+                badTargets.remove(index);
+            }else {
+                index++;
+            }
+        }
+        return badTargets;
+    }
+    private List<BadTarget> checkMoneyLower(List<BadTarget> badTargets, Double moneyLower) {
+        int index = 0;
+        while(index < badTargets.size()) {
+            BadTarget badTarget = badTargets.get(index);
+            if(badTarget.getLossAmount() < moneyLower) {
+                badTargets.remove(index);
+            }else {
+                index++;
+            }
+        }
+        return badTargets;
+    }
+    private List<BadTarget> checkState(List<BadTarget> badTargets, String state) {
+        int index = 0;
+        while(index < badTargets.size()) {
+            BadTarget badTarget = badTargets.get(index);
+            if(!badTarget.getState().equals(state)) {
+                badTargets.remove(index);
+            }else {
+                index++;
+            }
+        }
+        return badTargets;
+    }
+    private List<BadTarget> getBadTargetList(List<RepaymentRecord> badRepayment, String username) {
+        List<BadTarget> targets = new ArrayList<>();
+
+        for(RepaymentRecord repaymentRecord : badRepayment) {
+            BadTarget badTarget = getBadTarget(repaymentRecord, username);
+            targets.add(badTarget);
+        }
+        return targets;
+    }
+    private BadTarget getBadTarget(RepaymentRecord repaymentRecord, String username) {
+        BadTarget badTarget = new BadTarget();
+
+        BaseTarget baseTarget = repaymentRecord.getTarget();
+        badTarget.setTargetId(baseTarget.getId());
+        badTarget.setProjectName(baseTarget.getName());
+        badTarget.setLoanFrom(baseTarget.getUser().getUsername());
+        badTarget.setBadStartDate(repaymentRecord.getReturnDate().toString());
+        badTarget.setState(baseTarget.getTargetState().getStr());
+
+        List<InvestmentRecord> investmentRecords = investmentRecordRepository.findDistinctByUserUsernameAndTarget(username, baseTarget);
+        double investAmount = 0;
+        if(investmentRecords.size() > 0) {
+            investAmount = investmentRecords.get(0).getInvestedMoney();
+        }
+        badTarget.setInvestAmount(investAmount);
+
+        double total = baseTarget.getCollectedMoney();
+        double shouldReturn = repaymentRecord.getSum();
+        double lossAmount = investAmount*shouldReturn/total;
+        badTarget.setLossAmount(lossAmount);
+
+        return badTarget;
+    }
 
 
     private RepaymentNote getRepaymentNote(String username, List<Double> monthlyRepayment, double duration, double totalRepayment) {

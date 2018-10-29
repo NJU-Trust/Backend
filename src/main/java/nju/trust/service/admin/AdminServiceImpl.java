@@ -652,7 +652,7 @@ public class AdminServiceImpl implements AdminService {
 
         return violateTargets.size();
     }
-    private boolean isViolate(RepaymentRecord repaymentRecord) {
+    public boolean isViolate(RepaymentRecord repaymentRecord) {
         LocalDate returnDate = repaymentRecord.getReturnDate();
         LocalDate actualReturnDate = repaymentRecord.getActualRepayDate();
 

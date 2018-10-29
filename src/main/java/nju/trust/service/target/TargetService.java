@@ -47,4 +47,6 @@ public interface TargetService {
     ApiResponse schoolFellowInvestTarget(Long targetId, String username, String interestPlan);
 
     ApiResponse repay(String username, Long targetId, Integer period);
+
+    List<BadTarget> getBadTargets(String username, Double moneyUpper, Double moneyLower, String state);
 }

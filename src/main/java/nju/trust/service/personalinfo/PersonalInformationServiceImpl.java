@@ -735,7 +735,6 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
 
     /**
      * 数值分析
-     * TODO 投资额结余
      * @param username   用户名
      * @param startMonth 开始月份
      * @param endMonth   结束月份
@@ -792,7 +791,6 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
             monthAnalysis.setExpense(expense);
             monthAnalysis.setExpense_rig(expense_rig);
             monthAnalysis.setExpense_disc(expense_disc);
-            // TODO
             monthAnalysis.setSurplus(surplus);
 
             double lblt = antCheckLater + getToRepaySum(username, date);
