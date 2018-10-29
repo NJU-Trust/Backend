@@ -52,13 +52,13 @@ public class RepaymentController {
 
     // 消费修正建议，这里采用消费分析是因为 url 和之前的定义的重复了
     @RequestMapping("/consumptionAnalysis")
-    public ConsumptionAnalysis getConsumptionAnalysis(Principal principal) {
-        return repaymentService.consumptionAnalysis(principal.getName());
+    public ConsumptionAnalysis getConsumptionAnalysis(String username) {
+        return repaymentService.consumptionAnalysis(username);
     }
 
     @RequestMapping("/predictSurplus")
-    public SurplusPrediction getSurplusPrediction(Principal principal) {
-        return repaymentService.surplusPrediction(principal.getName());
+    public SurplusPrediction getSurplusPrediction(String username) {
+        return repaymentService.surplusPrediction(username);
     }
 
 

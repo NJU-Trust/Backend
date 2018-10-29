@@ -62,19 +62,19 @@ public class PersonalInfoController {
 
     // 数值分析
     @GetMapping(value = "/dataAnalysis")
-    public DataAnalysis getDataAnalysis(Principal principal, String startMonth, String endMonth) {
-        return personalInformationService.getDataAnalysis(principal.getName(), startMonth, endMonth);
+    public DataAnalysis getDataAnalysis(String username, String startMonth, String endMonth) {
+        return personalInformationService.getDataAnalysis(username, startMonth, endMonth);
     }
 
     // 趋势分析
     @GetMapping(value = "/trendAnalysis")
-    public List<TrendAnalysis> getTrendAnalysis(Principal principal, String startMonth, String endMonth) {
-        return personalInformationService.getTrendAnalysis(principal.getName(), startMonth, endMonth);
+    public List<TrendAnalysis> getTrendAnalysis(String username, String startMonth, String endMonth) {
+        return personalInformationService.getTrendAnalysis(username, startMonth, endMonth);
     }
 
     // 比例分析
     @GetMapping(value = "/proportionAnalysis")
-    public ProportionAnalysis getProportionAnalysis(Principal principal, String month) {
-        return personalInformationService.getProportionAnalysis(principal.getName(), month);
+    public ProportionAnalysis getProportionAnalysis(String username, String month) {
+        return personalInformationService.getProportionAnalysis(username, month);
     }
 }
