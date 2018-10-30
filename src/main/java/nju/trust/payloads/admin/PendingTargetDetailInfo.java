@@ -27,7 +27,7 @@ public class PendingTargetDetailInfo {
     private LocalDate startTime;    // 项目开始时间
     private LocalDate endTime;  // 项目结束时间
     private IdentityOption identityOption;  // 信息披露层级
-    private Double completionRate;  // 最低达标率、
+    private Double completionRate;  // 最低达标率
 
 
     // 资金去向

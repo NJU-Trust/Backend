@@ -51,4 +51,14 @@ public enum ApproveResult {
                 .put("str", str)
                 .build();
     }
+
+    public static ApproveResult getEnum(String str) {
+        ApproveResult[] approveResults = ApproveResult.values();
+        for(ApproveResult approveResult : approveResults) {
+            if(approveResult.getStr().equals(str)) {
+                return approveResult;
+            }
+        }
+        return ApproveResult.PASS;
+    }
 }

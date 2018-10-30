@@ -4,15 +4,11 @@ import nju.trust.entity.record.ApproveResult;
 import nju.trust.entity.target.TargetState;
 import nju.trust.entity.target.TargetType;
 import nju.trust.payloads.ApiResponse;
-import nju.trust.payloads.admin.PendingTargetBriefInfo;
 import nju.trust.payloads.admin.PendingTargetDetailInfo;
 import nju.trust.payloads.admin.TargetAdminBriefInfo;
 import nju.trust.payloads.admin.TargetAdminDetailInfo;
-import nju.trust.payloads.target.LargeTargetInfo;
-import nju.trust.payloads.target.SmallTargetInfo;
 import nju.trust.service.admin.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,8 +34,10 @@ public class AdminTargetController {
     // 查看项目概要
     @GetMapping(value = "/briefInfo")
     @PreAuthorize("hasRole('ADMIN')")
-    public List<TargetAdminBriefInfo> seeTarget(TargetState state, TargetType type) {
-        return adminService.seeTarget(state, type);
+    public List<TargetAdminBriefInfo> seeTarget(String state, String type) {
+        TargetState targetState = TargetState.getEnum(state);
+        TargetType targetType = TargetType.getEnum(type);
+        return adminService.seeTarget(targetState, targetType);
     }
 
     // 查看项目详情
@@ -49,27 +47,26 @@ public class AdminTargetController {
         return adminService.seeTarget(id);
     }
 
-    // 项目审批
-    // TODO 不要 获取待审核标的列表，分页显示
-    // TODO type str LARGE SMALL
+  /*  // 项目审批
     @GetMapping(value = "/pendinglist")
     @PreAuthorize("hasRole('ADMIN')")
     public List<PendingTargetBriefInfo> getPendingTargets(TargetType type) {
         return adminService.getPendingTargets(type);
-    }
+    }*/
 
-    //TODO 和上一个合并 查看标的详情
-    @GetMapping(value = "/targetpendingitem")
+    // 查看待审核标的详情
+    @GetMapping(value = "/pendingTarget")
     @PreAuthorize("hasRole('ADMIN')")
-    public PendingTargetDetailInfo getPendingTargetDetailInfo(Long targetID){
-        return adminService.getPendingTarget(targetID);
+    public List<PendingTargetDetailInfo> getPending(String targetType) {
+        TargetType type = TargetType.getEnum(targetType);
+        return adminService.getPendingTarget(type);
     }
 
     // 标的审核结果
     @GetMapping(value = "/targetcheck")
     @PreAuthorize("hasRole('ADMIN')")
-    // TODO result “通过”
-    public ApiResponse approveTarget(Long targetId, ApproveResult result) {
-        return adminService.approveTarget(targetId, result);
+    public ApiResponse approveTarget(Long targetId, String result) {
+        ApproveResult approveResult = ApproveResult.getEnum(result);
+        return adminService.approveTarget(targetId, approveResult);
     }
 }
