@@ -28,7 +28,7 @@ public class TargetFilter {
     public java.util.function.Predicate<BaseTarget> toPredicate() {
         java.util.function.Predicate<BaseTarget> result =
                 t -> Optional.ofNullable(moneyLower)
-                        .map(m -> t.getMoney() >= moneyLower).orElse(true);
+                        .map(m -> t.getMoney() >= m).orElse(true);
         result = result.and(t -> Optional.ofNullable(targetType)
                 .map(m -> m == t.getTargetType()).orElse(true))
                 .and(t -> Optional.ofNullable(moneyUpper)
