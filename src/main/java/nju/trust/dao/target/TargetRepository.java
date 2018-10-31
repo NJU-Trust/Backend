@@ -6,6 +6,7 @@ import nju.trust.entity.target.TargetType;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
@@ -27,4 +28,5 @@ public interface TargetRepository
     List<BaseTarget> findByTargetState(TargetState targetState, Pageable pageable);
 
     List<BaseTarget> findByTargetTypeAndTargetState(TargetType targetType, TargetState targetState, Pageable pageable);
+
 }

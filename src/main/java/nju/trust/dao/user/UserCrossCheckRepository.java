@@ -26,4 +26,6 @@ public interface UserCrossCheckRepository extends CrudRepository<CreditCrossChec
     List<CreditCrossCheck> findAllByUserUsernameAndEndDate(String username, LocalDate date);
 
     List<CreditCrossCheck> findAllByUserUsernameAndDone(String username, boolean done);
+
+    List<CreditCrossCheck> findAllByDone(boolean done);
 }

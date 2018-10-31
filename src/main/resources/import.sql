@@ -10,6 +10,11 @@ INSERT INTO user (username, institution, password, student_id,cross_score) VALUE
 INSERT INTO user (username, institution, password, student_id,cross_score) VALUES ('cross9', '软院', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS', '161250009',-1.0);
 INSERT INTO user (username, institution, password, student_id,cross_score) VALUES ('cross10', '软院', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS', '161250010',-1.0);
 INSERT INTO user (username, institution, password, student_id,cross_score) VALUES ('cross11', '软院', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS', '161250011',-1.0);
+INSERT INTO user (username, password) values ('SandboxUser1', '$2a$10$tmc4CLhdzFGPFhz7eiUc9OFmfi04gmFf6gUs89kild.PIZFTrXI3u')
+INSERT into user (username, password) values ('SandboxUser2', '$2a$10$3wLM9bnb3.kfGvMisZH30u9oGX5ewkyc6pMJ4BUovDj77OakQsEXK')
+INSERT INTO user (username, password) values ('SandboxUser3', '$2a$10$EbYe1Cbj6zkkfpEUU6UavOOVD/8FTO3zOLvFch3N8ashSi6.14GYC')
+
+
 
 -- insert into user_month_statistics(id, income, disc, surplus, username, debt) values (1, 1000, 500, 500, 'test', 100);
 -- insert into user_month_statistics(id, income, disc, surplus, username, debt) values (2, 1050, 500, 500, 'test', 100);

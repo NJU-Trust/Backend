@@ -14,19 +14,28 @@ import java.util.Set;
  */
 public class JwtAuthenticationResponse {
     private String accessToken;
+    private String realAccessToken;
     private String tokenType = "Bearer";
     private ArrayList<String> roles;
     private String username;
 
 
-    public JwtAuthenticationResponse(String accessToken, String username, Set<RoleName> rolesSet) {
+    public JwtAuthenticationResponse(String accessToken, String realAccessToken, String username, Set<RoleName> rolesSet) {
         this.accessToken = accessToken;
         this.username = username;
+        this.realAccessToken = realAccessToken;
         this.roles = new ArrayList<String>();
         for(RoleName roleName: rolesSet) {
             roles.add(roleName.toString());
         }
-        roles.add(RoleName.ROLE_ADMIN.toString());
+    }
+
+    public String getRealAccessToken() {
+        return realAccessToken;
+    }
+
+    public void setRealAccessToken(String realAccessToken) {
+        this.realAccessToken = realAccessToken;
     }
 
     public String getAccessToken() {

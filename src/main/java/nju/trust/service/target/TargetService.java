@@ -1,5 +1,6 @@
 package nju.trust.service.target;
 
+import nju.trust.entity.target.BaseTarget;
 import nju.trust.entity.user.RepaymentType;
 import nju.trust.payloads.ApiResponse;
 import nju.trust.payloads.Range;
@@ -49,4 +50,6 @@ public interface TargetService {
     ApiResponse repay(String username, Long targetId, Integer period);
 
     List<BadTarget> getBadTargets(String username, Double moneyUpper, Double moneyLower, String state);
+
+    List<TargetInfo> searchTargets(String name);
 }

@@ -1,13 +1,12 @@
 package nju.trust.util;
 
+import nju.trust.exception.CitiAuthorizationException;
 import okhttp3.*;
 import org.apache.commons.codec.binary.Base64;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -19,54 +18,29 @@ import java.util.UUID;
  */
 
 public class CitiHelper {
-    public static Map getBizToken(APIContext context) throws IOException {
-        step1GetAccessToken(context);
-        if(context.getAccessToken()==null){
-            return null;
-        }
-        Map map = step2GetBizToken(context);
-        if(context.getEventId()==null){
-            return null;
-        }
-        return map;
-    }
-
-    public static String getAccounts(String username, String password, APIContext context) throws IOException {
+    public static void getRealAccessToken(String username, String password, APIContext context){
         context.setUsername(username);
         context.setPassword(password);
-        step3GetRealAccessToken(context);
-        if(context.getRealAccessToken()==null){
-            return null;
+        try {
+            getAccessToken(context);
+            if (context.getAccessToken() == null) {
+                throw new CitiAuthorizationException();
+            }
+            getBiztoken(context);
+            if (context.getEventId() == null) {
+                throw new CitiAuthorizationException();
+            }
+            realAccessToken(context);
+            if (context.getRealAccessToken() == null){
+                throw new CitiAuthorizationException();
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
         }
-        getPayees(context);
-        transferMoney(context, 1200);
-        String accounts = step4GetAccounts(context);
-        if(context.getAccounts()==null){
-            return null;
-        }
-
-        return accounts;
     }
 
-    public static String getAccountDetail(String accountId, APIContext context) throws IOException {
-        context.setAccountId(accountId);
-        String accountDetail = step5GetAccountDetails(context);
-        if(accountDetail == null) {
-            return null;
-        }
-        return accountDetail;
-    }
 
-//    public static String getTransactions(String accountId, APIContext context) throws IOException {
-//        context.setAccountId(accountId);
-//        String transaction = step6GetTransaction(context);
-//        if(transaction == null) {
-//            return null;
-//        }
-//        return transaction;
-//    }
-
-    public static String step1GetAccessToken(APIContext context) throws IOException {
+    public static String getAccessToken(APIContext context) throws IOException {
         OkHttpClient client = new OkHttpClient();
         String client_id = APIConstant.CLIENT_ID;
         String client_scrent = APIConstant.CLIENT_SCRENT;
@@ -85,13 +59,12 @@ public class CitiHelper {
         JSONObject jsonObject = (JSONObject) JSONValue.parse(response.body().string());
         String accessToken = (String) jsonObject.get("access_token");
         context.setAccessToken(accessToken);
-        System.out.println("step1 access_token:");
+        System.out.println("access_token:");
         System.out.println("\t" + accessToken);
         return accessToken;
     }
 
-    public static Map step2GetBizToken(APIContext context) throws IOException {
-        Map<String, String> map = new HashMap<String, String>();
+    public static void getBiztoken(APIContext context) throws IOException {
         OkHttpClient client = new OkHttpClient();
         String client_id = APIConstant.CLIENT_ID;
         String accessToken = context.getAccessToken();
@@ -117,23 +90,14 @@ public class CitiHelper {
             Headers headers = response.headers();
             bizToken = headers.get("bizToken");
             eventId = headers.get("eventId");
-            map.put("modulus", modulus);
-            map.put("exponent", exponent);
-            map.put("bizToken", bizToken);
-            map.put("eventId", eventId);
             context.setEventId(eventId);
             context.setBizToken(bizToken);
             context.setExponent(exponent);
             context.setModulus(modulus);
         }
-        System.out.println("step2 map:");
-        for (String s : map.keySet()) {
-            System.out.println("\tkey:" + s + "\tvalues:" + map.get(s));
-        }
-        return map;
     }
 
-    public static String step3GetRealAccessToken(APIContext context) throws IOException{
+    public static String realAccessToken(APIContext context) throws IOException{
         String client_id = APIConstant.CLIENT_ID;
         String client_scrent = APIConstant.CLIENT_SCRENT;
         String bizToken = context.getBizToken();
@@ -142,7 +106,8 @@ public class CitiHelper {
         String authorization = "Basic " + Base64.encodeBase64String(encode_key.getBytes());
         String username = context.getUsername();
         String password = context.getPassword();
-        System.out.println(password);
+        System.out.println("password : " + password);
+        password = JSHelper.RSAConverter(context.getModulus(), context.getExponent(), context.getEventId(), context.getPassword());
         UUID uuid = UUID.randomUUID();
         OkHttpClient client = new OkHttpClient();
         MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
@@ -160,7 +125,7 @@ public class CitiHelper {
         JSONObject jsonObject = (JSONObject) JSONValue.parse(response.body().string());
         String realAccessToken = (String) jsonObject.get("access_token");
         context.setRealAccessToken(realAccessToken);
-        System.out.println("step3 real_access_token:");
+        System.out.println("real_access_token:");
         System.out.println("\t" + realAccessToken);
         return realAccessToken;
     }
@@ -250,26 +215,26 @@ public class CitiHelper {
         return responseBodyString;
     }
 
-//    public static String step6GetTransaction(APIContext context) throws IOException{
-//        String client_id = APIConstant.CLIENT_ID;
-//        String authorization = "Bearer " + context.getRealAccessToken();
-//        UUID uuid = UUID.randomUUID();
-//        String accountId = context.getAccountId();
-//        OkHttpClient client = new OkHttpClient();
-//        Request request = new Request.Builder()
-//                .url("https://sandbox.apihub.citi.com/gcb/api/v1/accounts/"+accountId+"/transactions")
-//                .get()
-//                .addHeader("authorization", authorization)
-//                .addHeader("uuid", uuid.toString())
-//                .addHeader("content-type", "application/json")
-//                .addHeader("accept", "application/json")
-//                .addHeader("client_id", client_id)
-//                .build();
-//        Response response = client.newCall(request).execute();
-//        String responseBodyString = response.body().string();
-//        context.setAccounts(responseBodyString);
-//        System.out.println("step6 transaction details:");
-//        System.out.println("\t"+responseBodyString);
-//        return responseBodyString;
-//    }
+    public static String step6GetTransaction(APIContext context) throws IOException{
+        String client_id = APIConstant.CLIENT_ID;
+        String authorization = "Bearer " + context.getRealAccessToken();
+        UUID uuid = UUID.randomUUID();
+        String accountId = context.getAccountId();
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url("https://sandbox.apihub.citi.com/gcb/api/v1/accounts/"+accountId+"/transactions")
+                .get()
+                .addHeader("authorization", authorization)
+                .addHeader("uuid", uuid.toString())
+                .addHeader("content-type", "application/json")
+                .addHeader("accept", "application/json")
+                .addHeader("client_id", client_id)
+                .build();
+        Response response = client.newCall(request).execute();
+        String responseBodyString = response.body().string();
+        context.setAccounts(responseBodyString);
+        System.out.println("step6 transaction details:");
+        System.out.println("\t"+responseBodyString);
+        return responseBodyString;
+    }
 }

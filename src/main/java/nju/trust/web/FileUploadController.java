@@ -44,26 +44,4 @@ public class FileUploadController {
             throw new InternalException("Upload failed");
         }
     }
-
-    @RequestMapping("/csv")
-    public String uploadCSV(MultipartFile file) {
-        String path = PathUtils.CSV_FOLDER_PATH;
-        String filename = StringUtils.cleanPath(file.getOriginalFilename());
-        if (file.isEmpty())
-            throw new BadRequestException("CSV is empty");
-        if (filename.contains("..")) {
-            // This is a security check
-            throw new BadRequestException(
-                    "Cannot store file with relative path outside current directory " + filename);
-        }
-
-        try (InputStream inputStream = file.getInputStream()) {
-            Files.copy(inputStream, Paths.get(path).resolve(filename),
-                    StandardCopyOption.REPLACE_EXISTING);
-            return "csv/" + filename;
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new InternalException("Upload failed");
-        }
-    }
 }
