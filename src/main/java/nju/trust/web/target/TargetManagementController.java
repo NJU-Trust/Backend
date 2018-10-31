@@ -6,6 +6,8 @@ import nju.trust.payloads.target.ReleasedTarget;
 import nju.trust.payloads.target.TargetFilter;
 import nju.trust.service.target.TargetManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,19 +25,19 @@ public class TargetManagementController {
 
     private TargetManagementService targetManagementService;
 
-    @RequestMapping("/ongoing")
-    public List<OnGoingTarget> onGoingTargets(String username, TargetFilter filter) {
-        return targetManagementService.getOnGoingTargetList(username, filter);
+    @PostMapping("/ongoing")
+    public List<OnGoingTarget> onGoingTargets(@RequestBody TargetFilter filter) {
+        return targetManagementService.getOnGoingTargetList(filter.getUsername(),filter);
     }
 
-    @RequestMapping("/complete")
-    public List<ReleasedTarget> completedTargets(String username, TargetFilter filter) {
-        return targetManagementService.completedTargetList(username, filter);
+    @PostMapping("/complete")
+    public List<ReleasedTarget> completedTargets(@RequestBody TargetFilter filter) {
+        return targetManagementService.completedTargetList(filter.getUsername(), filter);
     }
 
-    @RequestMapping("/released")
-    public List<ReleasedTarget> releasedTargets(String username, TargetFilter filter) {
-        return targetManagementService.releasedTargetList(username, filter);
+    @PostMapping("/released")
+    public List<ReleasedTarget> releasedTargets(@RequestBody TargetFilter filter) {
+        return targetManagementService.releasedTargetList(filter.getUsername(), filter);
     }
 
     @RequestMapping("/default")
