@@ -119,7 +119,7 @@ public class TargetController {
     }
 
     @RequestMapping("/repayment/pi")
-    public RepaymentTotalInfo getPIRepaymentInfo(Principal principal, RepaymentRequest repaymentRequest) {
+    public RepaymentTotalInfo getPIRepaymentInfo(@NotNull Principal principal, RepaymentRequest repaymentRequest) {
         return targetService.getRepaymentInfo(principal.getName(), RepaymentType.PRE_INTEREST,
                 repaymentRequest.getMoney(), repaymentRequest.getDuration(), repaymentRequest.getInterestRate());
     }
