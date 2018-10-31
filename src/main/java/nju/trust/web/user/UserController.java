@@ -4,13 +4,10 @@ import nju.trust.entity.UserLevel;
 import nju.trust.payloads.ApiResponse;
 import nju.trust.payloads.JwtAuthenticationResponse;
 import nju.trust.payloads.LoginRequest;
-import nju.trust.payloads.SignUpRequest;
-import nju.trust.payloads.user.BizToken;
 import nju.trust.security.JwtTokenProvider;
 import nju.trust.service.UserService;
 import nju.trust.util.APIContext;
-import nju.trust.util.CitiHelper;
-import nju.trust.util.JSHelper;
+import nju.trust.util.CitiAuthorizationHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -71,7 +68,7 @@ public class UserController {
 
     @PostMapping(value = "/signin")
     public ResponseEntity<JwtAuthenticationResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-        CitiHelper.getRealAccessToken( loginRequest.getUsername(), loginRequest.getPassword(), apiContext);
+        CitiAuthorizationHelper.getRealAccessToken( loginRequest.getUsername(), loginRequest.getPassword(), apiContext);
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getUsername(),

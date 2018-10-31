@@ -1,6 +1,10 @@
 package nju.trust.web.user;
 
-import org.springframework.stereotype.Controller;
+import nju.trust.util.APIContext;
+import nju.trust.util.CitiAccountHelper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * All rights Reserved, Designed by Popping Lim
@@ -9,6 +13,23 @@ import org.springframework.stereotype.Controller;
  * @Date: 2018/10/25
  * @Todo: 与CitiApi 相关，
  */
-@Controller
+@RestController
+@RequestMapping("/citi")
 public class CitiAccountController {
+
+    @Autowired
+    APIContext apiContext;
+
+    @RequestMapping("/confirm")
+    public void confirm() {
+        try{
+            CitiAccountHelper.transferConfirm(apiContext);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+
+
 }
