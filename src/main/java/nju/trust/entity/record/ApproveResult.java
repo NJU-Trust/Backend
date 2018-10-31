@@ -12,30 +12,30 @@ import java.util.Map;
  * @Date: 2018/8/31
  */
 public enum ApproveResult {
-    ONGOING("等待审批", TargetState.PENDING, CheckState.ONGING),
-    PASS("通过", TargetState.ON_GOING, CheckState.PASS),
-    HARMFULINFORMATION("含有恶意信息，审批不通过", TargetState.HARMFUL, CheckState.REJECT),
-    LACKINFO("信息缺失，审批不通过", TargetState.LACK_INFO, CheckState.REJECT),
-    INFORMAL("信息不规范，审批不通过", TargetState.INFORMAL, CheckState.REJECT);
+    ONGOING("等待审批", TargetState.PENDING, CheckState.ONGING, "ONGOING"),
+    PASS("通过", TargetState.ON_GOING, CheckState.PASS, "PASS"),
+    HARMFULINFORMATION("含有恶意信息，审批不通过", TargetState.HARMFUL, CheckState.REJECT, "HARMFULINFORMATION"),
+    LACKINFO("信息缺失，审批不通过", TargetState.LACK_INFO, CheckState.REJECT, "LACKINFO"),
+    INFORMAL("信息不规范，审批不通过", TargetState.INFORMAL, CheckState.REJECT, "INFORMAL");
 
-    private String str;
+    private final String str;
+    private final TargetState targetState;  // 对应的项目的状态
+    private final CheckState checkState;
+    private final String name;
 
-    private TargetState targetState;  // 对应的项目的状态
-
-    private CheckState checkState;
-
-    ApproveResult(String str, TargetState targetState, CheckState checkState) {
+    ApproveResult(String str, TargetState targetState, CheckState checkState, String name) {
         this.str = str;
         this.targetState = targetState;
         this.checkState = checkState;
-    }
-
-    ApproveResult(String str) {
-        this.str = str;
+        this.name = name;
     }
 
     public String getStr() {
         return str;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public TargetState getTargetState() {
@@ -55,7 +55,7 @@ public enum ApproveResult {
     public static ApproveResult getEnum(String str) {
         ApproveResult[] approveResults = ApproveResult.values();
         for(ApproveResult approveResult : approveResults) {
-            if(approveResult.getStr().equals(str)) {
+            if(approveResult.getName().equals(str)) {
                 return approveResult;
             }
         }
