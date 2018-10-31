@@ -153,6 +153,6 @@ public class RepaymentRecord extends BaseRecord {
     }
 
     private boolean overdueButRepaid() {
-        return actualRepayDate.isAfter(returnDate);
+        return actualRepayDate != null && actualRepayDate.isAfter(returnDate);
     }
 }

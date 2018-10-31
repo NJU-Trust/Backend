@@ -64,7 +64,7 @@ public class TransferHelper {
         if (user.hasEnoughMoney(money)) {
             user.minusAccount(money);
             //todo Add money to company account
-            transferMoney();
+//            transferMoney();
             userRepository.save(user);
             return true;
         } else {
@@ -75,7 +75,7 @@ public class TransferHelper {
     @Transactional(rollbackOn = Exception.class)
     public void repaidToInvestor(User borrower, User investor, Double money) {
         // todo use citi-api to do transfering work and add a record
-        transferMoney();
+//        transferMoney();
     }
 
     private void transferMoney() {

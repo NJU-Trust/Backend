@@ -885,13 +885,12 @@ public class AdminServiceImpl implements AdminService {
         return list;
     }
 
-    /**
+/*    *//**
      * 得到待审核的标的列表
      * @param type 标的类别
      * @return 标的概要信息
-     */
-    @Override
-    public List<PendingTargetBriefInfo> getPendingTargets(TargetType type) {
+     *//*
+    private List<PendingTargetBriefInfo> getPendingTargets(TargetType type) {
         TargetState state = TargetState.PENDING;
         // 通过标的类型筛选得到标的信息
         List<BaseTarget> records;
@@ -911,7 +910,7 @@ public class AdminServiceImpl implements AdminService {
             list.add(briefInfo);
         }
         return list;
-    }
+    }*/
 /*
     *//**
      * 查看小额标的内容
@@ -939,8 +938,7 @@ public class AdminServiceImpl implements AdminService {
         return info;
     }*/
 
-    @Override
-    public PendingTargetDetailInfo getPendingTarget(Long id) {
+    private PendingTargetDetailInfo getPendingTarget(Long id) {
         BaseTarget baseTarget = baseTargetRepository.findById(id).get();
         User user = baseTarget.getUser();
         TargetType targetType = baseTarget.getTargetType();
@@ -956,6 +954,29 @@ public class AdminServiceImpl implements AdminService {
             Repayment repayment = repaymentRepository.findFirstByTargetId(id);
             return new PendingTargetDetailInfo(user, baseTarget, repayment, state, classification);
         }
+    }
+
+    /**
+     * 查看待审核标的详情
+     * @param type 类别
+     * @return 标的详情
+     */
+    @Override
+    public List<PendingTargetDetailInfo> getPendingTarget(TargetType type) {
+        TargetState state = TargetState.PENDING;
+        // 通过标的类型筛选得到标的信息
+        List<BaseTarget> records;
+        List<PendingTargetDetailInfo> list = new ArrayList<>();
+        if(type == null) {
+            records = baseTargetRepository.findDistinctByTargetState(state);
+        }else {
+            records = baseTargetRepository.findDistinctByTargetStateAndTargetType(state, type);
+        }
+        for(BaseTarget target : records) {
+            PendingTargetDetailInfo pendingTargetDetailInfo = getPendingTarget(target.getId());
+            list.add(pendingTargetDetailInfo);
+        }
+        return list;
     }
 
     /**

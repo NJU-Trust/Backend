@@ -100,26 +100,26 @@ public class TargetController {
     }
 
     @RequestMapping("/repayment/ep")
-    public RepaymentTotalInfo getEPRepaymentInfo(Principal principal,@RequestBody RepaymentRequest repaymentRequest) {
+    public RepaymentTotalInfo getEPRepaymentInfo(@NotNull Principal principal,@RequestBody RepaymentRequest repaymentRequest) {
         return targetService.getRepaymentInfo(principal.getName(), RepaymentType.EQUAL_PRINCIPAL,
                 repaymentRequest.getMoney(), repaymentRequest.getDuration(), repaymentRequest.getInterestRate());
     }
 
     @RequestMapping("/repayment/eipi")
-    public RepaymentTotalInfo getEIPIRepaymentInfo(Principal principal, RepaymentRequest repaymentRequest) {
+    public RepaymentTotalInfo getEIPIRepaymentInfo(@NotNull Principal principal, RepaymentRequest repaymentRequest) {
         return targetService.getRepaymentInfo(principal.getName(),
                 RepaymentType.EQUAL_INSTALLMENT_OF_PRINCIPAL_AND_INTEREST,
                 repaymentRequest.getMoney(), repaymentRequest.getDuration(), repaymentRequest.getInterestRate());
     }
 
     @RequestMapping("/repayment/otp")
-    public RepaymentTotalInfo getOTPRepaymentInfo(Principal principal, RepaymentRequest repaymentRequest) {
+    public RepaymentTotalInfo getOTPRepaymentInfo(@NotNull Principal principal, RepaymentRequest repaymentRequest) {
         return targetService.getRepaymentInfo(principal.getName(), RepaymentType.ONE_TIME_PAYMENT,
                 repaymentRequest.getMoney(), repaymentRequest.getDuration(), repaymentRequest.getInterestRate());
     }
 
     @RequestMapping("/repayment/pi")
-    public RepaymentTotalInfo getPIRepaymentInfo(Principal principal, RepaymentRequest repaymentRequest) {
+    public RepaymentTotalInfo getPIRepaymentInfo(@NotNull Principal principal, RepaymentRequest repaymentRequest) {
         return targetService.getRepaymentInfo(principal.getName(), RepaymentType.PRE_INTEREST,
                 repaymentRequest.getMoney(), repaymentRequest.getDuration(), repaymentRequest.getInterestRate());
     }

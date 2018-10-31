@@ -66,6 +66,11 @@ public class TargetServiceImplTest {
     }
 
     @Test
+    public void test2() {
+        System.out.println(targetRepository.findAllByUserUsername("test"));
+    }
+
+    @Test
     public void getBadTargets() {
         prepareData();
 

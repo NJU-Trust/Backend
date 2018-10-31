@@ -31,10 +31,12 @@ public class InvestmentTarget {
 
     private TargetState state;
 
+    private Long targetId;
+
     public InvestmentTarget(String projectName, String loanFrom, LocalDate loanDate,
                             Double investAmount, Integer num, Double interest,
                             Double repaymentAmountMonth, LocalDate deadlineDate,
-                            Double deadlineAmount, TargetState state) {
+                            Double deadlineAmount, TargetState state, Long targetId) {
         this.projectName = projectName;
         this.loanFrom = loanFrom;
         this.loanDate = loanDate;
@@ -45,6 +47,11 @@ public class InvestmentTarget {
         this.deadlineDate = deadlineDate;
         this.deadlineAmount = deadlineAmount;
         this.state = state;
+        this.targetId = targetId;
+    }
+
+    public Long getTargetId() {
+        return targetId;
     }
 
     public String getProjectName() {

@@ -4,7 +4,6 @@ import nju.trust.entity.target.BaseTarget;
 import nju.trust.entity.target.TargetState;
 import nju.trust.entity.target.TargetType;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;

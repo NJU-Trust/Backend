@@ -1,6 +1,5 @@
 package nju.trust.payloads.admin;
 
-import netscape.security.Target;
 import nju.trust.entity.target.BaseTarget;
 import nju.trust.entity.target.TargetState;
 

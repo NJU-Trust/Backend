@@ -1,5 +1,6 @@
 package nju.trust.payloads.target;
 
+import nju.trust.entity.CreditRating;
 import nju.trust.entity.UserLevel;
 import nju.trust.entity.record.RepaymentRecord;
 import nju.trust.entity.target.BaseTarget;
@@ -39,7 +40,8 @@ public class TargetDetails {
 
     private String PS;
 
-    private UserLevel userLevel;
+    private CreditRating userLevel;
+
 
     private TargetRating projectLevel;
 
@@ -59,7 +61,7 @@ public class TargetDetails {
         monthInterest = repaymentRecord.getInterest();
         payAll = repaymentRecord.getPrincipal();
         PS = "";
-        userLevel = target.getUser().getUserLevel();
+        userLevel = target.getUser().getCreditRating();
         projectLevel = target.getTargetRating();
     }
 
@@ -171,11 +173,11 @@ public class TargetDetails {
         this.PS = PS;
     }
 
-    public UserLevel getUserLevel() {
+    public CreditRating getUserLevel() {
         return userLevel;
     }
 
-    public void setUserLevel(UserLevel userLevel) {
+    public void setUserLevel(CreditRating userLevel) {
         this.userLevel = userLevel;
     }
 

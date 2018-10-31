@@ -54,12 +54,32 @@ public class RepaymentAnalysis {
 
         private Long targetId;
 
-        public Action(String state, LocalDate date, Integer period, Double money, Long targetId) {
+        Action(String state, LocalDate date, Integer period, Double money, Long targetId) {
             this.state = state;
             this.date = date;
             this.period = period;
             this.money = money;
             this.targetId = targetId;
+        }
+
+        public String getState() {
+            return state;
+        }
+
+        public LocalDate getDate() {
+            return date;
+        }
+
+        public Integer getPeriod() {
+            return period;
+        }
+
+        public Double getMoney() {
+            return money;
+        }
+
+        public Long getTargetId() {
+            return targetId;
         }
     }
 }

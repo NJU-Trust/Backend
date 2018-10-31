@@ -119,7 +119,7 @@ public interface AdminService {
      * @param type 标的类别
      * @return 标的概要信息
      */
-    public List<PendingTargetBriefInfo> getPendingTargets(TargetType type);
+    //public List<PendingTargetBriefInfo> getPendingTargets(TargetType type);
 
     /**
      * 得到待审核的小额标的编号
@@ -154,7 +154,7 @@ public interface AdminService {
      * @param id 标的编号
      * @return 标的详情
      */
-    PendingTargetDetailInfo getPendingTarget(Long id);
+    //PendingTargetDetailInfo getPendingTarget(Long id);
 
     /**
      * 审批标的
@@ -170,4 +170,11 @@ public interface AdminService {
      * @return
      */
     boolean isViolate(RepaymentRecord repaymentRecord);
+
+    /**
+     * 查看待审核标的详情
+     * @param type 类别
+     * @return 标的详情
+     */
+    List<PendingTargetDetailInfo> getPendingTarget(TargetType type);
 }

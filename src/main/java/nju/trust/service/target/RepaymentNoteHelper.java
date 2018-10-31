@@ -40,8 +40,8 @@ class RepaymentNoteHelper {
         this.totalRepayment = totalRepayment;
         this.monthlyRepayment = monthlyRepayment;
 
-        if (monthlyRepayment.size() != duration)
-            throw new IllegalStateException();
+        if (monthlyRepayment.size() < duration)
+            throw new IllegalStateException("Wrong data");
     }
 
     RepaymentNoteHelper(List<UserMonthStatistics> monthlyData, double duration,

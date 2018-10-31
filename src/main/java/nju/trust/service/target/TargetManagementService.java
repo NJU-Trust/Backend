@@ -1,6 +1,5 @@
 package nju.trust.service.target;
 
-import nju.trust.dao.record.DefaultRecordRepository;
 import nju.trust.dao.record.InvestmentRecordRepository;
 import nju.trust.dao.record.RepaymentRecordRepository;
 import nju.trust.dao.target.TargetRepository;
@@ -16,6 +15,8 @@ import nju.trust.payloads.target.DefaultRecord;
 import nju.trust.payloads.target.OnGoingTarget;
 import nju.trust.payloads.target.ReleasedTarget;
 import nju.trust.payloads.target.TargetFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,19 +34,26 @@ import java.util.stream.Collectors;
 @Service
 public class TargetManagementService {
 
+    private static Logger logger = LoggerFactory.getLogger("TargetManagementService");
+
     private TargetRepository targetRepository;
 
     private RepaymentRecordRepository repaymentRecordRepository;
 
     private InvestmentRecordRepository investmentRecordRepository;
 
-    private DefaultRecordRepository defaultRecordRepository;
-
     public List<OnGoingTarget> getOnGoingTargetList(String username, TargetFilter filter) {
+        System.out.println(username);
+        System.out.println(targetRepository.findAllByUserUsername(username));
+
         List<BaseTarget> targets = targetRepository.findAllByUserUsername(username)
                 .stream()
-                .filter(t -> filter.toPredicate().test(t) && t.getTargetState() == TargetState.IN_THE_PAYMENT)
+                .filter(t -> filter.toPredicate().test(t)
+                        && t.getTargetState() == TargetState.ON_GOING)
                 .collect(Collectors.toList());
+
+        logger.info(targets.toString());
+
         List<OnGoingTarget> result = new ArrayList<>();
         for (BaseTarget target : targets) {
             Repayment repayment = target.getRepayment();
@@ -99,7 +107,7 @@ public class TargetManagementService {
             result.add(new InvestmentTarget(target.getName(), target.getUser().getUsername(),
                     target.getStartTime(), record.getInvestedMoney(), repayment.getDuration(),
                     repayment.getInterestRate(), repaymentRecord.getSum(), repaymentRecord.getReturnDate(),
-                    repayment.getRemainingAmount(), target.getTargetState()));
+                    repayment.getRemainingAmount(), target.getTargetState(), target.getId()));
         }
 
         return result;
@@ -125,7 +133,7 @@ public class TargetManagementService {
             // Just ues total interest to represent investor's profit
             result.add(new CompletedTarget(target.getName(), target.getUser().getUsername(),
                     startDate, endDate, record.getInvestedMoney(), repayment.getInterestRate(),
-                    target.getTargetState(), repayment.getTotalInterest()));
+                    target.getTargetState(), repayment.getTotalInterest(), target.getId()));
         }
 
         return result;
@@ -144,11 +152,6 @@ public class TargetManagementService {
     @Autowired
     public void setRepaymentRecordRepository(RepaymentRecordRepository repaymentRecordRepository) {
         this.repaymentRecordRepository = repaymentRecordRepository;
-    }
-
-    @Autowired
-    public void setDefaultRecordRepository(DefaultRecordRepository defaultRecordRepository) {
-        this.defaultRecordRepository = defaultRecordRepository;
     }
 
     @Autowired
