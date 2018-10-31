@@ -29,9 +29,11 @@ public class CollectedTarget {
 
     private Double trust;
 
+    private Long targetId;
+
     public CollectedTarget(String projectName, String loanFrom, LocalDate startDate,
                            LocalDate endDate, Double investAmount, Integer num,
-                           Double interest, TargetState state, Double trust) {
+                           Double interest, TargetState state, Double trust, Long targetId) {
         this.projectName = projectName;
         this.loanFrom = loanFrom;
         this.startDate = startDate;
@@ -41,6 +43,11 @@ public class CollectedTarget {
         this.interest = interest;
         this.state = state;
         this.trust = trust;
+        this.targetId = targetId;
+    }
+
+    public Long getTargetId() {
+        return targetId;
     }
 
     public String getProjectName() {

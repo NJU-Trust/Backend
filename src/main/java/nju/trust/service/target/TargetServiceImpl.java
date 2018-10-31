@@ -304,10 +304,13 @@ public class TargetServiceImpl implements TargetService {
             long overdueDays = record.getOverdueDays();
             money = principalInterestSum + FineCalculator.getOverdueFine(principalInterestSum, overdueDays);
             serviceCharge = FineCalculator.getOverdueServiceCharge(principalInterestSum, overdueDays);
+            log.info("money is " + money);
+            log.info("service charge is " + serviceCharge);
         } else if (record.isBeforeSettlementDay()) {
             List<RepaymentRecord> records = repaymentRecordRepository.findAllByTargetId(targetId);
             double prepaymentFine = FineCalculator.getPrepaymentFine(records, period);
             money = record.getSum() + prepaymentFine;
+            log.info("money is " + money);
         }
 
         User borrower = getUser(username);

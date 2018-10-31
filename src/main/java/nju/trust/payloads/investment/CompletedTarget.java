@@ -27,9 +27,11 @@ public class CompletedTarget {
 
     private Double get;
 
+    private Long targetId;
+
     public CompletedTarget(String projectName, String loanFrom, LocalDate startDate,
                            LocalDate endDate, Double investAmount, Double interest,
-                           TargetState state, Double get) {
+                           TargetState state, Double get, Long targetId) {
         this.projectName = projectName;
         this.loanFrom = loanFrom;
         this.startDate = startDate;
@@ -38,6 +40,11 @@ public class CompletedTarget {
         this.interest = interest;
         this.state = state;
         this.get = get;
+        this.targetId = targetId;
+    }
+
+    public Long getTargetId() {
+        return targetId;
     }
 
     public String getProjectName() {

@@ -107,7 +107,7 @@ public class TargetManagementService {
             result.add(new InvestmentTarget(target.getName(), target.getUser().getUsername(),
                     target.getStartTime(), record.getInvestedMoney(), repayment.getDuration(),
                     repayment.getInterestRate(), repaymentRecord.getSum(), repaymentRecord.getReturnDate(),
-                    repayment.getRemainingAmount(), target.getTargetState()));
+                    repayment.getRemainingAmount(), target.getTargetState(), target.getId()));
         }
 
         return result;
@@ -133,7 +133,7 @@ public class TargetManagementService {
             // Just ues total interest to represent investor's profit
             result.add(new CompletedTarget(target.getName(), target.getUser().getUsername(),
                     startDate, endDate, record.getInvestedMoney(), repayment.getInterestRate(),
-                    target.getTargetState(), repayment.getTotalInterest()));
+                    target.getTargetState(), repayment.getTotalInterest(), target.getId()));
         }
 
         return result;

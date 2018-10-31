@@ -7,6 +7,7 @@ import nju.trust.payloads.target.RepaymentAnalysis;
 import nju.trust.payloads.target.SurplusPrediction;
 import nju.trust.service.target.ConsumptionAnalysis;
 import nju.trust.service.target.RepaymentService;
+import nju.trust.service.target.TargetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,9 +30,11 @@ public class RepaymentController {
 
     private RepaymentService repaymentService;
 
+    private TargetService targetService;
+
     @RequestMapping("/repay")
-    public ApiResponse repay(Principal principal, @Valid @NotNull Long targetId, @Valid @NotNull Integer period) {
-        return null;
+    public ApiResponse repay(@NotNull Principal principal, @Valid @NotNull Long targetId, @Valid @NotNull Integer period) {
+        return targetService.repay(principal.getName(), targetId, period);
     }
 
     @GetMapping("/info")
@@ -65,6 +68,11 @@ public class RepaymentController {
     @Scheduled(cron = "0 0 0 * * ?")
     public void checkForDefaults() {
         repaymentService.checkForDefault();
+    }
+
+    @Autowired
+    public void setTargetService(TargetService targetService) {
+        this.targetService = targetService;
     }
 
     @Autowired
