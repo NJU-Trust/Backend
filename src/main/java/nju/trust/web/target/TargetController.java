@@ -117,7 +117,7 @@ public class TargetController {
     }
 
     @RequestMapping("/repayment/otp")
-    public RepaymentTotalInfo getOTPRepaymentInfo(@NotNull Principal principal, RepaymentRequest repaymentRequest) {
+    public RepaymentTotalInfo getOTPRepaymentInfo(@NotNull Principal principal, @RequestBody RepaymentRequest repaymentRequest) {
         System.out.println("otp:");
         System.out.println( repaymentRequest.getMoney() + " " + repaymentRequest.getDuration() + " " + repaymentRequest.getInterestRate());
         return targetService.getRepaymentInfo(principal.getName(), RepaymentType.ONE_TIME_PAYMENT,
@@ -125,7 +125,7 @@ public class TargetController {
     }
 
     @RequestMapping("/repayment/pi")
-    public RepaymentTotalInfo getPIRepaymentInfo(@NotNull Principal principal, RepaymentRequest repaymentRequest) {
+    public RepaymentTotalInfo getPIRepaymentInfo(@NotNull Principal principal,@RequestBody RepaymentRequest repaymentRequest) {
         System.out.println("pi:");
         System.out.println( repaymentRequest.getMoney() + " " + repaymentRequest.getDuration() + " " + repaymentRequest.getInterestRate());
         return targetService.getRepaymentInfo(principal.getName(), RepaymentType.PRE_INTEREST,
