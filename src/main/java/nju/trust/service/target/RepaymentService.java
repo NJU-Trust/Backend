@@ -144,7 +144,7 @@ public class RepaymentService {
         // Generate time line
         List<LocalDate> time = new ArrayList<>();
         for (int i = 0; i < PREDICT_MONTHS; i++) {
-            time.add(LocalDate.now().plusMonths(i));
+            time.add(LocalDate.now().plusMonths(i).withDayOfMonth(1));
         }
 
         // Generate table data
