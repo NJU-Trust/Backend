@@ -27,7 +27,7 @@ public class LargeTargetFilterRequest {
         filter.setUserFailedSubject(new Integer[]{0, null});
         filter.setUserRankingRate(new Double[]{null, 50.});
         filter.setUseOfFunds(new ArrayList<>());
-
+        filter.setTargetRating(new TargetRating[]{});
         return filter;
     }
 
@@ -63,11 +63,8 @@ public class LargeTargetFilterRequest {
 
     private List<String> useOfFunds;
 
-    private List<TargetRating> targetRating;
+    private TargetRating[] targetRating;
 
-    public List<TargetRating> getTargetRating() {
-        return targetRating;
-    }
 
     public List<String> getUseOfFunds() {
         return useOfFunds;
@@ -155,5 +152,13 @@ public class LargeTargetFilterRequest {
 
     public void setProperties(String properties) {
         this.properties = properties;
+    }
+
+    public TargetRating[] getTargetRating() {
+        return targetRating;
+    }
+
+    public void setTargetRating(TargetRating[] targetRating) {
+        this.targetRating = targetRating;
     }
 }

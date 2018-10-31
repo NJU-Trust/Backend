@@ -367,6 +367,12 @@ public class TargetServiceImpl implements TargetService {
 
         return badTargets;
     }
+
+    @Override
+    public List<TargetInfo> searchTargets(String name) {
+        return smallTargetRepository.findByNameLike(name).stream().map(SmallTargetInfo::new).collect(Collectors.toList());
+    }
+
     private List<BadTarget> checkMoneyUpper(List<BadTarget> badTargets, Double moneyUpper) {
         int index = 0;
         while(index < badTargets.size()) {
@@ -531,7 +537,6 @@ public class TargetServiceImpl implements TargetService {
         repaymentRecordRepository.saveAll(records);
         loanRecordRepository.save(new LoanRecord(target.getUser(), target));
     }
-
 
     private BaseTarget getTarget(Long targetId) {
         return targetRepository.findById(targetId)

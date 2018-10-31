@@ -141,4 +141,16 @@ public class TargetController {
     public Double getRate(Principal principal) {
         return RECOMMEND_INTEREST;
     }
+
+
+    @RequestMapping("/getTarget")
+    public TargetInfo getTarget(Long id) {
+        return targetService.getTargetInfo(id);
+    }
+
+    @RequestMapping("/searchTarget")
+    public List<TargetInfo> getTarget(String name) {
+        return targetService.searchTargets(name);
+    }
+
 }
