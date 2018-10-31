@@ -7,7 +7,7 @@ import nju.trust.payloads.target.RepaymentMonthInfo;
  * Date: 2018/9/3
  * Description:
  */
-public class OTPRepaymentCalculator extends RepaymentCalculator {
+class OTPRepaymentCalculator extends RepaymentCalculator {
 
     OTPRepaymentCalculator(double principal, double duration, double interestRate) {
         super(principal, duration, interestRate);
@@ -16,6 +16,9 @@ public class OTPRepaymentCalculator extends RepaymentCalculator {
     @Override
     void init() {
         double interestPortion = principal * interestRate * duration;
+        for (int i = 0; i < duration - 1; i++) {
+            monthlyRepayment.add(new RepaymentMonthInfo(0, 0, 0, principal));
+        }
         monthlyRepayment.add(new RepaymentMonthInfo(interestPortion + principal, principal,
                 interestPortion, 0.));
     }
