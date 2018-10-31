@@ -20,7 +20,6 @@ import nju.trust.entity.record.UserEvidence.*;
 import nju.trust.entity.record.UserInfoCheckRecord;
 import nju.trust.entity.target.BaseTarget;
 import nju.trust.entity.target.TargetState;
-import nju.trust.entity.target.TargetType;
 import nju.trust.entity.user.*;
 import nju.trust.payloads.personalinfomation.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,10 +97,20 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
             payMoneyProgress = payMoney / totalLoan * 100;
         }
         info.setPayMoneyProgress(toForm(payMoneyProgress));
-        // 信用评分
-        info.setCreditRating(user.getCreditRating().toString());
         // 信用评级
-        info.setCreditRatingScore(user.getCreditScore());
+        if(user.getCreditRating() == null) {
+            info.setCreditRating("未评级");
+        }else {
+            info.setCreditRating(user.getCreditRating().toString());
+        }
+
+        // 信用评分
+        if(user.getCreditScore() == null) {
+            info.setCreditRatingScore(0);
+        }else {
+            info.setCreditRatingScore(user.getCreditScore());
+        }
+
         return info;
     }
     // 本息

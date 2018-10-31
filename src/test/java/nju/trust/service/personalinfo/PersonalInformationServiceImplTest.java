@@ -46,7 +46,7 @@ public class PersonalInformationServiceImplTest {
     @Test
     public void getInvestAndLoanInfo() {
         System.out.println("test getInvestAndLoanInfo:");
-        String username = "test";
+        String username = "cross11";
         System.out.println("username:"+username);
         InvestAndLoan result = test.getInvestAndLoanInfo(username);
         print(result);
@@ -65,7 +65,7 @@ public class PersonalInformationServiceImplTest {
     @Test
     public void getTotalAccountInfo() {
         System.out.println("test getTotalAccountInfo");
-        String username = "test";
+        String username = "cross11";
         System.out.println("username:"+username);
         TotalAccountInfo result = test.getTotalAccountInfo(username);
         print(result);
@@ -81,7 +81,7 @@ public class PersonalInformationServiceImplTest {
     @Test
     public void getAllEventsInfo() {
         System.out.println("test getAllEventsInfo");
-        String username = "test";
+        String username = "cross11";
         System.out.println("username:"+username);
         List<EventsInfo> result = test.getAllEventsInfo(username);
         System.out.println("result:");
@@ -95,7 +95,7 @@ public class PersonalInformationServiceImplTest {
 
     @Test
     public void getCampusPerformance() {
-        String username = "test";
+        String username = "cross11";
         CampusPerformance result = test.getCampusPerformance(username);
         System.out.println("result:");
         System.out.println("学校 学历 社交情况 获奖情况 成绩");
@@ -106,7 +106,7 @@ public class PersonalInformationServiceImplTest {
 
     @Test
     public void getPersonalDetailInformation() {
-        String username = "test";
+        String username = "cross11";
         PersonalDetailInfomation info = test.getPersonalDetailInformation(username);
         System.out.println("username:"+username);
         System.out.println("PersonalDetailInfomation:");
@@ -130,7 +130,7 @@ public class PersonalInformationServiceImplTest {
         prepareData();
 
         System.out.println("test getPersonalRelationships");
-        String username = "test";
+        String username = "cross11";
         System.out.println("username:"+username);
         PersonalRelationship result = test.getPersonalRelationships(username);
         print(result);
@@ -242,7 +242,7 @@ public class PersonalInformationServiceImplTest {
     public void getDataAnalysis() {
         System.out.println();
         System.out.println("test getDataAnalysis:");
-        String username = "test";
+        String username = "cross11";
         String startMonth = "2018-9";
         String endMonth = "2018-10";
 
@@ -286,7 +286,7 @@ public class PersonalInformationServiceImplTest {
     public void getTrendAnalysis() {
         System.out.println();
         System.out.println("test getTrendAnalysis:");
-        String username = "test";
+        String username = "cross11";
         String startMonth = "2018-1";
         String endMonth = "2018-10";
 
@@ -313,7 +313,7 @@ public class PersonalInformationServiceImplTest {
         System.out.println();
         System.out.println("test getProportionAnalysis:");
 
-        String username = "test";
+        String username = "cross11";
         String month = "2018-1";
 
         ProportionAnalysis proportionAnalysis = test.getProportionAnalysis(username, month);
