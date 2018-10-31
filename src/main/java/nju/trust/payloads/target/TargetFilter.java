@@ -13,6 +13,8 @@ import java.util.Optional;
  */
 public class TargetFilter {
 
+    private String username;
+
     private Double moneyUpper;
 
     private Double moneyLower;
@@ -65,5 +67,13 @@ public class TargetFilter {
 
     public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }
