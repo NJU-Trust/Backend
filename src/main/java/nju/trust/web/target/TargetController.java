@@ -101,33 +101,25 @@ public class TargetController {
 
     @RequestMapping("/repayment/ep")
     public RepaymentTotalInfo getEPRepaymentInfo(@NotNull Principal principal,@RequestBody RepaymentRequest repaymentRequest) {
-        System.out.println("ep:");
-        System.out.println( repaymentRequest.getMoney() + " " + repaymentRequest.getDuration() + " " + repaymentRequest.getInterestRate());
         return targetService.getRepaymentInfo(principal.getName(), RepaymentType.EQUAL_PRINCIPAL,
                 repaymentRequest.getMoney(), repaymentRequest.getDuration(), repaymentRequest.getInterestRate());
     }
 
     @RequestMapping("/repayment/eipi")
-    public RepaymentTotalInfo getEIPIRepaymentInfo(@NotNull Principal principal,@RequestBody RepaymentRequest repaymentRequest) {
-        System.out.println("eipi:");
-        System.out.println( repaymentRequest.getMoney() + " " + repaymentRequest.getDuration() + " " + repaymentRequest.getInterestRate());
+    public RepaymentTotalInfo getEIPIRepaymentInfo(@NotNull Principal principal, RepaymentRequest repaymentRequest) {
         return targetService.getRepaymentInfo(principal.getName(),
                 RepaymentType.EQUAL_INSTALLMENT_OF_PRINCIPAL_AND_INTEREST,
                 repaymentRequest.getMoney(), repaymentRequest.getDuration(), repaymentRequest.getInterestRate());
     }
 
     @RequestMapping("/repayment/otp")
-    public RepaymentTotalInfo getOTPRepaymentInfo(@NotNull Principal principal, @RequestBody RepaymentRequest repaymentRequest) {
-        System.out.println("otp:");
-        System.out.println( repaymentRequest.getMoney() + " " + repaymentRequest.getDuration() + " " + repaymentRequest.getInterestRate());
+    public RepaymentTotalInfo getOTPRepaymentInfo(@NotNull Principal principal, RepaymentRequest repaymentRequest) {
         return targetService.getRepaymentInfo(principal.getName(), RepaymentType.ONE_TIME_PAYMENT,
                 repaymentRequest.getMoney(), repaymentRequest.getDuration(), repaymentRequest.getInterestRate());
     }
 
     @RequestMapping("/repayment/pi")
-    public RepaymentTotalInfo getPIRepaymentInfo(@NotNull Principal principal,@RequestBody RepaymentRequest repaymentRequest) {
-        System.out.println("pi:");
-        System.out.println( repaymentRequest.getMoney() + " " + repaymentRequest.getDuration() + " " + repaymentRequest.getInterestRate());
+    public RepaymentTotalInfo getPIRepaymentInfo(@NotNull Principal principal, RepaymentRequest repaymentRequest) {
         return targetService.getRepaymentInfo(principal.getName(), RepaymentType.PRE_INTEREST,
                 repaymentRequest.getMoney(), repaymentRequest.getDuration(), repaymentRequest.getInterestRate());
     }
@@ -141,16 +133,4 @@ public class TargetController {
     public Double getRate(Principal principal) {
         return RECOMMEND_INTEREST;
     }
-
-
-    @RequestMapping("/getTarget")
-    public TargetInfo getTarget(Long id) {
-        return targetService.getTargetInfo(id);
-    }
-
-    @RequestMapping("/searchTarget")
-    public List<TargetInfo> getTarget(String name) {
-        return targetService.searchTargets(name);
-    }
-
 }

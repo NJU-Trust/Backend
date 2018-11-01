@@ -1,5 +1,8 @@
 package nju.trust.payloads.target;
 
+import nju.trust.entity.target.TargetType;
+import nju.trust.entity.user.IdentityOption;
+
 import java.time.LocalDate;
 
 /**
@@ -25,6 +28,35 @@ public class ProjectInformation {
 
     private String projectDescription;
 
+    private TargetType targetType;
+
+    private Double interest;
+
+    private Integer remainingPeriod;
+
+    private Double remainingMoney;
+
+    private IdentityOption identityOption;
+
+    public ProjectInformation(LocalDate releaseDate, LocalDate recruitmentDeadline,
+                              LocalDate nextDueDate, Long remainingDay, Double repay,
+                              Double unrepaidProportion, String purpose, String projectDescription,
+                              TargetType targetType, Double interest, Integer remainingPeriod,
+                              Double remainingMoney, IdentityOption identityOption) {
+        this.releaseDate = releaseDate;
+        this.recruitmentDeadline = recruitmentDeadline;
+        this.nextDueDate = nextDueDate;
+        this.remainingDay = remainingDay;
+        this.repay = repay;
+        this.unrepaidProportion = unrepaidProportion;
+        this.purpose = purpose;
+        this.projectDescription = projectDescription;
+        this.targetType = targetType;
+        this.interest = interest;
+        this.remainingPeriod = remainingPeriod;
+        this.remainingMoney = remainingMoney;
+        this.identityOption = identityOption;
+    }
 
     public ProjectInformation(LocalDate releaseDate, LocalDate recruitmentDeadline,
                               LocalDate nextDueDate, Long remainingDay,
@@ -38,6 +70,26 @@ public class ProjectInformation {
         this.unrepaidProportion = unrepaidProportion;
         this.purpose = purpose;
         this.projectDescription = projectDescription;
+    }
+
+    public Double getInterest() {
+        return interest;
+    }
+
+    public Integer getRemainingPeriod() {
+        return remainingPeriod;
+    }
+
+    public Double getRemainingMoney() {
+        return remainingMoney;
+    }
+
+    public IdentityOption getIdentityOption() {
+        return identityOption;
+    }
+
+    public TargetType getTargetType() {
+        return targetType;
     }
 
     public LocalDate getReleaseDate() {

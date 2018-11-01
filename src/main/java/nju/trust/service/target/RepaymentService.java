@@ -83,17 +83,23 @@ public class RepaymentService {
         BaseTarget target = targetRepository.findById(targetId)
                 .orElseThrow(() -> new ResourceNotFoundException("Target not found"));
         Repayment repayment = target.getRepayment();
-        RepaymentRecord repaymentRecord = repaymentRecordRepository
+        List<RepaymentRecord> records = repaymentRecordRepository
                 .findAllByTargetId(targetId)
                 .stream()
-                .filter(r -> !r.hasPaidOff())
+                .filter(r -> !r.hasPaidOff()).collect(Collectors.toList());
+
+        RepaymentRecord repaymentRecord = records.stream()
                 .min(Comparator.comparing(RepaymentRecord::getReturnDate))
                 .orElseThrow(NoSuchElementException::new);
+
+        double remainingMoneyToBePay = records.stream().mapToDouble(RepaymentRecord::getSum).sum();
+
 
         return new ProjectInformation(target.getStartTime(),
                 repayment.getStartDate(), repayment.nextDueDate(), repayment.nextDue(),
                 repaymentRecord.getSum(), repayment.getRemainingAmount() / target.getCollectedMoney(),
-                target.getUseOfFunds(), target.getProjectDescription());
+                target.getUseOfFunds(), target.getProjectDescription(), target.getTargetType(),
+                repayment.getInterestRate(), records.size(), remainingMoneyToBePay, target.getIdentityOption());
     }
 
     public RepaymentAnalysis getRepaymentAnalysis(Long targetId) {
