@@ -95,7 +95,7 @@ public class LargeTargetSpecification implements Specification<LargeTarget> {
         }
 
         // TargetRating constraints
-        if (!filter.getTargetRating().isEmpty()) {
+        if (filter.getTargetRating().length != 0) {
             predicates.clear();
             for (TargetRating targetRating : filter.getTargetRating())
                 predicates.add(builder.equal(root.get("targetRating"), targetRating));

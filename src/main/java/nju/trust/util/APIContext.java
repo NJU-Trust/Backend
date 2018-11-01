@@ -19,6 +19,7 @@ public class APIContext {
     private String username;
     private String password;
     private String accountId;
+    private String controlFlowId;
     private String nickname;
 
     public String getNickname() {
@@ -107,5 +108,13 @@ public class APIContext {
 
     public void setExponent(String exponent) {
         this.exponent = exponent;
+    }
+
+    public String getControlFlowId() {
+        return controlFlowId;
+    }
+
+    public void setControlFlowId(String controlFlowId) {
+        this.controlFlowId = controlFlowId;
     }
 }

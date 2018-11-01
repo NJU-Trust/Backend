@@ -4,12 +4,10 @@ import nju.trust.entity.UserLevel;
 import nju.trust.payloads.ApiResponse;
 import nju.trust.payloads.JwtAuthenticationResponse;
 import nju.trust.payloads.LoginRequest;
-import nju.trust.payloads.SignUpRequest;
-import nju.trust.payloads.user.BizToken;
 import nju.trust.security.JwtTokenProvider;
 import nju.trust.service.UserService;
 import nju.trust.util.APIContext;
-import nju.trust.util.CitiHelper;
+import nju.trust.util.CitiAuthorizationHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +19,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 
 /**
  * All rights Reserved, Designed by Popping Lim
@@ -71,6 +68,7 @@ public class UserController {
 
     @PostMapping(value = "/signin")
     public ResponseEntity<JwtAuthenticationResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+        CitiAuthorizationHelper.getRealAccessToken( loginRequest.getUsername(), loginRequest.getPassword(), apiContext);
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getUsername(),
@@ -79,31 +77,12 @@ public class UserController {
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = tokenProvider.generateToken(authentication);
-        return ResponseEntity.ok(new JwtAuthenticationResponse(jwt, loginRequest.getUsername(), userService.getRoles(loginRequest.getUsername())));
+
+        return ResponseEntity.ok(new JwtAuthenticationResponse(jwt, apiContext.getRealAccessToken() ,loginRequest.getUsername(), userService.getRoles(loginRequest.getUsername())));
     }
 
-    @PostMapping(value = "/signup")
-    public ApiResponse registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
-        return userService.addUser(signUpRequest);
-    }
-
-    @GetMapping(value = "/gettoken")
-    public BizToken getToken() {
-        try {
-            CitiHelper.getBizToken(apiContext);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return new BizToken(apiContext.getEventId(),apiContext.getBizToken(),apiContext.getModulus(),apiContext.getExponent());
-    }
-
-    @GetMapping(value = "/presignin")
-    public BizToken preSignin(String username, String password) {
-        try {
-            CitiHelper.getAccounts(username, password, apiContext);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return new BizToken(apiContext.getEventId(),apiContext.getBizToken(),apiContext.getModulus(),apiContext.getExponent());
-    }
+//    @PostMapping(value = "/signup")
+//    public ApiResponse registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
+//        return userService.addUser(signUpRequest);
+//    }
 }

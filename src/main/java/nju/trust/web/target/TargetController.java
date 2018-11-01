@@ -8,6 +8,7 @@ import nju.trust.payloads.investment.InvestmentStrategy;
 import nju.trust.payloads.target.*;
 import nju.trust.service.UserService;
 import nju.trust.service.target.TargetService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -99,7 +100,7 @@ public class TargetController {
     }
 
     @RequestMapping("/repayment/ep")
-    public RepaymentTotalInfo getEPRepaymentInfo(@NotNull Principal principal, RepaymentRequest repaymentRequest) {
+    public RepaymentTotalInfo getEPRepaymentInfo(@NotNull Principal principal,@RequestBody RepaymentRequest repaymentRequest) {
         return targetService.getRepaymentInfo(principal.getName(), RepaymentType.EQUAL_PRINCIPAL,
                 repaymentRequest.getMoney(), repaymentRequest.getDuration(), repaymentRequest.getInterestRate());
     }
