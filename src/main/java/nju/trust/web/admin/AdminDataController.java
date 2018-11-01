@@ -27,14 +27,14 @@ public class AdminDataController {
 
     // 统计当天的基础数据
     @GetMapping(value = "/base")
-    @PreAuthorize("hasRole('ADMIN')")
+    //@PreAuthorize("hasRole('ADMIN')")
     public BaseStatistics getBaseStatistics() {
         return adminService.getBaseStatistics();
     }
 
     // 统计当月的违约信息
     @GetMapping(value = "/breakContract")
-    @PreAuthorize("hasRole('ADMIN')")
+   // @PreAuthorize("hasRole('ADMIN')")
     public BreakContractStatistics getBreakContractStatistics() {
         return adminService.getBreakContractStatistics();
     }

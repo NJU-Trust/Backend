@@ -28,7 +28,7 @@ public class PathUtils {
 
             File upload = new File(path.getAbsolutePath(), "static/images/upload/");
             File csvFolder = new File(path.getAbsolutePath(), "static/csv");
-            if (!upload.exists() && !upload.mkdirs() || (!csvFolder.exists() && !upload.mkdirs()))
+            if ((!upload.exists() && !upload.mkdirs()) || (!csvFolder.exists() && !csvFolder.mkdirs()))
                 log.error("Create image directory failed");
             IMAGE_FOLDER_PATH = upload.getAbsolutePath();
             CSV_FOLDER_PATH = csvFolder.getAbsolutePath();

@@ -1,0 +1,29 @@
+INSERT INTO trust.user (username, account, cross_score, institution, password, student_id) VALUES ('crosstest1', '100000', '-1', '软件学院', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS', '161250101');
+INSERT INTO trust.user (username, account, cross_score, institution, password, student_id) VALUES ('crosstest2', '100000', '-1', '软件学院', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS', '161250102');
+INSERT INTO trust.user (username, account, cross_score, institution, password, student_id) VALUES ('crosstest3', '100000', '-1', '软件学院', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS', '161250103');
+INSERT INTO trust.user (username, account, cross_score, institution, password, student_id) VALUES ('crosstest4', '100000', '-1', '软件学院', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS', '161250104');
+INSERT INTO trust.user (username, account, cross_score, institution, password, student_id) VALUES ('crosstest5', '100000', '-1', '软件学院', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS', '161250105');
+INSERT INTO trust.user (username, account, cross_score, institution, password, student_id) VALUES ('crosstest6', '100000', '-1', '软件学院', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS', '161250106');
+INSERT INTO trust.user (username, account, cross_score, institution, password, student_id) VALUES ('crosstest7', '100000', '-1', '软件学院', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS', '161250107');
+INSERT INTO trust.user (username, account, cross_score, institution, password, student_id) VALUES ('crosstest8', '100000', '-1', '软件学院', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS', '161250108');
+INSERT INTO trust.user (username, account, cross_score, institution, password, student_id) VALUES ('crosstest9', '100000', '-1', '软件学院', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS', '161250109');
+INSERT INTO trust.user (username, account, cross_score, institution, password, student_id) VALUES ('crosstest10', '100000', '-1', '软件学院', '$2a$10$3lj/cEZUJiepqAwekmiaKe9p6X7gudLsc9jiZixB.53PStsrdS7pS', '161250110');
+UPDATE trust.user SET account='100000', cross_score='80.33', institution='软件学院', student_id='161250202' WHERE username='SandboxUser1';
+UPDATE trust.user SET account='100000', cross_score='-1', institution='软件学院', student_id='161250200' WHERE username='SandboxUser3';
+UPDATE trust.user SET account='100000', cross_score='0', institution='软件学院', student_id='161250201' WHERE username='SandboxUser2';
+UPDATE trust.user SET age='19', alipay='t_1499823478234_0892', birthday='1998-10-24', email='3278545098@qq.com', gender='FEMALE', grade='2', major='软件工程', phone_number='13888990129', real_name='李琳', university='南京大学' WHERE username='SandboxUser2';
+UPDATE trust.user SET roles='ROLE_INTERMEDIATE', user_level='INTERMEDIATE' WHERE username='SandboxUser2';
+UPDATE trust.user SET institution='软件学院' WHERE username='cross11';
+UPDATE trust.user SET institution='软件学院' WHERE username='cross10';
+UPDATE trust.user SET institution='软件学院' WHERE username='cross9';
+UPDATE trust.user SET institution='软件学院' WHERE username='cross8';
+UPDATE trust.user SET institution='软件学院' WHERE username='cross7';
+UPDATE trust.user SET institution='软件学院' WHERE username='cross6';
+UPDATE trust.user SET institution='软件学院' WHERE username='cross5';
+UPDATE trust.user SET institution='软件学院' WHERE username='cross4';
+UPDATE trust.user SET institution='软件学院' WHERE username='cross3';
+UPDATE trust.user SET institution='软件学院' WHERE username='cross2';
+UPDATE trust.user SET institution='软件学院' WHERE username='cross1';
+
+
+
