@@ -57,10 +57,10 @@ public class TargetController {
         return targetService.applyLargeTarget(largeTargetRequest, principal.getName());
     }
 
-    @RequestMapping("/interestRate")
-    public InterestRateInterval getInterestRateInterval() {
-        return null;
-    }
+//    @RequestMapping("/interestRate")
+//    public InterestRateInterval getInterestRateInterval() {
+//        return null;
+//    }
 
     @RequestMapping("/largeTargetList")
     public List<TargetInfo> getLargeTargets(@Valid @RequestBody LargeTargetFilterRequest filter) {
