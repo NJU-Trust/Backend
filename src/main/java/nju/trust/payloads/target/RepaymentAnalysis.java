@@ -26,8 +26,12 @@ public class RepaymentAnalysis {
 
         timeline = new ArrayList<>();
         for (RepaymentRecord r : records) {
-            String state = r.isOverdue() ? "overdue" : "normal";
-            timeline.add(new Action(state, r.getReturnDate(), r.getPeriod(), r.getSum(), r.getTarget().getId()));
+            timeline.add(new Action("time", r.getReturnDate(), r.getPeriod(), r.getSum(), r.getTarget().getId()));
+            if (r.isOverdue())
+                timeline.add(new Action("overdue", r.getReturnDate(), r.getPeriod(), r.getSum(), r.getTarget().getId()));
+
+            if (r.hasPaidOff())
+                timeline.add(new Action("normal", r.getActualRepayDate(), r.getPeriod(), r.getSum(), r.getTarget().getId()));
         }
     }
 
