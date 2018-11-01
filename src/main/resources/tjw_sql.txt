@@ -28,16 +28,16 @@ UPDATE trust.user SET institution='软件学院' WHERE username='cross1';
 
 
 
-INSERT INTO trust.credit_cross_check (id, done, end_date, q1, q2, q3, q4, q5, q6, q7, q8, q9, random, valid, related_person_username) VALUES ('1', true, '2018-11-1', '1', '1', '1', '1', '1', '1', '1', '8', '6', true, false, 'cross1');
-INSERT INTO trust.credit_cross_check (id, done, end_date, q1, q2, q3, q4, q5, q6, q7, q8, q9, random, valid, related_person_username) VALUES ('2', true, '2018-11-1', '2', '1', '1', '1', '1', '1', '4', '7', '5', true, false, 'cross2');
-INSERT INTO trust.credit_cross_check (id, done, end_date, q1, q2, q3, q4, q5, q6, q7, q8, q9, random, valid, related_person_username) VALUES ('3', true, '2018-11-1', '4', '2', '2', '2', '2', '2', '2', '5', '5', true, false, 'cross3');
-INSERT INTO trust.credit_cross_check (id, done, end_date, q1, q2, q3, q4, q5, q6, q7, q8, q9, random, valid, related_person_username) VALUES ('4', false, '2018-11-1', '0', '0', '0', '0', '0', '0', '0', '0', '0', false, false, 'crosstest1');
-INSERT INTO trust.credit_cross_check (id, done, end_date, q1, q2, q3, q4, q5, q6, q7, q8, q9, random, valid, related_person_username) VALUES ('5', true, '2018-11-1', '1', '2', '1', '2', '1', '2', '3', '8', '6' false, false, 'crosstest2');
-INSERT INTO trust.credit_cross_check (id, done, end_date, q1, q2, q3, q4, q5, q6, q7, q8, q9, random, valid, related_person_username) VALUES ('6', false, '2018-11-1', '0', '0', '0', '0', '0', '0', '0', '0', '0', false, false, 'cross3');
-INSERT INTO trust.credit_cross_check (id, done, end_date, q1, q2, q3, q4, q5, q6, q7, q8, q9, random, valid, related_person_username) VALUES ('7', true, '2018-11-1', '1', '2', '1', '2', '1', '2', '4', '6', '3', false, false, 'cross4');
-INSERT INTO trust.credit_cross_check (id, done, end_date, q1, q2, q3, q4, q5, q6, q7, q8, q9, random, valid, related_person_username) VALUES ('8', true, '2018-11-1', '1', '1', '1', '1', '1', '1', '1', '5', '5', false, false, 'cross5');
-INSERT INTO trust.credit_cross_check (id, done, end_date, q1, q2, q3, q4, q5, q6, q7, q8, q9, random, valid, related_person_username) VALUES ('9', false, '2018-11-1', '0', '0', '0', '0', '0', '0', '0', '0', '0', false, false, 'cross6');
-INSERT INTO trust.credit_cross_check (id, done, end_date, q1, q2, q3, q4, q5, q6, q7, q8, q9, random, valid, related_person_username) VALUES ('10', false, '2018-11-1', '0', '0', '0', '0', '0', '0', '0', '0', '0', false, false, 'cross7');
+INSERT INTO trust.credit_cross_check (id, done, end_date, q1, q2, q3, q4, q5, q6, q7, q8, q9, random, valid, related_person_username, user_username) VALUES ('1', true, '2018-11-1', '1', '1', '1', '1', '1', '1', '1', '8', '6', true, false, 'cross1', 'SandboxUser1');
+INSERT INTO trust.credit_cross_check (id, done, end_date, q1, q2, q3, q4, q5, q6, q7, q8, q9, random, valid, related_person_username, user_username) VALUES ('2', true, '2018-11-1', '2', '1', '1', '1', '1', '1', '4', '7', '5', true, false, 'cross2', 'SandboxUser1');
+INSERT INTO trust.credit_cross_check (id, done, end_date, q1, q2, q3, q4, q5, q6, q7, q8, q9, random, valid, related_person_username, user_username) VALUES ('3', true, '2018-11-1', '4', '2', '2', '2', '2', '2', '2', '5', '5', true, false, 'cross3', 'SandboxUser1');
+INSERT INTO trust.credit_cross_check (id, done, end_date, q1, q2, q3, q4, q5, q6, q7, q8, q9, random, valid, related_person_username, user_username) VALUES ('4', false, '2018-11-1', '0', '0', '0', '0', '0', '0', '0', '0', '0', false, false, 'crosstest1', 'SandboxUser1');
+INSERT INTO trust.credit_cross_check (id, done, end_date, q1, q2, q3, q4, q5, q6, q7, q8, q9, random, valid, related_person_username, user_username) VALUES ('5', true, '2018-11-1', '1', '2', '1', '2', '1', '2', '3', '8', '6' false, false, 'crosstest2', 'SandboxUser1');
+INSERT INTO trust.credit_cross_check (id, done, end_date, q1, q2, q3, q4, q5, q6, q7, q8, q9, random, valid, related_person_username, user_username) VALUES ('6', false, '2018-11-1', '0', '0', '0', '0', '0', '0', '0', '0', '0', false, false, 'cross3', 'SandboxUser1');
+INSERT INTO trust.credit_cross_check (id, done, end_date, q1, q2, q3, q4, q5, q6, q7, q8, q9, random, valid, related_person_username, user_username) VALUES ('7', true, '2018-11-1', '1', '2', '1', '2', '1', '2', '4', '6', '3', false, false, 'cross4', 'SandboxUser1');
+INSERT INTO trust.credit_cross_check (id, done, end_date, q1, q2, q3, q4, q5, q6, q7, q8, q9, random, valid, related_person_username, user_username) VALUES ('8', true, '2018-11-1', '1', '1', '1', '1', '1', '1', '1', '5', '5', false, false, 'cross5', 'SandboxUser1');
+INSERT INTO trust.credit_cross_check (id, done, end_date, q1, q2, q3, q4, q5, q6, q7, q8, q9, random, valid, related_person_username, user_username) VALUES ('9', false, '2018-11-1', '0', '0', '0', '0', '0', '0', '0', '0', '0', false, false, 'cross6', 'SandboxUser1');
+INSERT INTO trust.credit_cross_check (id, done, end_date, q1, q2, q3, q4, q5, q6, q7, q8, q9, random, valid, related_person_username, user_username) VALUES ('10', false, '2018-11-1', '0', '0', '0', '0', '0', '0', '0', '0', '0', false, false, 'cross7', 'SandboxUser1');
 
 
 
