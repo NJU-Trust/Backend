@@ -81,6 +81,7 @@ public class TransferHelper {
             CitiAccountHelper.getPayeeList(apiContext);
             CitiAccountHelper.getPersonalDestSrc(apiContext);
             CitiAccountHelper.transferMoney(apiContext, money);
+            CitiAccountHelper.transferConfirm(apiContext);
         }catch (Exception e) {
             e.printStackTrace();
         }
