@@ -9,7 +9,7 @@ import javax.persistence.*;
 public class InvestmentRecord extends BaseRecord {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)

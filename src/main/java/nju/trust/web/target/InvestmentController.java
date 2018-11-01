@@ -9,6 +9,8 @@ import nju.trust.payloads.target.TargetFilter;
 import nju.trust.service.target.TargetManagementService;
 import nju.trust.service.target.TargetService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,14 +31,14 @@ public class InvestmentController {
         return targetService.investTarget(targetId, principal.getName(), money);
     }
 
-    @RequestMapping("/ongoing")
-    public List<InvestmentTarget> ongoingTargets(String username, TargetFilter filter) {
-        return managementService.investedOngoingTargets(username, filter);
+    @PostMapping("/ongoing")
+    public List<InvestmentTarget> ongoingTargets(@RequestBody TargetFilter filter) {
+        return managementService.investedOngoingTargets(filter.getUsername(), filter);
     }
 
-    @RequestMapping("/complete")
-    public List<CompletedTarget> completedTargets(String username, TargetFilter filter) {
-        return managementService.investedCompletedTargets(username, filter);
+    @PostMapping("/complete")
+    public List<CompletedTarget> completedTargets(@RequestBody TargetFilter filter) {
+        return managementService.investedCompletedTargets(filter.getUsername(), filter);
     }
 
 

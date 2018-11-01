@@ -15,7 +15,7 @@ import java.time.LocalDate;
 public class DefaultRecord extends BaseRecord {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
