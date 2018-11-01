@@ -34,7 +34,6 @@ public class AdminUserController {
 
     // 用户管理
     @GetMapping(value = "/manageLen")
-    @PreAuthorize("hasRole('ADMIN')")
     public int getUserListLen(UserListRequest request) {
         String keyword = request.getKeyword();
         UserType type = request.getType();
@@ -43,7 +42,6 @@ public class AdminUserController {
 
 
     @GetMapping(value = "/manage")
-    @PreAuthorize("hasRole('ADMIN')")
     public List<UserSimpleInfo> getUserList(UserListRequest request) {
         String keyword = request.getKeyword();
         UserType type = request.getType();
@@ -53,21 +51,18 @@ public class AdminUserController {
     // 用户审批
     // 获取待审核的用户列表，分页显示
     @GetMapping(value = "/userlist")
-    @PreAuthorize("hasRole('ADMIN')")
     public List<UserStateList> getUserStateList() {
         return adminService.getUserStateList();
     }
 
     // 审核用户非结构化信息
     @GetMapping(value = "/userpendingitem")
-    @PreAuthorize("hasRole('ADMIN')")
     public UserCheckResponse getUserCheckItems(String username) {
         return adminService.getUserCheckItems(username);
     }
 
     // 用户信息审核结果，返回审核结果
     @GetMapping(value = "/usercheck")
-    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse approveItem(String username, Long id, ApproveResult result) {
         return adminService.approveItem(username, id, result);
     }

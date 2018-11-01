@@ -104,3 +104,15 @@ INSERT INTO trust.repayment_record (id, time, actual_repay_date, interest, perio
 INSERT INTO trust.repayment_record (id, time, actual_repay_date, interest, period, principal, remaining_principal, return_date, sum, username, target_id) VALUES (45, '2019-08-13 00:00:00', null, 90, 100, 100, 200, '2019-08-13', 200, 'test', 3);
 INSERT INTO trust.repayment_record (id, time, actual_repay_date, interest, period, principal, remaining_principal, return_date, sum, username, target_id) VALUES (46, '2019-09-13 00:00:00', null, 90, 100, 100, 200, '2019-09-13', 200, 'test', 3);
 INSERT INTO trust.repayment_record (id, time, actual_repay_date, interest, period, principal, remaining_principal, return_date, sum, username, target_id) VALUES (47, '2020-02-13 00:00:00', null, 90, 100, 100, 200, '2020-02-13', 200, 'test', 3);
+
+INSERT INTO trust.investment_record (id, time, invested_money, username, target_id) VALUES (1, '2018-08-01 06:38:45', 1000, 'cross1', 1);
+INSERT INTO trust.investment_record (id, time, invested_money, username, target_id) VALUES (2, '2018-08-01 06:38:45', 1000, 'cross2', 2);
+INSERT INTO trust.investment_record (id, time, invested_money, username, target_id) VALUES (3, '2018-08-01 06:38:45', 1000, 'cross1', 2);
+INSERT INTO trust.investment_record (id, time, invested_money, username, target_id) VALUES (4, '2018-08-01 06:38:45', 1000, 'cross2', 1);
+INSERT INTO trust.investment_record (id, time, invested_money, username, target_id) VALUES (5, '2018-08-01 06:38:45', 1000, 'cross2', 2);
+INSERT INTO trust.investment_record (id, time, invested_money, username, target_id) VALUES (6, '2018-08-01 06:38:45', 1000, 'cross3', 1);
+INSERT INTO trust.investment_record (id, time, invested_money, username, target_id) VALUES (7, '2018-08-01 06:38:45', 1000, 'cross3', 2);
+INSERT INTO trust.investment_record (id, time, invested_money, username, target_id) VALUES (8, '2018-08-01 06:38:45', 1000, 'cross1', 3);
+INSERT INTO trust.investment_record (id, time, invested_money, username, target_id) VALUES (9, '2018-08-01 06:38:45', 1000, 'test', 3);
+INSERT INTO trust.investment_record (id, time, invested_money, username, target_id) VALUES (10, '2018-08-01 06:38:45', 1000, 'cross3', 3);
+INSERT INTO trust.investment_record (id, time, invested_money, username, target_id) VALUES (11, '2018-08-01 06:38:45', 1000, 'cross2', 3);

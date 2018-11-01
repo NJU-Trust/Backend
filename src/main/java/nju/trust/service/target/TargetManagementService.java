@@ -24,6 +24,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 /**
@@ -89,7 +90,8 @@ public class TargetManagementService {
         // Apply filter to all ongoing task this user invested
         List<InvestmentRecord> records = investmentRecordRepository.findAllByUserUsername(username)
                 .stream()
-                .filter(r -> r.getTarget().getTargetState() == TargetState.ON_GOING
+                .filter(r -> (r.getTarget().getTargetState() == TargetState.ON_GOING
+                        || r.getTarget().getTargetState() == TargetState.IN_THE_PAYMENT)
                         && filter.toPredicate().test(r.getTarget()))
                 .collect(Collectors.toList());
 
@@ -100,8 +102,11 @@ public class TargetManagementService {
             // Find latest repayment record
             Repayment repayment = target.getRepayment();
             RepaymentRecord repaymentRecord = repaymentRecordRepository
-                    .findByReturnDateAndTargetId(repayment.nextDueDate(), target.getId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Repayment record not found"));
+                    .findAllByTargetId(target.getId())
+                    .stream()
+                    .filter(r -> !r.hasPaidOff())
+                    .min(Comparator.comparing(RepaymentRecord::getReturnDate))
+                    .orElseThrow(NoSuchElementException::new);
 
             // Add the vo to result list
             result.add(new InvestmentTarget(target.getName(), target.getUser().getUsername(),

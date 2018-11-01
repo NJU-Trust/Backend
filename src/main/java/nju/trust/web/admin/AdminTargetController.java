@@ -33,7 +33,6 @@ public class AdminTargetController {
     // 项目管理
     // 查看项目概要
     @GetMapping(value = "/briefInfo")
-    @PreAuthorize("hasRole('ADMIN')")
     public List<TargetAdminBriefInfo> seeTarget(String state, String type) {
         TargetState targetState = TargetState.getEnum(state);
         TargetType targetType = TargetType.getEnum(type);
@@ -42,7 +41,6 @@ public class AdminTargetController {
 
     // 查看项目详情
     @GetMapping(value = "/detailInfo")
-    @PreAuthorize("hasRole('ADMIN')")
     public TargetAdminDetailInfo seeTarget(Long id) {
         return adminService.seeTarget(id);
     }
@@ -56,7 +54,6 @@ public class AdminTargetController {
 
     // 查看待审核标的详情
     @GetMapping(value = "/pendingTarget")
-    @PreAuthorize("hasRole('ADMIN')")
     public List<PendingTargetDetailInfo> getPending(String targetType) {
         TargetType type = TargetType.getEnum(targetType);
         return adminService.getPendingTarget(type);
@@ -64,7 +61,6 @@ public class AdminTargetController {
 
     // 标的审核结果
     @GetMapping(value = "/targetcheck")
-    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse approveTarget(Long targetId, String result) {
         ApproveResult approveResult = ApproveResult.getEnum(result);
         return adminService.approveTarget(targetId, approveResult);

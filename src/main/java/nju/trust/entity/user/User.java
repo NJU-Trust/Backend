@@ -109,7 +109,12 @@ public class User {
 
     private String livingPlace;
 
-    private Double campusScore; // 校园表现
+    // 校园表现
+    private Double campusScore;
+
+    private String alipayPath;
+
+    private String cardPath;
 
 
     public User() {
@@ -423,5 +428,22 @@ public class User {
 
     public void setCampusScore(Double campusScore) {
         this.campusScore = campusScore;
+    }
+
+
+    public String getAlipayPath() {
+        return alipayPath;
+    }
+
+    public void setAlipayPath(String alipayPath) {
+        this.alipayPath = alipayPath;
+    }
+
+    public String getCardPath() {
+        return cardPath;
+    }
+
+    public void setCardPath(String cardPath) {
+        this.cardPath = cardPath;
     }
 }
