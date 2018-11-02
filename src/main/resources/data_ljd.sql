@@ -506,4 +506,35 @@ INSERT INTO trust.investment_record (id, time, invested_money, username, target_
 INSERT INTO trust.investment_record (id, time, invested_money, username, target_id) VALUES (26, '2018-08-01 06:38:45', 1000, 'SandboxUser1', 12);
 INSERT INTO trust.investment_record (id, time, invested_money, username, target_id) VALUES (27, '2018-08-01 06:38:45', 1000, 'SandboxUser2', 13);
 INSERT INTO trust.investment_record (id, time, invested_money, username, target_id) VALUES (28, '2018-08-01 06:38:45', 1000, 'SandboxUser3', 14);
-INSERT INTO trust.investment_record (id, time, invested_money, username, target_id) VALUES (29, '2018-08-01 06:38:45', 1000, 'test', 15);
+INSERT INTO trust.investment_record (id, time, invested_money, username, target_id)
+VALUES (29, '2018-08-01 06:38:45', 1000, 'test', 15);
+
+
+INSERT INTO trust.small_target (classification, id) VALUES (0, 1);
+INSERT INTO trust.small_target (classification, id) VALUES (0, 3);
+INSERT INTO trust.small_target (classification, id) VALUES (0, 5);
+INSERT INTO trust.small_target (classification, id) VALUES (0, 7);
+INSERT INTO trust.small_target (classification, id) VALUES (0, 9);
+INSERT INTO trust.small_target (classification, id) VALUES (0, 11);
+INSERT INTO trust.small_target (classification, id) VALUES (0, 13);
+INSERT INTO trust.small_target (classification, id) VALUES (0, 15);
+INSERT INTO trust.small_target (classification, id) VALUES (0, 17);
+INSERT INTO trust.small_target (classification, id) VALUES (0, 19);
+INSERT INTO trust.small_target (classification, id) VALUES (0, 21);
+INSERT INTO trust.small_target (classification, id) VALUES (0, 23);
+INSERT INTO trust.small_target (classification, id) VALUES (0, 27);
+
+INSERT INTO trust.large_target (classification, id) VALUES (0, 2);
+INSERT INTO trust.large_target (classification, id) VALUES (0, 4);
+INSERT INTO trust.large_target (classification, id) VALUES (0, 6);
+INSERT INTO trust.large_target (classification, id) VALUES (0, 8);
+INSERT INTO trust.large_target (classification, id) VALUES (0, 10);
+INSERT INTO trust.large_target (classification, id) VALUES (0, 12);
+INSERT INTO trust.large_target (classification, id) VALUES (0, 14);
+INSERT INTO trust.large_target (classification, id) VALUES (0, 16);
+INSERT INTO trust.large_target (classification, id) VALUES (0, 18);
+INSERT INTO trust.large_target (classification, id) VALUES (0, 20);
+INSERT INTO trust.large_target (classification, id) VALUES (0, 22);
+INSERT INTO trust.large_target (classification, id) VALUES (0, 24);
+INSERT INTO trust.large_target (classification, id) VALUES (0, 25);
+INSERT INTO trust.large_target (classification, id) VALUES (0, 26);

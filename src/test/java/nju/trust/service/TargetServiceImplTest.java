@@ -67,7 +67,7 @@ public class TargetServiceImplTest {
 
     @Test
     public void test2() {
-        System.out.println(targetRepository.findAllByUserUsername("test"));
+        System.out.println(smallTargetRepository.findByNameLike("帽"));
     }
 
     @Test

@@ -50,6 +50,21 @@ UPDATE trust.user SET credit_rating='B', credit_score='60' WHERE username='cross
 UPDATE trust.user SET credit_rating='C', credit_score='50' WHERE username='cross5';
 
 
-
+UPDATE `trust`.`user` t SET t.`ranking_rate` = 0.0625 WHERE t.`username` LIKE 'cross4' ESCAPE '#'
+UPDATE `trust`.`user` t SET t.`ranking_rate` = 0.5 WHERE t.`username` LIKE 'cross1' ESCAPE '#'
+UPDATE `trust`.`user` t SET t.`ranking_rate` = 0.6875 WHERE t.`username` LIKE 'test' ESCAPE '#'
+UPDATE `trust`.`user` t SET t.`ranking_rate` = 0.875 WHERE t.`username` LIKE 'SandboxUser1' ESCAPE '#'
+UPDATE `trust`.`user` t SET t.`ranking_rate` = 0.375 WHERE t.`username` LIKE 'SandboxUser2' ESCAPE '#'
+UPDATE `trust`.`user` t SET t.`ranking_rate` = 0.25 WHERE t.`username` LIKE 'cross9' ESCAPE '#'
+UPDATE `trust`.`user` t SET t.`ranking_rate` = 0.8125 WHERE t.`username` LIKE 'cross3' ESCAPE '#'
+UPDATE `trust`.`user` t SET t.`ranking_rate` = 0.9375 WHERE t.`username` LIKE 'cross8' ESCAPE '#'
+UPDATE `trust`.`user` t SET t.`ranking_rate` = 0.5625 WHERE t.`username` LIKE 'SandboxUser3' ESCAPE '#'
+UPDATE `trust`.`user` t SET t.`ranking_rate` = 0.3125 WHERE t.`username` LIKE 'cross2' ESCAPE '#'
+UPDATE `trust`.`user` t SET t.`ranking_rate` = 0.75 WHERE t.`username` LIKE 'admin' ESCAPE '#'
+UPDATE `trust`.`user` t SET t.`ranking_rate` = 1 WHERE t.`username` LIKE 'cross11' ESCAPE '#'
+UPDATE `trust`.`user` t SET t.`ranking_rate` = 0.625 WHERE t.`username` LIKE 'cross7' ESCAPE '#'
+UPDATE `trust`.`user` t SET t.`ranking_rate` = 0.4375 WHERE t.`username` LIKE 'cross5' ESCAPE '#'
+UPDATE `trust`.`user` t SET t.`ranking_rate` = 0.125 WHERE t.`username` LIKE 'cross10' ESCAPE '#'
+UPDATE `trust`.`user` t SET t.`ranking_rate` = 0.1875 WHERE t.`username` LIKE 'cross6' ESCAPE '#'
 
 
