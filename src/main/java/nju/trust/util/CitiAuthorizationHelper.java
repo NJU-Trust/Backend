@@ -34,6 +34,8 @@ public class CitiAuthorizationHelper {
             if (context.getRealAccessToken() == null){
                 throw new CitiAuthorizationException();
             }
+            System.out.println(CitiAccountHelper.getName(context));
+
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -70,6 +72,7 @@ public class CitiAuthorizationHelper {
         String accessToken = context.getAccessToken();
         String authorization = "Bearer " + accessToken;
         UUID uuid = UUID.randomUUID();
+        System.out.println(uuid.toString());
         Request request = new Request.Builder()
                 .url("https://sandbox.apihub.citi.com/gcb/api/security/e2eKey")
                 .get()

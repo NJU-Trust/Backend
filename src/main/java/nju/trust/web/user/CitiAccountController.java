@@ -29,7 +29,16 @@ public class CitiAccountController {
         }
 
     }
-
+    @RequestMapping("/basic")
+    public String basic() {
+        String name = "";
+        try{
+            name = CitiAccountHelper.getName(apiContext);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return name;
+    }
 
 
 }

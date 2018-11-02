@@ -35,7 +35,14 @@ public class TargetController {
         this.targetService = targetService;
         this.userService = userService;
     }
-
+    @RequestMapping("/getTarget")
+    public TargetInfo getTarget(Long id) {
+        return targetService.getTargetInfo(id);
+    }
+    @RequestMapping("/searchTarget")
+    public List<TargetInfo> getTarget(String name) {
+        return targetService.searchTargets(name);
+    }
 
     @GetMapping("/investmentRecord")
     public List<InvestmentHistory> getInvestmentRecords(@NotNull Long targetId) {
