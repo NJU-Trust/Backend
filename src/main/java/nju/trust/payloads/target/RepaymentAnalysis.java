@@ -20,6 +20,8 @@ public class RepaymentAnalysis {
 
     private List<Action> timeline;
 
+    private Integer currentPeriod;
+
     public RepaymentAnalysis(RepaymentType repaymentType, Double difficulty, List<RepaymentRecord> records) {
         this.repaymentType = repaymentType;
         this.difficulty = difficulty;
@@ -33,6 +35,13 @@ public class RepaymentAnalysis {
             if (r.hasPaidOff())
                 timeline.add(new Action("normal", r.getActualRepayDate(), r.getPeriod(), r.getSum(), r.getTarget().getId()));
         }
+
+        currentPeriod = records.stream().filter(r -> !r.hasPaidOff())
+                .findFirst().map(RepaymentRecord::getPeriod).orElse(-1);
+    }
+
+    public Integer getCurrentPeriod() {
+        return currentPeriod;
     }
 
     public RepaymentType getRepaymentType() {
