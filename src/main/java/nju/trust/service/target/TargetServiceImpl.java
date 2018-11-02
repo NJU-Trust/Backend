@@ -210,8 +210,11 @@ public class TargetServiceImpl implements TargetService {
         // Get top 8 targets with highest success rate
         Specification<SmallTarget> specification = new SmallTargetSpecification(filterRequest);
         List<SmallTarget> targets = smallTargetRepository
-                .findAll(specification, PageRequest.of(0, RECOMMENDATION_NUMBER,
-                        Sort.by(Sort.Direction.DESC, "targetRatingScore"))).getContent();
+                .findAll(specification, Sort.by(Sort.Direction.DESC, "targetRatingScore"))
+                .stream().filter(t -> t.getTargetState() == TargetState.ON_GOING)
+                .sorted(Comparator.comparing(BaseTarget::getTargetRatingScore).reversed())
+                .limit(RECOMMENDATION_NUMBER)
+                .collect(Collectors.toList());
 
         return targets.stream().map(SmallTargetInfo::new).collect(Collectors.toList());
     }
