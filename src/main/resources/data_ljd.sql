@@ -538,3 +538,31 @@ INSERT INTO trust.large_target (classification, id) VALUES (0, 22);
 INSERT INTO trust.large_target (classification, id) VALUES (0, 24);
 INSERT INTO trust.large_target (classification, id) VALUES (0, 25);
 INSERT INTO trust.large_target (classification, id) VALUES (0, 26);
+
+UPDATE `trust`.`repayment` t SET t.`interest_rate` = 7.029855589261001 WHERE t.`id` = 9
+UPDATE `trust`.`repayment` t SET t.`interest_rate` = 7.265280494158957 WHERE t.`id` = 3
+UPDATE `trust`.`repayment` t SET t.`interest_rate` = 6.539080086847967 WHERE t.`id` = 7
+UPDATE `trust`.`repayment` t SET t.`interest_rate` = 5.824234816903991 WHERE t.`id` = 18
+UPDATE `trust`.`repayment` t SET t.`interest_rate` = 5.723235568932674 WHERE t.`id` = 12
+UPDATE `trust`.`repayment` t SET t.`interest_rate` = 6.566330736351686 WHERE t.`id` = 23
+UPDATE `trust`.`repayment` t SET t.`interest_rate` = 6.545316560125939 WHERE t.`id` = 20
+UPDATE `trust`.`repayment` t SET t.`interest_rate` = 4.842362169811694 WHERE t.`id` = 11
+UPDATE `trust`.`repayment` t SET t.`interest_rate` = 6.783192866647592 WHERE t.`id` = 6
+UPDATE `trust`.`repayment` t SET t.`interest_rate` = 3.810890621479886 WHERE t.`id` = 27
+UPDATE `trust`.`repayment` t SET t.`interest_rate` = 6.851107267013171 WHERE t.`id` = 4
+UPDATE `trust`.`repayment` t SET t.`interest_rate` = 5.159304253891218 WHERE t.`id` = 25
+UPDATE `trust`.`repayment` t SET t.`interest_rate` = 4.965753028980023 WHERE t.`id` = 5
+UPDATE `trust`.`repayment` t SET t.`interest_rate` = 6.360949676135745 WHERE t.`id` = 24
+UPDATE `trust`.`repayment` t SET t.`interest_rate` = 7.775694605841261 WHERE t.`id` = 14
+UPDATE `trust`.`repayment` t SET t.`interest_rate` = 5.583368548733498 WHERE t.`id` = 15
+UPDATE `trust`.`repayment` t SET t.`interest_rate` = 7.855749671303887 WHERE t.`id` = 13
+UPDATE `trust`.`repayment` t SET t.`interest_rate` = 3.085296024914922 WHERE t.`id` = 2
+UPDATE `trust`.`repayment` t SET t.`interest_rate` = 4.731212334827717 WHERE t.`id` = 19
+UPDATE `trust`.`repayment` t SET t.`interest_rate` = 5.187519417095249 WHERE t.`id` = 17
+UPDATE `trust`.`repayment` t SET t.`interest_rate` = 5.837757630330362 WHERE t.`id` = 16
+UPDATE `trust`.`repayment` t SET t.`interest_rate` = 6.515679793771916 WHERE t.`id` = 21
+UPDATE `trust`.`repayment` t SET t.`interest_rate` = 4.489351334259625 WHERE t.`id` = 8
+UPDATE `trust`.`repayment` t SET t.`interest_rate` = 4.427134848057607 WHERE t.`id` = 1
+UPDATE `trust`.`repayment` t SET t.`interest_rate` = 6.490301141055503 WHERE t.`id` = 26
+UPDATE `trust`.`repayment` t SET t.`interest_rate` = 4.111030956374144 WHERE t.`id` = 10
+UPDATE `trust`.`repayment` t SET t.`interest_rate` = 6.060134439963901 WHERE t.`id` = 22
