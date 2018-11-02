@@ -106,7 +106,10 @@ public class RepaymentService {
         BaseTarget target = targetRepository.findById(targetId)
                 .orElseThrow(() -> new ResourceNotFoundException("Target not found"));
         Repayment repayment = target.getRepayment();
-        List<RepaymentRecord> records = repaymentRecordRepository.findAllByTargetId(targetId);
+        List<RepaymentRecord> records = repaymentRecordRepository.findAllByTargetId(targetId)
+                .stream()
+                .sorted(Comparator.comparing(RepaymentRecord::getReturnDate))
+                .collect(Collectors.toList());
 
         return new RepaymentAnalysis(repayment.getType(), repayment.getDifficulty(), records);
     }
