@@ -69,6 +69,7 @@ public class UserController {
     @PostMapping(value = "/signin")
     public ResponseEntity<JwtAuthenticationResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         CitiAuthorizationHelper.getRealAccessToken( loginRequest.getUsername(), loginRequest.getPassword(), apiContext);
+
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getUsername(),
