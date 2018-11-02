@@ -11,7 +11,7 @@ INSERT INTO trust.user (username, account, cross_score, institution, password, s
 UPDATE trust.user SET account='100000', cross_score='80.33', institution='软件学院', student_id='161250202' WHERE username='SandboxUser1';
 UPDATE trust.user SET account='100000', cross_score='-1', institution='软件学院', student_id='161250200' WHERE username='SandboxUser3';
 UPDATE trust.user SET account='100000', cross_score='0', institution='软件学院', student_id='161250201' WHERE username='SandboxUser2';
-UPDATE trust.user SET age='19', alipay='t_1499823478234_0892', birthday='1998-10-24', email='3278545098@qq.com', gender='FEMALE', grade='2', major='软件工程', phone_number='13888990129', real_name='李琳', university='南京大学' WHERE username='SandboxUser2';
+UPDATE trust.user SET age='19', alipay='t_1499823478234_0892', birthday='1998-10-24', email='3278545098@qq.com', gender='FEMALE', grade='2', major='软件工程', phone_number='13888990129', university='南京大学' WHERE username='SandboxUser2';
 UPDATE trust.user SET roles='ROLE_INTERMEDIATE', user_level='INTERMEDIATE' WHERE username='SandboxUser2';
 UPDATE trust.user SET institution='软件学院' WHERE username='cross11';
 UPDATE trust.user SET institution='软件学院' WHERE username='cross10';
@@ -25,5 +25,46 @@ UPDATE trust.user SET institution='软件学院' WHERE username='cross3';
 UPDATE trust.user SET institution='软件学院' WHERE username='cross2';
 UPDATE trust.user SET institution='软件学院' WHERE username='cross1';
 
+
+
+
+INSERT INTO trust.credit_cross_check (id, done, end_date, q1, q2, q3, q4, q5, q6, q7, q8, q9, random, valid, related_person_username, user_username) VALUES ('1', true, '2018-11-1', '1', '1', '1', '1', '1', '1', '1', '8', '6', true, false, 'cross1', 'SandboxUser1');
+INSERT INTO trust.credit_cross_check (id, done, end_date, q1, q2, q3, q4, q5, q6, q7, q8, q9, random, valid, related_person_username, user_username) VALUES ('2', true, '2018-11-1', '2', '1', '1', '1', '1', '1', '4', '7', '5', true, false, 'cross2', 'SandboxUser1');
+INSERT INTO trust.credit_cross_check (id, done, end_date, q1, q2, q3, q4, q5, q6, q7, q8, q9, random, valid, related_person_username, user_username) VALUES ('3', true, '2018-11-1', '2', '2', '2', '2', '2', '2', '2', '5', '5', true, false, 'cross3', 'SandboxUser1');
+INSERT INTO trust.credit_cross_check (id, done, end_date, q1, q2, q3, q4, q5, q6, q7, q8, q9, random, valid, related_person_username, user_username) VALUES ('4', false, '2018-11-1', '0', '0', '0', '0', '0', '0', '0', '0', '0', false, false, 'crosstest1', 'SandboxUser1');
+INSERT INTO trust.credit_cross_check (id, done, end_date, q1, q2, q3, q4, q5, q6, q7, q8, q9, random, valid, related_person_username, user_username) VALUES ('5', true, '2018-11-1', '1', '2', '1', '2', '1', '2', '3', '8', '6' false, false, 'crosstest2', 'SandboxUser1');
+INSERT INTO trust.credit_cross_check (id, done, end_date, q1, q2, q3, q4, q5, q6, q7, q8, q9, random, valid, related_person_username, user_username) VALUES ('6', false, '2018-11-1', '0', '0', '0', '0', '0', '0', '0', '0', '0', false, false, 'cross3', 'SandboxUser1');
+INSERT INTO trust.credit_cross_check (id, done, end_date, q1, q2, q3, q4, q5, q6, q7, q8, q9, random, valid, related_person_username, user_username) VALUES ('7', true, '2018-11-1', '1', '2', '1', '2', '1', '2', '4', '6', '3', false, false, 'cross4', 'SandboxUser1');
+INSERT INTO trust.credit_cross_check (id, done, end_date, q1, q2, q3, q4, q5, q6, q7, q8, q9, random, valid, related_person_username, user_username) VALUES ('8', true, '2018-11-1', '1', '1', '1', '1', '1', '1', '1', '5', '5', false, false, 'cross5', 'SandboxUser1');
+INSERT INTO trust.credit_cross_check (id, done, end_date, q1, q2, q3, q4, q5, q6, q7, q8, q9, random, valid, related_person_username, user_username) VALUES ('9', false, '2018-11-1', '0', '0', '0', '0', '0', '0', '0', '0', '0', false, false, 'cross6', 'SandboxUser1');
+INSERT INTO trust.credit_cross_check (id, done, end_date, q1, q2, q3, q4, q5, q6, q7, q8, q9, random, valid, related_person_username, user_username) VALUES ('10', false, '2018-11-1', '0', '0', '0', '0', '0', '0', '0', '0', '0', false, false, 'cross7', 'SandboxUser1');
+
+UPDATE trust.user SET age='18', alipay='t_3458901348995_9093', birthday='1999-09-08', credit_rating='B', credit_score='70', email='254083478@qq.com', gender='MALE', grade='1', living_place='南京大学仙林校区1栋610', major='软件工程', phone_number='13280567347', roles='ROLE_PRIMARY', university='南京大学' WHERE username='SandboxUser3';
+UPDATE trust.user SET alipay='t_1909249899454_0913', birthday='1997-03-05', credit_rating='A', credit_score='80', email='45876026@qq.com', gender='MALE', grade='3', living_place='南京大学鼓楼校区6舍101', major='软件工程', phone_number='18990012387', roles='ROLE_PRIMARY', university='南京大学' WHERE username='SandboxUser1';
+UPDATE trust.user SET credit_rating='AA', credit_score='90', living_place='南京大学仙林校区2栋304' WHERE username='SandboxUser2';
+
+
+UPDATE trust.user SET credit_rating='A', credit_score='80' WHERE username='cross2';
+UPDATE trust.user SET credit_rating='B', credit_score='70' WHERE username='cross3';
+UPDATE trust.user SET credit_rating='B', credit_score='60' WHERE username='cross4';
+UPDATE trust.user SET credit_rating='C', credit_score='50' WHERE username='cross5';
+
+
+UPDATE `trust`.`user` t SET t.`ranking_rate` = 0.0625 WHERE t.`username` LIKE 'cross4' ESCAPE '#'
+UPDATE `trust`.`user` t SET t.`ranking_rate` = 0.5 WHERE t.`username` LIKE 'cross1' ESCAPE '#'
+UPDATE `trust`.`user` t SET t.`ranking_rate` = 0.6875 WHERE t.`username` LIKE 'test' ESCAPE '#'
+UPDATE `trust`.`user` t SET t.`ranking_rate` = 0.875 WHERE t.`username` LIKE 'SandboxUser1' ESCAPE '#'
+UPDATE `trust`.`user` t SET t.`ranking_rate` = 0.375 WHERE t.`username` LIKE 'SandboxUser2' ESCAPE '#'
+UPDATE `trust`.`user` t SET t.`ranking_rate` = 0.25 WHERE t.`username` LIKE 'cross9' ESCAPE '#'
+UPDATE `trust`.`user` t SET t.`ranking_rate` = 0.8125 WHERE t.`username` LIKE 'cross3' ESCAPE '#'
+UPDATE `trust`.`user` t SET t.`ranking_rate` = 0.9375 WHERE t.`username` LIKE 'cross8' ESCAPE '#'
+UPDATE `trust`.`user` t SET t.`ranking_rate` = 0.5625 WHERE t.`username` LIKE 'SandboxUser3' ESCAPE '#'
+UPDATE `trust`.`user` t SET t.`ranking_rate` = 0.3125 WHERE t.`username` LIKE 'cross2' ESCAPE '#'
+UPDATE `trust`.`user` t SET t.`ranking_rate` = 0.75 WHERE t.`username` LIKE 'admin' ESCAPE '#'
+UPDATE `trust`.`user` t SET t.`ranking_rate` = 1 WHERE t.`username` LIKE 'cross11' ESCAPE '#'
+UPDATE `trust`.`user` t SET t.`ranking_rate` = 0.625 WHERE t.`username` LIKE 'cross7' ESCAPE '#'
+UPDATE `trust`.`user` t SET t.`ranking_rate` = 0.4375 WHERE t.`username` LIKE 'cross5' ESCAPE '#'
+UPDATE `trust`.`user` t SET t.`ranking_rate` = 0.125 WHERE t.`username` LIKE 'cross10' ESCAPE '#'
+UPDATE `trust`.`user` t SET t.`ranking_rate` = 0.1875 WHERE t.`username` LIKE 'cross6' ESCAPE '#'
 
 

@@ -37,6 +37,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -114,7 +115,9 @@ public class TargetServiceImpl implements TargetService {
         Repayment repayment = target.getRepayment();
         log.info(repayment.nextDueDate().toString());
         RepaymentRecord record = repaymentRecordRepository
-                .findByReturnDateAndTargetId(repayment.nextDueDate(), targetId)
+                .findAllByTargetId(targetId)
+                .stream().filter(r -> !r.hasPaidOff())
+                .min(Comparator.comparing(RepaymentRecord::getReturnDate))
                 .orElseThrow(() -> new ResourceNotFoundException("Repayment records not found"));
 
         return new TargetDetails(target, record);

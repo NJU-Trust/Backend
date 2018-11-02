@@ -5,6 +5,7 @@ import org.springframework.core.io.Resource;
 
 import javax.script.*;
 import java.io.FileReader;
+import java.io.InputStreamReader;
 
 /**
  * All rights Reserved, Designed by Popping Lim
@@ -23,7 +24,7 @@ public class JSHelper {
         Resource resource = new ClassPathResource("CitiE2E.js");
         // 获得js文件
         try {
-            engine.eval(new FileReader(resource.getFile()));
+            engine.eval(new InputStreamReader(resource.getInputStream()));
             Invocable invocable = (Invocable) engine;
             JSMethod executeMethod = invocable.getInterface(JSMethod.class);
             return executeMethod.getRSAPassword(modulus, exponent, eventId, password);
