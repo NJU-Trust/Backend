@@ -201,7 +201,9 @@ public class PersonalInformationServiceImpl implements PersonalInformationServic
     public TotalAccountInfo getTotalAccountInfo(String username) {
         TotalAccountInfo info = new TotalAccountInfo();
 
-        double balance = 0;
+        User u = userRepository.findByUsername(username).get();
+
+        double balance = u.getAccount();
         double frozenAmount = calFrozenAmount(username);
         double pendingPI = calPendingPI(username);
         double investmentInBidding = calInvestmentInBidding(username);
