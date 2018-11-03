@@ -99,7 +99,7 @@ public class FileUploadController {
                                 .addFormDataPart("username", username)
                                 .build();
                         Request request = new Request.Builder()
-                                .url("http://localhost:8001/process")
+                                .url("http://193.112.82.110:8001/process")
                                 .post(requestBody)
                                 .build();
                         Response response = client.newCall(request).execute();
